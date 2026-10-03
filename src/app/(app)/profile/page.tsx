@@ -4,16 +4,55 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/layout/page-header";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { Amount } from "@/components/ui/amount";
 import { Card, CardTitle } from "@/components/ui/card";
+import { SignOutButton } from "@/features/auth/sign-out-button";
+import type { CurrencyCode } from "@/lib/money";
+import { requireUser } from "@/server/auth";
 
 export const metadata: Metadata = { title: "Profil" };
 
 export default async function ProfilePage() {
-  const t = await getTranslations("profile");
+  const [t, tOnboarding, user] = await Promise.all([
+    getTranslations("profile"),
+    getTranslations("onboarding.currencies"),
+    requireUser(),
+  ]);
+  const currency = user.currency as CurrencyCode;
   return (
     <>
       <PageHeader title={t("title")} subtitle={t("subtitle")} />
       <div className="space-y-4">
+        <Card>
+          <div className="flex items-center gap-4">
+            <span
+              className="grid size-14 shrink-0 place-items-center rounded-full bg-accent-soft text-h2 text-accent"
+              aria-hidden
+            >
+              {user.name.charAt(0).toLocaleUpperCase("tr-TR")}
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-h2 text-text">{user.name}</p>
+              <p className="truncate text-small text-muted">{user.email}</p>
+            </div>
+          </div>
+          <dl className="mt-5 grid grid-cols-2 gap-4 border-t border-border pt-5">
+            <div>
+              <dt className="text-caption text-muted">{t("currency")}</dt>
+              <dd className="mt-1 text-body text-text">{tOnboarding(currency)}</dd>
+            </div>
+            <div>
+              <dt className="text-caption text-muted">{t("monthlyIncome")}</dt>
+              <dd className="mt-1 text-body text-text">
+                {user.monthlyIncomeMinor ? (
+                  <Amount minor={user.monthlyIncomeMinor} currency={currency} compact />
+                ) : (
+                  <span className="text-muted">{t("notSet")}</span>
+                )}
+              </dd>
+            </div>
+          </dl>
+        </Card>
         <Card>
           <CardTitle>{t("appearance")}</CardTitle>
           <p className="mt-1 mb-4 text-small text-muted">{t("appearanceBody")}</p>
@@ -27,6 +66,13 @@ export default async function ProfilePage() {
           <span className="flex-1">{t("componentsLink")}</span>
           <ChevronRight className="size-5 text-muted" aria-hidden />
         </Link>
+        <Card className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <CardTitle>{t("account")}</CardTitle>
+            <p className="mt-1 text-small text-muted">{t("signOutBody")}</p>
+          </div>
+          <SignOutButton />
+        </Card>
       </div>
     </>
   );

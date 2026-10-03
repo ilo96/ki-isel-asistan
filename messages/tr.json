@@ -47,7 +47,14 @@
     "orSay": "Ya da yaz: “Her ayın 5'inde kirayı hatırlat”",
     "noBudget": "Bütçe belirlenmedi",
     "summaryLabel": "Asistanın özeti",
-    "hello": "Merhaba"
+    "hello": "Merhaba",
+    "suggestionsLabel": "Nereden başlamak istersin?",
+    "suggestions": {
+      "expense": "İlk giderini ekle",
+      "rent": "Kira hatırlatıcısı kur",
+      "budget": "Aylık bütçe belirle"
+    },
+    "welcome": "Hoş geldin! Henüz bir şey kaydetmedin. Aşağıdakilerden biriyle başlayabilirsin; ilk kaydından sonra sana her gün kısa bir özet çıkaracağım."
   },
   "finance": {
     "title": "Finans",
@@ -85,7 +92,12 @@
     "subtitle": "Tercihlerin ve hedeflerin",
     "appearance": "Görünüm",
     "appearanceBody": "Uygulamanın temasını seç. Sistem, cihazının ayarını izler.",
-    "componentsLink": "Tasarım sistemi önizlemesi"
+    "componentsLink": "Tasarım sistemi önizlemesi",
+    "account": "Hesap",
+    "currency": "Para birimi",
+    "monthlyIncome": "Aylık gelir",
+    "notSet": "Belirtilmedi",
+    "signOutBody": "Bu cihazdaki oturumun kapanır."
   },
   "quickAdd": {
     "title": "Hızlı ekle",
@@ -109,5 +121,114 @@
     "errorTitle": "Bir şeyler ters gitti",
     "errorBody": "Bu bölümü şu an yükleyemedik.",
     "retry": "Tekrar dene"
+  },
+  "auth": {
+    "loginTitle": "Tekrar hoş geldin",
+    "loginSubtitle": "Asistanın kaldığın yerden devam etmeye hazır.",
+    "registerTitle": "Hesabını oluştur",
+    "registerSubtitle": "Bir dakikada başla. Gelirini, giderini ve gününü senin için takip edeyim.",
+    "name": "Adın",
+    "namePlaceholder": "Ayşe",
+    "email": "E-posta",
+    "emailPlaceholder": "ornek@eposta.com",
+    "password": "Şifre",
+    "passwordNew": "Yeni şifre",
+    "passwordConfirm": "Yeni şifre (tekrar)",
+    "passwordHint": "En az 8 karakter",
+    "showPassword": "Şifreyi göster",
+    "hidePassword": "Şifreyi gizle",
+    "login": "Giriş yap",
+    "register": "Hesap oluştur",
+    "orEmail": "ya da e-postayla",
+    "google": "Google ile devam et",
+    "apple": "Apple ile devam et",
+    "noAccount": "Hesabın yok mu?",
+    "haveAccount": "Zaten hesabın var mı?",
+    "goRegister": "Kayıt ol",
+    "goLogin": "Giriş yap",
+    "forgot": "Şifremi unuttum",
+    "forgotTitle": "Şifreni sıfırla",
+    "forgotSubtitle": "E-posta adresini yaz, sana bir sıfırlama bağlantısı gönderelim.",
+    "forgotSubmit": "Bağlantı gönder",
+    "forgotSent": "Bu adrese kayıtlı bir hesap varsa sıfırlama bağlantısı birkaç dakika içinde gelecek. Gereksiz klasörünü de kontrol et.",
+    "resetTitle": "Yeni şifre belirle",
+    "resetSubtitle": "Bundan sonra bu şifreyle giriş yapacaksın.",
+    "resetSubmit": "Şifreyi kaydet",
+    "resetDone": "Şifren değişti. Şimdi yeni şifrenle giriş yapabilirsin.",
+    "resetInvalid": "Bu bağlantının süresi dolmuş ya da daha önce kullanılmış. Yeni bir bağlantı iste.",
+    "backToLogin": "Girişe dön",
+    "terms": "Devam ederek verilerinin yalnızca sana ait olduğunu ve hiçbir zaman satılmayacağını kabul etmiş olursun.",
+    "signOut": "Çıkış yap",
+    "errors": {
+      "INVALID_EMAIL_OR_PASSWORD": "E-posta ya da şifre hatalı.",
+      "USER_ALREADY_EXISTS": "Bu e-postayla zaten bir hesap var. Giriş yapmayı dene.",
+      "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL": "Bu e-postayla zaten bir hesap var. Giriş yapmayı dene.",
+      "PASSWORD_TOO_SHORT": "Şifre en az 8 karakter olmalı.",
+      "PASSWORD_TOO_LONG": "Şifre çok uzun.",
+      "INVALID_TOKEN": "Bu bağlantının süresi dolmuş ya da daha önce kullanılmış. Yeni bir bağlantı iste.",
+      "TOO_MANY_REQUESTS": "Çok fazla deneme yaptın. Biraz bekleyip tekrar dene.",
+      "generic": "Bir şeyler ters gitti. Lütfen tekrar dene."
+    }
+  },
+  "validation": {
+    "required": "Bu alan zorunlu.",
+    "email": "Geçerli bir e-posta adresi yaz.",
+    "passwordMin": "Şifre en az 8 karakter olmalı.",
+    "passwordMax": "Şifre çok uzun.",
+    "passwordMismatch": "Şifreler aynı değil.",
+    "nameMax": "İsim en fazla 60 karakter olabilir.",
+    "amount": "Geçerli bir tutar yaz (ör. 25.000).",
+    "amountPositive": "Tutar sıfırdan büyük olmalı.",
+    "amountMax": "Tutar çok büyük."
+  },
+  "onboarding": {
+    "skip": "Atla",
+    "next": "Devam",
+    "back": "Geri",
+    "start": "Başlayalım",
+    "step": "Adım {current} / {total}",
+    "slides": [
+      {
+        "title": "Sana ait bir asistan",
+        "body": "Ne harcadığını sor, gider ekletmek için tek cümle yaz. Gerisini o halleder."
+      },
+      {
+        "title": "Paran tek bakışta",
+        "body": "Gelirin, giderin ve bütçen tek ekranda. Ay sonunu tahmin etmek zorunda kalma."
+      },
+      {
+        "title": "Hiçbir şeyi unutma",
+        "body": "Faturalar, kira, önemli günler. Zamanı gelince sana haber veririm."
+      }
+    ],
+    "personalTitle": "Seni biraz tanıyayım",
+    "personalSubtitle": "Sadece isim ve para birimi gerekli. Gerisini istediğin zaman Profil'den değiştirebilirsin.",
+    "name": "Sana nasıl hitap edeyim?",
+    "currency": "Para birimi",
+    "income": "Aylık gelirin",
+    "incomeHint": "İsteğe bağlı. Bütçe önerilerini buna göre yaparım.",
+    "goal": "Aylık birikim hedefin",
+    "goalHint": "İsteğe bağlı. Ana sayfada ilerlemeni gösteririm.",
+    "optional": "İsteğe bağlı",
+    "finish": "Hazırım",
+    "currencies": {
+      "TRY": "₺ TL",
+      "USD": "$ USD",
+      "EUR": "€ EUR",
+      "GBP": "£ GBP"
+    },
+    "illustration": {
+      "userSays": "Bugün 350 TL yemek harcadım",
+      "assistantSays": "Ekledim: Yemek, ₺350. Bu ay yemeğe ayırdığın bütçenin %40'ındasın.",
+      "rent": "Kira",
+      "electricity": "Elektrik faturası",
+      "birthday": "Annemin doğum günü",
+      "inDays": "{count} gün sonra",
+      "tomorrow": "Yarın"
+    },
+    "errors": {
+      "invalid": "Bilgileri kontrol edip tekrar dene.",
+      "unknown": "Kaydedemedim. Bağlantını kontrol edip tekrar dene."
+    }
   }
 }

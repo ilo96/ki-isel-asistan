@@ -6,6 +6,8 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Gömülü geliştirme veritabanı WASM dosyalarını kendi klasöründen okur; paketlenmemeli.
+  serverExternalPackages: ["@electric-sql/pglite"],
 };
 
 export default withNextIntl(nextConfig);
