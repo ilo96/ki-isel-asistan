@@ -15,6 +15,10 @@ Yerelde hiçbir hesap veya anahtar gerekmez: `DATABASE_URL` tanımlı değilse v
 şifre sıfırlama bağlantıları sunucu konsoluna yazılır. Production için gereken değişkenler
 `.env.example` içinde.
 
+İşlem ekleme ekranı gelene kadar ana sayfayı dolu görmek için, boş ana sayfadaki
+**Örnek veriyle dene** düğmesi (yalnızca geliştirmede görünür) örnek gelir, gider, bütçe ve
+hatırlatıcılar ekler. `/dev/components` sayfasından bu veriler temizlenebilir.
+
 | Komut            | Ne yapar                         |
 | ---------------- | -------------------------------- |
 | `pnpm lint`      | ESLint                           |

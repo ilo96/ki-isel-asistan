@@ -8,14 +8,25 @@ type ProgressProps = {
   /** 0–1 arası oran; 1'in üstü limit aşımı demektir. */
   value: number;
   label: string;
+  /** budget: %80'de uyarı, %100'de aşım rengi. goal: dolunca başarı rengi. */
+  kind?: "budget" | "goal";
   className?: string;
 };
 
-/** Bütçe çubuğu: %80'de uyarı, %100'de aşım rengi. */
-export function Progress({ value, label, className }: ProgressProps) {
+/** İlerleme çubuğu: bütçede dolmak kötü, hedefte iyi haberdir. */
+export function Progress({ value, label, kind = "budget", className }: ProgressProps) {
   const reduce = useReducedMotion();
   const clamped = Math.max(0, Math.min(value, 1));
-  const tone = value >= 1 ? "bg-negative" : value >= 0.8 ? "bg-warning" : "bg-accent";
+  const tone =
+    kind === "goal"
+      ? value >= 1
+        ? "bg-positive"
+        : "bg-accent"
+      : value >= 1
+        ? "bg-negative"
+        : value >= 0.8
+          ? "bg-warning"
+          : "bg-accent";
   return (
     <div
       role="progressbar"

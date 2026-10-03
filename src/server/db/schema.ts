@@ -4,10 +4,13 @@ import {
   boolean,
   date,
   index,
+  integer,
   pgEnum,
   pgTable,
   text,
   timestamp,
+  unique,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -112,6 +115,136 @@ export const financialGoals = pgTable(
   (t) => [index("financial_goals_user_id_idx").on(t.userId, t.status)],
 );
 
+/* ---------------------------------------------------------------- Finans */
+
+export const transactionType = pgEnum("transaction_type", ["income", "expense"]);
+export const paymentMethodKind = pgEnum("payment_method_kind", [
+  "cash",
+  "debit",
+  "credit",
+  "bank",
+  "other",
+]);
+export const transactionSource = pgEnum("transaction_source", ["manual", "ai", "recurring"]);
+
+/** system_key (ör. groceries) kullanıcı adı değiştirse de AI eşleştirmesi için sabit kalır. */
+export const categories = pgTable(
+  "categories",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: transactionType("type").notNull(),
+    name: text("name").notNull(),
+    icon: text("icon").notNull(),
+    colorToken: text("color_token").notNull(),
+    systemKey: text("system_key"),
+    sortOrder: integer("sort_order").notNull().default(0),
+    archivedAt: timestamp("archived_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [
+    index("categories_user_id_idx").on(t.userId, t.type),
+    uniqueIndex("categories_user_system_key_uq").on(t.userId, t.systemKey),
+  ],
+);
+
+/** Toplam bakiye = açılış bakiyeleri + gelirler − giderler. */
+export const paymentMethods = pgTable(
+  "payment_methods",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    kind: paymentMethodKind("kind").notNull(),
+    openingBalanceMinor: bigint("opening_balance_minor", { mode: "number" }).notNull().default(0),
+    archivedAt: timestamp("archived_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [index("payment_methods_user_id_idx").on(t.userId)],
+);
+
+/** Tutar her zaman pozitif kuruş; yönü type belirler. occurred_on kullanıcının takvim günü. */
+export const transactions = pgTable(
+  "transactions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: transactionType("type").notNull(),
+    amountMinor: bigint("amount_minor", { mode: "number" }).notNull(),
+    currency: text("currency").notNull(),
+    categoryId: uuid("category_id")
+      .notNull()
+      .references(() => categories.id),
+    paymentMethodId: uuid("payment_method_id").references(() => paymentMethods.id),
+    description: text("description").notNull(),
+    note: text("note"),
+    occurredOn: date("occurred_on").notNull(),
+    source: transactionSource("source").notNull().default("manual"),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [
+    index("transactions_user_date_idx").on(t.userId, t.occurredOn.desc()),
+    index("transactions_user_category_date_idx").on(t.userId, t.categoryId, t.occurredOn),
+  ],
+);
+
+/** category_id boşsa genel aylık bütçe. */
+export const budgets = pgTable(
+  "budgets",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    categoryId: uuid("category_id").references(() => categories.id),
+    amountMinor: bigint("amount_minor", { mode: "number" }).notNull(),
+    startsOn: date("starts_on").notNull(),
+    alertThresholds: integer("alert_thresholds").array().notNull().default([80, 100]),
+    ...timestamps,
+  },
+  (t) => [
+    // Genel bütçe (category_id boş) de ayda bir tane olsun.
+    unique("budgets_user_category_start_uq")
+      .on(t.userId, t.categoryId, t.startsOn)
+      .nullsNotDistinct(),
+  ],
+);
+
+/* ----------------------------------------------------------------- Yaşam */
+
+export const reminderKind = pgEnum("reminder_kind", ["reminder", "bill", "important_date"]);
+export const priority = pgEnum("priority", ["low", "normal", "high"]);
+
+/** Faturalar ve önemli tarihler de hatırlatıcıdır; dashboard'daki Yaklaşanlar buradan beslenir. */
+export const reminders = pgTable(
+  "reminders",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    kind: reminderKind("kind").notNull().default("reminder"),
+    title: text("title").notNull(),
+    note: text("note"),
+    dueAt: timestamp("due_at", { withTimezone: true }).notNull(),
+    allDay: boolean("all_day").notNull().default(false),
+    priority: priority("priority").notNull().default("normal"),
+    amountMinor: bigint("amount_minor", { mode: "number" }),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    snoozedUntil: timestamp("snoozed_until", { withTimezone: true }),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [index("reminders_user_due_idx").on(t.userId, t.dueAt)],
+);
+
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
@@ -120,3 +253,6 @@ export const usersRelations = relations(users, ({ many }) => ({
 
 export type User = typeof users.$inferSelect;
 export type FinancialGoal = typeof financialGoals.$inferSelect;
+export type Category = typeof categories.$inferSelect;
+export type Transaction = typeof transactions.$inferSelect;
+export type Reminder = typeof reminders.$inferSelect;

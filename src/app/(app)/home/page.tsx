@@ -1,73 +1,51 @@
-import { CalendarClock, PiggyBank, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
-import { AssistantOrb } from "@/components/assistant/assistant-orb";
-import { Amount } from "@/components/ui/amount";
-import { QuickAddButton } from "@/components/layout/quick-add-button";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { EmptyState } from "@/components/ui/empty-state";
-import { FirstSteps } from "@/features/dashboard/first-steps";
+import { AssistantSummary } from "@/features/dashboard/assistant-summary";
+import { GoalCard } from "@/features/dashboard/goal-card";
 import { Greeting } from "@/features/dashboard/greeting";
-import { StatCard } from "@/features/dashboard/stat-card";
-import type { CurrencyCode } from "@/lib/money";
+import { RecentTransactions } from "@/features/dashboard/recent-transactions";
+import { SummaryCards } from "@/features/dashboard/summary-cards";
+import { UpcomingList } from "@/features/dashboard/upcoming-list";
+import { DEFAULT_TIMEZONE } from "@/lib/dates";
+import { DEFAULT_CURRENCY, type CurrencyCode } from "@/lib/money";
 import { requireUser } from "@/server/auth";
+import { getDb } from "@/server/db";
+import { isProduction } from "@/server/env";
+import { buildInsights, getDashboard } from "@/server/services/dashboard";
 
 export const metadata: Metadata = { title: "Ana Sayfa" };
 
 export default async function HomePage() {
-  const [t, user] = await Promise.all([getTranslations("home"), requireUser()]);
-  const currency = user.currency as CurrencyCode;
+  const user = await requireUser();
+  const timeZone = user.timezone ?? DEFAULT_TIMEZONE;
+  const data = await getDashboard(await getDb(), { id: user.id, timezone: timeZone });
+  const currency = (user.currency ?? DEFAULT_CURRENCY) as CurrencyCode;
   const firstName = user.name.split(" ")[0];
-  // Finans verisi sonraki fazda; şimdilik rakamlar sıfır ve boş durumlar gösterilir.
+
   return (
     <div className="space-y-6 lg:space-y-8">
-      <section className="pt-2">
+      <section className="space-y-4 pt-2">
         <Greeting name={firstName} />
-        <div className="relative mt-4 overflow-hidden rounded-card border border-border/60 bg-surface p-5 shadow-card dark:border-transparent">
-          <div className="absolute inset-y-0 left-0 w-1 ai-gradient" aria-hidden />
-          <div className="flex items-start gap-4">
-            <AssistantOrb size="md" />
-            <div>
-              <p className="text-caption text-muted">{t("summaryLabel")}</p>
-              <p className="mt-1 text-body text-text">{t("welcome")}</p>
-              <FirstSteps />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="grid grid-cols-2 gap-4 lg:grid-cols-4" aria-label={t("balance")}>
-        <StatCard index={0} label={t("balance")} icon={<Wallet />}>
-          <Amount minor={0} currency={currency} animated compact />
-        </StatCard>
-        <StatCard index={1} label={t("income")} icon={<TrendingUp />}>
-          <Amount minor={0} currency={currency} animated compact />
-        </StatCard>
-        <StatCard index={2} label={t("expense")} icon={<TrendingDown />}>
-          <Amount minor={0} currency={currency} animated compact />
-        </StatCard>
-        <StatCard
-          index={3}
-          label={t("budgetLeft")}
-          icon={<PiggyBank />}
-          footer={<p className="text-caption text-muted">{t("noBudget")}</p>}
-        >
-          <Amount minor={0} currency={currency} animated compact />
-        </StatCard>
-      </section>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("upcoming")}</CardTitle>
-        </CardHeader>
-        <EmptyState
-          icon={CalendarClock}
-          title={t("upcomingEmptyTitle")}
-          description={t("upcomingEmptyBody")}
-          action={<QuickAddButton variant="soft">{t("addReminder")}</QuickAddButton>}
-          hint={t("orSay")}
+        <AssistantSummary
+          insights={buildInsights(data)}
+          isEmpty={data.isEmpty}
+          currency={currency}
+          showDemo={!isProduction()}
         />
-      </Card>
+      </section>
+
+      <SummaryCards data={data} currency={currency} />
+
+      <div className="grid gap-4 lg:grid-cols-12 lg:gap-6">
+        <div className="space-y-4 lg:order-2 lg:col-span-5 lg:space-y-6">
+          {data.goal && (
+            <GoalCard goal={data.goal} daysLeft={data.daysLeftInMonth} currency={currency} />
+          )}
+          <UpcomingList items={data.upcoming} currency={currency} timeZone={timeZone} />
+        </div>
+        <div className="lg:order-1 lg:col-span-7">
+          <RecentTransactions items={data.recent} currency={currency} />
+        </div>
+      </div>
     </div>
   );
 }
