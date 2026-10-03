@@ -1,21 +1,9 @@
 import { and, eq, isNull } from "drizzle-orm";
 import type { Db } from "@/server/db/client";
 import { financialGoals, users } from "@/server/db/schema";
+import { monthBounds } from "@/lib/dates";
 import { onboardingSchema, type OnboardingInput } from "@/lib/validation/auth";
-
-/** "2026-10-01" ve "2026-10-31" gibi, verilen günün ayının ilk ve son günü (takvim günü). */
-export function monthBounds(today: Date, timeZone: string): { start: string; end: string } {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-  }).formatToParts(today);
-  const year = Number(parts.find((p) => p.type === "year")?.value);
-  const month = Number(parts.find((p) => p.type === "month")?.value);
-  const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
-  const mm = String(month).padStart(2, "0");
-  return { start: `${year}-${mm}-01`, end: `${year}-${mm}-${String(lastDay).padStart(2, "0")}` };
-}
+import { ensureDefaultCategories } from "./categories";
 
 /**
  * Onboarding'in kişiselleştirme adımını kaydeder. İki kez çağrılırsa ikinci çağrı
@@ -42,6 +30,8 @@ export async function completeOnboarding(
       .returning({ id: users.id, timezone: users.timezone });
 
     if (!user) return { alreadyOnboarded: true as const };
+
+    await ensureDefaultCategories(tx, userId);
 
     if (data.savingGoalMinor) {
       const { start, end } = monthBounds(now, user.timezone);

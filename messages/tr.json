@@ -35,7 +35,6 @@
     "thinking": "Verilerine bakıyorum…"
   },
   "home": {
-    "summaryEmpty": "Henüz bir şey kaydetmedin. İlk gelirini ya da giderini eklediğinde sana her gün kısa bir özet çıkaracağım.",
     "balance": "Toplam bakiye",
     "income": "Bu ayki gelir",
     "expense": "Bu ayki gider",
@@ -54,7 +53,58 @@
       "rent": "Kira hatırlatıcısı kur",
       "budget": "Aylık bütçe belirle"
     },
-    "welcome": "Hoş geldin! Henüz bir şey kaydetmedin. Aşağıdakilerden biriyle başlayabilirsin; ilk kaydından sonra sana her gün kısa bir özet çıkaracağım."
+    "welcome": "Hoş geldin! Henüz bir şey kaydetmedin. Aşağıdakilerden biriyle başlayabilirsin; ilk kaydından sonra sana her gün kısa bir özet çıkaracağım.",
+    "balanceFooter": "Tüm hesapların",
+    "incomeEmpty": "Bu ay gelir yok",
+    "vsLastMonth": "Geçen aya göre",
+    "trendDown": "%{percent} az",
+    "trendUp": "%{percent} fazla",
+    "trendSame": "Geçen ayla aynı",
+    "budgetOf": "{limit} bütçenin %{percent} kadarı",
+    "budgetOver": "Bütçe {amount} aşıldı",
+    "seeFinance": "Finans'a git",
+    "goalTitle": "Birikim hedefi",
+    "goalProgress": "{saved} / {target}",
+    "goalLeft": "Hedefe {amount} kaldı",
+    "goalReached": "Hedefe ulaştın",
+    "goalPeriod": "Ay sonuna {days} gün",
+    "recent": "Son işlemler",
+    "seeAll": "Tümü",
+    "recentEmptyTitle": "Henüz işlem yok",
+    "recentEmptyBody": "İlk gelirini ya da giderini eklediğinde burada en yenisi en üstte görünecek.",
+    "addExpense": "Gider ekle",
+    "orSayExpense": "Ya da yaz: “Bugün 350 TL yemek harcadım”",
+    "seeTasks": "Tümü",
+    "day": {
+      "today": "Bugün",
+      "tomorrow": "Yarın",
+      "yesterday": "Dün",
+      "inDays": "{count} gün sonra",
+      "overdue": "Gecikti"
+    },
+    "kind": {
+      "reminder": "Hatırlatıcı",
+      "bill": "Fatura",
+      "important_date": "Önemli gün"
+    },
+    "insight": {
+      "billOverdue": "{title} için ödeme günü geçti{amount, select, none {} other { ({amount})}}.",
+      "billSoon": "{title} {days, plural, =0 {bugün} =1 {yarın} other {# gün sonra}} ödenecek{amount, select, none {} other {: {amount}}}.",
+      "budgetOver": "Bu ay bütçeni {amount} aştın.",
+      "budgetHigh": "Bütçe kullanımın %{percent} oldu. Ayın bitmesine {daysLeft} gün var.",
+      "expenseDown": "Bu ay harcamaların geçen ayın aynı dönemine göre %{percent} daha düşük.",
+      "expenseUp": "Bu ay harcamaların geçen ayın aynı dönemine göre %{percent} daha yüksek.",
+      "goalReached": "Bu ayki {amount} birikim hedefine ulaştın.",
+      "goalLeft": "Birikim hedefine ulaşmak için {amount} daha ayırman gerekiyor.",
+      "topCategory": "Bu ay en çok {name} kategorisine harcadın: {amount}.",
+      "monthStart": "Bu ay için henüz harcama yok. Eklediğinde kısa bir özet çıkaracağım."
+    },
+    "demo": {
+      "seed": "Örnek veriyle dene",
+      "clear": "Finans verilerimi temizle",
+      "devOnly": "Yalnızca geliştirme ortamında görünür.",
+      "failed": "İşlem yapılamadı."
+    }
   },
   "finance": {
     "title": "Finans",

@@ -31,6 +31,16 @@
   --ai-2: #a26bf5;
   --ai-3: #5ec8f2;
 
+  /* Kategori renkleri: yalnızca ikon zemini ve grafik serileri için, metinde kullanılmaz */
+  --cat-1: #5b4bdb;
+  --cat-2: #0f8a7e;
+  --cat-3: #c2410c;
+  --cat-4: #2563eb;
+  --cat-5: #be185d;
+  --cat-6: #a16207;
+  --cat-7: #15803d;
+  --cat-8: #64748b;
+
   --skeleton-base: #eceef3;
   --skeleton-shine: #f7f8fb;
 
@@ -64,6 +74,15 @@
   --ai-1: rgb(109 93 246 / 0.8);
   --ai-2: rgb(162 107 245 / 0.8);
   --ai-3: rgb(94 200 242 / 0.8);
+
+  --cat-1: #9d91ff;
+  --cat-2: #3cc8b4;
+  --cat-3: #fb923c;
+  --cat-4: #60a5fa;
+  --cat-5: #f472b6;
+  --cat-6: #facc15;
+  --cat-7: #4ade80;
+  --cat-8: #94a3b8;
 
   --skeleton-base: #181c25;
   --skeleton-shine: #222734;
