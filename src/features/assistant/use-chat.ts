@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ChatEvent, ChatMessage, MessagePart } from "@/lib/assistant/types";
 
 /*
@@ -74,6 +74,18 @@ export function useChat({
   const [statusText, setStatusText] = useState<string | null>(null);
   const conversationId = useRef(initialId);
   const abort = useRef<AbortController | null>(null);
+
+  // Geçmişten başka bir sohbete (ya da yeni sohbete) geçilince durum sıfırlanır. Yeni sohbetin
+  // adresi /assistant/[id] olunca gelen aynı id sıfırlamaz; akan yanıt korunur.
+  useEffect(() => {
+    if (initialId === conversationId.current) return;
+    abort.current?.abort();
+    conversationId.current = initialId;
+    setMessages(initialMessages);
+    setSuggestions([]);
+    setError(null);
+    setStatus("idle");
+  }, [initialId, initialMessages]);
 
   const send = useCallback(
     async (raw: string) => {
@@ -162,6 +174,7 @@ export function useChat({
       } finally {
         abort.current = null;
         setStatusText(null);
+        // Okunmamış rozeti ve kenar çubuğu gibi düzen verisi tazelensin.
         if (wrote) router.refresh();
         if (navigateTo) router.push(navigateTo);
       }

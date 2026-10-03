@@ -23,6 +23,6 @@ export function getDb(): Promise<Db> {
 async function open(): Promise<Db> {
   const { DATABASE_URL } = env();
   if (DATABASE_URL) return createPostgresDb(DATABASE_URL);
-  if (isProduction()) throw new Error("Production ortamında DATABASE_URL zorunlu.");
+  if (isProduction() && env().LOCAL_DB !== "1") throw new Error("Production ortamında DATABASE_URL zorunlu.");
   return createPgliteDb(LOCAL_DATA_DIR);
 }

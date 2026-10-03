@@ -29,10 +29,10 @@ export default function CategoryDonut({ shares, totalMinor, currency }: Props) {
   ];
 
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-52" aria-hidden>
+    <div className="relative mx-auto aspect-square w-full max-w-52" aria-hidden inert>
       {c && (
         <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
+          <PieChart accessibilityLayer={false}>
             <Pie
               data={data}
               dataKey="value"

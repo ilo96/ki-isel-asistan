@@ -10,30 +10,43 @@ import { getDb } from "@/server/db";
 
 export const metadata: Metadata = { title: "Asistan" };
 
-type Props = { params: Promise<{ id: string }> };
+type Props = { params: Promise<{ id?: string[] }>; searchParams: Promise<{ q?: string }> };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export default async function ConversationPage({ params }: Props) {
-  const [user, t, { id }] = await Promise.all([requireUser(), getTranslations("assistantPage"), params]);
-  if (!UUID.test(id)) notFound();
+/**
+ * /assistant (yeni sohbet) ve /assistant/[id] tek sayfa: yeni sohbet açılınca adres
+ * değişse de sohbet bileşeni yeniden kurulmaz, akan yanıt kesilmez.
+ */
+export default async function AssistantPage({ params, searchParams }: Props) {
+  const [user, t, { id: segments }, { q }] = await Promise.all([
+    requireUser(),
+    getTranslations("assistantPage"),
+    params,
+    searchParams,
+  ]);
+  if (segments && (segments.length !== 1 || !UUID.test(segments[0]!))) notFound();
+  const id = segments?.[0] ?? null;
   const db = await getDb();
   const [conversation, conversations] = await Promise.all([
-    getConversation(db, user.id, id),
+    id ? getConversation(db, user.id, id) : null,
     listConversations(db, user.id),
   ]);
-  if (!conversation) notFound();
+  if (id && !conversation) notFound();
+  const prompt = id ? undefined : q?.trim().slice(0, 1000) || undefined;
+
   return (
     <>
       <PageHeader
         title={t("title")}
-        subtitle={conversation.title}
+        subtitle={conversation?.title ?? t("subtitle")}
         action={<ConversationHistory conversations={conversations} currentId={id} />}
       />
       <ChatView
-        key={id}
+        key={prompt}
         conversationId={id}
-        initialMessages={conversation.messages}
+        initialMessages={conversation?.messages ?? []}
+        initialPrompt={prompt}
         offline={engineName() === "offline"}
       />
     </>

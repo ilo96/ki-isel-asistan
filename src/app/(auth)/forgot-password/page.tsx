@@ -17,7 +17,7 @@ export default async function ForgotPasswordPage() {
       <AuthHeading title={t("forgotTitle")} subtitle={t("forgotSubtitle")} />
       <ForgotPasswordForm />
       <AuthFooter>
-        <Link href="/login" className="font-medium text-accent hover:underline">
+        <Link href="/login" className="font-medium text-accent underline underline-offset-2">
           {t("backToLogin")}
         </Link>
       </AuthFooter>

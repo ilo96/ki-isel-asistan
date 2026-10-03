@@ -17,7 +17,7 @@ export default async function ResetPasswordPage({ searchParams }: Props) {
       <AuthHeading title={t("resetTitle")} subtitle={t("resetSubtitle")} />
       <ResetPasswordForm token={!error && token ? token : null} />
       <AuthFooter>
-        <Link href="/login" className="font-medium text-accent hover:underline">
+        <Link href="/login" className="font-medium text-accent underline underline-offset-2">
           {t("backToLogin")}
         </Link>
       </AuthFooter>

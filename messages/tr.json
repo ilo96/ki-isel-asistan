@@ -693,7 +693,8 @@
     "deleteSheetBody": "İşlemlerin, bütçelerin, hatırlatıcıların ve asistan sohbetlerin kalıcı olarak silinecek.",
     "deleteType": "Onaylamak için {word} yaz",
     "deleteConfirm": "Kalıcı olarak sil",
-    "deleteError": "Onay kelimesi eşleşmedi."
+    "deleteError": "Onay kelimesi eşleşmedi.",
+    "close": "Kapat"
   },
   "shortcuts": {
     "title": "Klavye kısayolları",
@@ -707,5 +708,62 @@
     "tasks": "Görevlere git",
     "notifications": "Bildirimlere git",
     "help": "Bu liste"
+  },
+  "landing": {
+    "login": "Giriş yap",
+    "cta": "Ücretsiz başla",
+    "haveAccount": "Hesabım var",
+    "ctaNote": "Kart bilgisi istemez. Verilerini istediğin an indirip silebilirsin.",
+    "eyebrow": "Kişisel AI asistanın",
+    "title": "Paranı ve gününü senin yerine takip eden asistan.",
+    "subtitle": "Harcamanı yazman yeterli: kaydeder, bütçeni izler, faturayı gününden önce hatırlatır. Ne kadar harcadığını sorduğunda gerçek rakamlarla cevap verir.",
+    "deleted": "Hesabın ve tüm verilerin silindi. Görüşmek üzere.",
+    "featuresTitle": "Tek uygulama, dört iş",
+    "features": {
+      "write": {
+        "title": "Yaz, eklesin",
+        "body": "“Bugün 350 TL yemek harcadım” demen yeter. Kategoriyi, tarihi ve tutarı asistan çıkarır; yanlışsa tek dokunuşla geri alırsın."
+      },
+      "budget": {
+        "title": "Bütçeni korur",
+        "body": "Aylık ve kategori bütçeleri, ay sonu tahmini ve %80'de nazik bir uyarı. Geçmiş aylarına bakıp sana makul bir limit önerir."
+      },
+      "remind": {
+        "title": "Ödemeyi kaçırma",
+        "body": "Kira, fatura, abonelik… Tekrarlayan hatırlatıcılar kurar, ödediğinde gideri tek dokunuşla ekler. Gece rahatsız etmez."
+      },
+      "control": {
+        "title": "Kontrol sende",
+        "body": "Silme ve bütçe değişikliğinden önce onay ister, her işlemi geri alabilirsin. Verilerin yalnızca sana ait; istediğinde indir ya da sil."
+      }
+    },
+    "stepsTitle": "Üç adımda başla",
+    "steps": {
+      "1": {
+        "title": "Hesabını aç",
+        "body": "E-postanla ya da Google ile bir dakikada."
+      },
+      "2": {
+        "title": "Para birimini ve hedefini seç",
+        "body": "İstersen aylık gelirini ve bir birikim hedefini ekle."
+      },
+      "3": {
+        "title": "Asistana yaz",
+        "body": "İlk giderini, kira hatırlatıcını ya da bütçeni tek cümleyle kur."
+      }
+    },
+    "finalTitle": "Ay sonunu merak etmeyi bırak.",
+    "finalBody": "Her sabah iki cümlelik bir özet: neye ne harcadın, hangi ödeme yaklaşıyor.",
+    "footer": "Türkiye'de, Türkçe tasarlandı.",
+    "mock": {
+      "title": "Asistan",
+      "user": "Bugün 350 TL yemek harcadım",
+      "reply": "Tamam, ₺350 Yemek gideri bugüne eklendi. Bu ay yemeğe toplam ₺2.150 harcadın.",
+      "done": "Yapıldı",
+      "card": "−₺350 · Yemek",
+      "cardLine": "Bugün",
+      "user2": "Bütçem nasıl gidiyor?",
+      "reply2": "Aylık bütçenin %62'sini kullandın. Ay sonuna 12 gün var, ₺9.400 kaldı."
+    }
   }
 }

@@ -20,7 +20,7 @@
   --accent-soft: #ecebfd;
   --on-accent: #ffffff;
 
-  --positive: #12804f;
+  --positive: #0e7044;
   --positive-soft: #e5f5ed;
   --negative: #c9323a;
   --negative-soft: #fcebec;
@@ -58,7 +58,7 @@
   --text: #f5f7fa;
   --text-muted: #8b93a7;
 
-  --accent: #7c6cf6;
+  --accent: #968bff;
   /* Beyaz yazıyla 4,5:1 için buton zemini bir ton koyu */
   --accent-strong: #6d5df6;
   --accent-soft: #221f3d;

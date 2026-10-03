@@ -29,10 +29,10 @@ export default function CumulativeChart({ points, currency }: Props) {
 
   return (
     <>
-      <div className="h-48 w-full" aria-hidden>
+      <div className="h-48 w-full" aria-hidden inert>
         {c && (
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={points} margin={{ top: 8, right: 4, bottom: 0, left: -8 }}>
+            <AreaChart accessibilityLayer={false} data={points} margin={{ top: 8, right: 4, bottom: 0, left: -8 }}>
               <defs>
                 <linearGradient id="cum-fill" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={c.accent} stopOpacity={0.28} />

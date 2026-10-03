@@ -21,10 +21,10 @@ export default function MonthlyChart({ points, currency }: Props) {
 
   return (
     <>
-      <div className="h-56 w-full" aria-hidden>
+      <div className="h-56 w-full" aria-hidden inert>
         {c && (
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} barGap={4} margin={{ top: 8, right: 4, bottom: 0, left: -8 }}>
+            <BarChart accessibilityLayer={false} data={data} barGap={4} margin={{ top: 8, right: 4, bottom: 0, left: -8 }}>
               <CartesianGrid vertical={false} stroke={c.border} strokeDasharray="3 3" />
               <XAxis
                 dataKey="label"

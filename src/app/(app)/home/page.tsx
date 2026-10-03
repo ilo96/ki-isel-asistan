@@ -9,7 +9,7 @@ import { DEFAULT_TIMEZONE } from "@/lib/dates";
 import { DEFAULT_CURRENCY, type CurrencyCode } from "@/lib/money";
 import { requireUser } from "@/server/auth";
 import { getDb } from "@/server/db";
-import { isProduction } from "@/server/env";
+import { demoEnabled } from "@/server/env";
 import { buildInsights, getDashboard } from "@/server/services/dashboard";
 
 export const metadata: Metadata = { title: "Ana Sayfa" };
@@ -30,7 +30,7 @@ export default async function HomePage() {
           insights={buildInsights(data)}
           isEmpty={data.isEmpty}
           currency={currency}
-          showDemo={!isProduction()}
+          showDemo={demoEnabled()}
         />
       </section>
 

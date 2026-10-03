@@ -23,7 +23,6 @@ const csp = [
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self' https://accounts.google.com https://appleid.apple.com",
-  ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
 
 const securityHeaders = [
