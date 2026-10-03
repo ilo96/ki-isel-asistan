@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, CalendarClock, PiggyBank, Receipt, Sparkles, type LucideIcon } from "lucide-react";
+import { Activity, Bell, CalendarClock, PiggyBank, Receipt, Sparkles, type LucideIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useOptimistic, useTransition } from "react";
@@ -10,7 +10,7 @@ import { markReadAction } from "./actions";
 
 export type NotificationRow = {
   id: string;
-  kind: "bill_due" | "reminder_due" | "budget_threshold" | "weekly_summary";
+  kind: "bill_due" | "reminder_due" | "budget_threshold" | "weekly_summary" | "fitness";
   title: string;
   body: string;
   href: string | null;
@@ -25,6 +25,7 @@ const ICONS: Record<NotificationRow["kind"], { icon: LucideIcon; tone: string }>
   reminder_due: { icon: CalendarClock, tone: "bg-accent-soft text-accent" },
   budget_threshold: { icon: PiggyBank, tone: "bg-negative-soft text-negative" },
   weekly_summary: { icon: Sparkles, tone: "ai-gradient text-white" },
+  fitness: { icon: Activity, tone: "bg-positive-soft text-positive" },
 };
 
 export function NotificationList({ items }: { items: NotificationRow[] }) {

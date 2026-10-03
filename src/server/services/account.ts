@@ -3,16 +3,21 @@ import type { Db } from "@/server/db/client";
 import {
   aiConversations,
   aiMessages,
+  bodyProfiles,
   budgets,
   categories,
   financialGoals,
+  fitnessGoals,
   notifications,
   reminders,
   tasks,
   transactions,
   userMemories,
+  userModules,
   userSettings,
   users,
+  weightRecords,
+  workouts,
 } from "@/server/db/schema";
 
 /*
@@ -49,6 +54,17 @@ export async function exportAccount(db: Db, userId: string) {
     db.select().from(notifications).where(eq(notifications.userId, userId)),
     db.select().from(aiConversations).where(and(eq(aiConversations.userId, userId), isNull(aiConversations.deletedAt))),
   ]);
+  const [modules, body, weights, sport, fitGoals] = await Promise.all([
+    db.select().from(userModules).where(eq(userModules.userId, userId)),
+    db.select().from(bodyProfiles).where(eq(bodyProfiles.userId, userId)),
+    db.select().from(weightRecords).where(eq(weightRecords.userId, userId)).orderBy(asc(weightRecords.measuredOn)),
+    db
+      .select()
+      .from(workouts)
+      .where(and(eq(workouts.userId, userId), isNull(workouts.deletedAt)))
+      .orderBy(asc(workouts.performedOn)),
+    db.select().from(fitnessGoals).where(eq(fitnessGoals.userId, userId)),
+  ]);
   const messages = convs.length
     ? await db.select().from(aiMessages).where(eq(aiMessages.userId, userId)).orderBy(asc(aiMessages.createdAt))
     : [];
@@ -68,6 +84,14 @@ export async function exportAccount(db: Db, userId: string) {
     goals: strip(goals),
     memories: strip(mem),
     notifications: strip(notes),
+    modules: strip(modules),
+    fitness: {
+      note: "Boy mm, kilo gram, mesafe metre cinsindendir (heightMm: 1800 = 180 cm, weightG: 80500 = 80,5 kg).",
+      profile: strip(body)[0] ?? null,
+      weights: strip(weights),
+      workouts: strip(sport),
+      goals: strip(fitGoals),
+    },
     conversations: convs.map(({ id, title, createdAt }) => ({
       title,
       createdAt,

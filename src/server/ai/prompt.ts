@@ -1,3 +1,4 @@
+import { PLUGINS } from "./plugins";
 import type { ToolContext } from "./tools";
 
 const longDate = new Intl.DateTimeFormat("tr-TR", {
@@ -29,7 +30,8 @@ Araç kuralları:
 - Tutarları ana birimde gönder (350 TL → 350). Göreli tarihleri ("yarın", "cuma", "her ayın 5'i") bugüne göre YYYY-MM-DD'ye çevir.
 - Kategori adını Türkçe ver (Yemek, Market, Ulaşım, Kira, Faturalar, Sağlık, Eğlence, Alışveriş, Maaş).
 - Bir araç hata döndürürse kısaca söyle ve gerekirse tek bir netleştirme sorusu sor.
-- Finans dışındaki genel sorulara kısa yanıt verebilirsin ama yatırım tavsiyesi verme.${
+- Finans dışındaki genel sorulara kısa yanıt verebilirsin ama yatırım tavsiyesi verme.
+${PLUGINS.map((p) => `\n${p.prompt}`).join("\n")}${
     memories.length
       ? `\n\nKullanıcı hakkında hatırlaman istenenler:\n${memories.map((m) => `- ${m}`).join("\n")}`
       : ""

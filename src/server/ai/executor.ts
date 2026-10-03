@@ -3,7 +3,9 @@ import type { ActionCard, ActionState, ChatEvent } from "@/lib/assistant/types";
 import { aiActions } from "@/server/db/schema";
 import { FinanceError } from "@/server/services/categories";
 import { LifeError } from "@/server/services/reminders";
-import { getTool, ToolError, type ToolContext, type ToolDef } from "./tools";
+import { FitnessError } from "@/server/services/fitness";
+import { getTool } from "./registry";
+import { ToolError, type ToolContext, type ToolDef } from "./tools";
 
 /*
  * Araç çağrılarını politika ile çalıştırır (plan: Tool kullanım politikası):
@@ -31,7 +33,12 @@ export function decide(tool: ToolDef, input: Record<string, unknown>): Decision 
 }
 
 function errorCode(error: unknown) {
-  if (error instanceof ToolError || error instanceof FinanceError || error instanceof LifeError) {
+  if (
+    error instanceof ToolError ||
+    error instanceof FinanceError ||
+    error instanceof LifeError ||
+    error instanceof FitnessError
+  ) {
     return error.code;
   }
   return null;

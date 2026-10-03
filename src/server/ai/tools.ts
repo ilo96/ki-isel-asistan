@@ -76,7 +76,7 @@ export type ToolDef<S extends z.ZodObject = z.ZodObject> = {
   undo?: (ctx: ToolContext, undo: unknown) => Promise<void>;
 };
 
-function define<S extends z.ZodObject>(def: ToolDef<S>) {
+export function defineTool<S extends z.ZodObject>(def: ToolDef<S>) {
   return def as unknown as ToolDef;
 }
 
@@ -86,13 +86,13 @@ const amount = z
   .positive()
   .max(MAX_AMOUNT_MINOR / 100)
   .describe("Amount in major currency units, e.g. 350 or 1250.5 (not cents).");
-const explicit = z
+export const explicit = z
   .boolean()
   .default(false)
   .describe(
     "true only when the user directly asked for this exact change in their latest message (e.g. 'ekle', 'harcadım', 'hatırlat'). false when you are inferring or suggesting it.",
   );
-const isoDate = z.iso.date().describe("Calendar date YYYY-MM-DD in the user's time zone.");
+export const isoDate = z.iso.date().describe("Calendar date YYYY-MM-DD in the user's time zone.");
 const monthKey = z
   .string()
   .regex(/^\d{4}-(0[1-9]|1[0-2])$/)
@@ -176,7 +176,7 @@ function txData(ctx: ToolContext, t: TransactionItem) {
 
 /* ------------------------------------------------------------------ Okuma */
 
-const getFinancialSummary = define({
+const getFinancialSummary = defineTool({
   name: "get_financial_summary",
   description:
     "Income, expense, net and top spending categories for a month, plus the change vs. the same period of the previous month. Use for any 'how much did I spend/earn' question.",
@@ -219,7 +219,7 @@ const getFinancialSummary = define({
   },
 });
 
-const getTransactions = define({
+const getTransactions = defineTool({
   name: "get_transactions",
   description:
     "List the user's transactions, newest first. Filter by type, category name, free-text query or date range. Returns ids needed for update/delete.",
@@ -250,7 +250,7 @@ const getTransactions = define({
   },
 });
 
-const getBalance = define({
+const getBalance = defineTool({
   name: "get_balance",
   description: "Current total balance across the user's accounts.",
   kind: "read",
@@ -266,7 +266,7 @@ const getBalance = define({
   },
 });
 
-const getBudget = define({
+const getBudget = defineTool({
   name: "get_budget",
   description:
     "Budget status for a month: overall limit, spent, percent, projection, and per-category budgets sorted by usage.",
@@ -314,7 +314,7 @@ const getBudget = define({
   },
 });
 
-const getReminders = define({
+const getReminders = defineTool({
   name: "get_reminders",
   description:
     "Reminders, bills and tasks. range: today (due today or overdue), upcoming (next 60 days), done (last 30 days). Returns ids for complete/delete.",
@@ -353,13 +353,13 @@ const getReminders = define({
   },
 });
 
-const openScreen = define({
+const openScreen = defineTool({
   name: "open_screen",
   description: "Navigate the app to a screen when the user asks to see or open it.",
   kind: "read",
   label: "Ekranı açıyorum",
   doneLabel: "Ekranı açtım",
-  schema: z.object({ screen: z.enum(["home", "finance", "budgets", "tasks", "profile"]) }),
+  schema: z.object({ screen: z.enum(["home", "finance", "budgets", "tasks", "profile", "fitness"]) }),
   async run(_ctx, { screen }) {
     const href = {
       home: "/home",
@@ -367,6 +367,7 @@ const openScreen = define({
       budgets: "/finance/budgets",
       tasks: "/tasks",
       profile: "/profile",
+      fitness: "/fitness",
     }[screen];
     return { data: { opened: screen }, navigate: href };
   },
@@ -374,7 +375,7 @@ const openScreen = define({
 
 /* ----------------------------------------------------------------- Yazma */
 
-const createTransactionTool = define({
+const createTransactionTool = defineTool({
   name: "create_transaction",
   description:
     "Record an income or expense. Pick the category by name (e.g. 'Yemek', 'Market', 'Ulaşım', 'Kira', 'Faturalar', 'Maaş'); unknown names fall back to 'Diğer'. Date defaults to today.",
@@ -440,7 +441,7 @@ const createTransactionTool = define({
   },
 });
 
-const updateTransactionTool = define({
+const updateTransactionTool = defineTool({
   name: "update_transaction",
   description: "Change an existing transaction (get its id from get_transactions first).",
   kind: "write",
@@ -497,7 +498,7 @@ const updateTransactionTool = define({
   },
 });
 
-const deleteTransactionTool = define({
+const deleteTransactionTool = defineTool({
   name: "delete_transaction",
   description: "Delete a transaction by id. Always shown to the user for confirmation.",
   kind: "sensitive",
@@ -565,7 +566,7 @@ const reminderSchema = z.object({
   explicit_command: explicit,
 });
 
-const createReminderTool = define({
+const createReminderTool = defineTool({
   name: "create_reminder",
   description:
     "Create a reminder, bill or important date. For 'her ayın 5'inde' use repeat=monthly with the next 5th as date.",
@@ -611,7 +612,7 @@ const createReminderTool = define({
   },
 });
 
-const completeReminderTool = define({
+const completeReminderTool = defineTool({
   name: "complete_reminder",
   description: "Mark a reminder or bill as done (recurring ones move to the next date).",
   kind: "write",
@@ -644,7 +645,7 @@ const completeReminderTool = define({
   },
 });
 
-const deleteReminderTool = define({
+const deleteReminderTool = defineTool({
   name: "delete_reminder",
   description: "Delete a reminder or bill by id. Always confirmed by the user.",
   kind: "sensitive",
@@ -670,7 +671,7 @@ const deleteReminderTool = define({
   },
 });
 
-const createTaskTool = define({
+const createTaskTool = defineTool({
   name: "create_task",
   description: "Add a to-do without a specific time. due_on is optional.",
   kind: "write",
@@ -712,7 +713,7 @@ const createTaskTool = define({
   },
 });
 
-const completeTaskTool = define({
+const completeTaskTool = defineTool({
   name: "complete_task",
   description: "Mark a task as done.",
   kind: "write",
@@ -734,7 +735,7 @@ const completeTaskTool = define({
   },
 });
 
-const deleteTaskTool = define({
+const deleteTaskTool = defineTool({
   name: "delete_task",
   description: "Delete a task by id. Always confirmed by the user.",
   kind: "sensitive",
@@ -752,7 +753,7 @@ const deleteTaskTool = define({
   },
 });
 
-const setBudgetTool = define({
+const setBudgetTool = defineTool({
   name: "set_budget",
   description:
     "Set the monthly budget from a month onwards. Without category it is the overall monthly budget. Always confirmed by the user.",
@@ -810,7 +811,7 @@ const setBudgetTool = define({
   },
 });
 
-const remember = define({
+const remember = defineTool({
   name: "remember",
   description:
     "Save a short durable fact the user asked you to remember (e.g. payday, preferences). Not for transactions or reminders.",
@@ -841,13 +842,14 @@ const remember = define({
 
 /** Araç hataları; kod modele ve kullanıcıya iletilir. */
 export class ToolError extends Error {
-  constructor(readonly code: "not_found" | "invalid_input" | "unknown_tool" | "limit") {
+  constructor(readonly code: "not_found" | "invalid_input" | "unknown_tool" | "limit" | "module_disabled") {
     super(code);
     this.name = "ToolError";
   }
 }
 
-export const TOOLS: readonly ToolDef[] = [
+/** Çekirdek araçlar; eklentilerin araçları registry.ts'te eklenir. */
+export const CORE_TOOLS: readonly ToolDef[] = [
   getFinancialSummary,
   getTransactions,
   getBalance,
@@ -867,8 +869,6 @@ export const TOOLS: readonly ToolDef[] = [
   remember,
 ];
 
-const byName = new Map(TOOLS.map((t) => [t.name, t]));
-export const getTool = (name: string) => byName.get(name);
 
 /** Kullanıcının hafızası: sistem istemine eklenen son notlar. */
 export async function listMemories(db: Db, userId: string) {

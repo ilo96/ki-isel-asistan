@@ -10,14 +10,19 @@ import {
 } from "@/lib/dates";
 import type { Db } from "@/server/db/client";
 import {
+  bodyProfiles,
   budgets,
   categories,
+  fitnessGoals,
   paymentMethods,
   reminders,
   tasks,
   transactions,
   users,
+  weightRecords,
+  workouts,
 } from "@/server/db/schema";
+import { estimateCalories, type WorkoutType } from "@/lib/fitness/activities";
 import { ensureDefaultCategories } from "./categories";
 
 /*
@@ -244,6 +249,51 @@ export async function seedDemoData(db: Db, userId: string, now = new Date()) {
         sortOrder: 4,
       },
     ]);
+
+    // Spor & Sağlık: son 9 haftada yavaş bir düşüş, bu hafta ve geçen hafta birkaç aktivite.
+    const [hasWeights] = await tx.select({ id: weightRecords.id }).from(weightRecords).where(eq(weightRecords.userId, userId)).limit(1);
+    if (!hasWeights) {
+      await tx
+        .insert(bodyProfiles)
+        .values({ userId, heightMm: 1780, birthYear: Number(today.slice(0, 4)) - 32 })
+        .onConflictDoNothing();
+      const weights = [84.2, 83.9, 83.6, 83.8, 83.1, 82.7, 82.4, 82.6, 81.9, 81.4, 81.1, 80.6];
+      await tx.insert(weightRecords).values(
+        weights.map((kg, i) => ({
+          userId,
+          weightG: Math.round(kg * 1000),
+          measuredOn: addDays(today, -(weights.length - 1 - i) * 5),
+        })),
+      );
+      const sessions: [WorkoutType, number, number | null, number][] = [
+        ["running", 32, 5.2, 0],
+        ["fitness", 60, null, 1],
+        ["walking", 45, 3.8, 3],
+        ["yoga", 30, null, 5],
+        ["cycling", 50, 16, 7],
+        ["running", 28, 4.6, 9],
+        ["football", 70, null, 11],
+      ];
+      await tx.insert(workouts).values(
+        sessions.map(([type, min, km, ago]) => ({
+          userId,
+          type,
+          durationMin: min,
+          distanceM: km === null ? null : Math.round(km * 1000),
+          calories: estimateCalories(type, min, 81_000),
+          caloriesEstimated: true,
+          performedOn: dayOf(ago),
+        })),
+      );
+      await tx.insert(fitnessGoals).values({
+        userId,
+        kind: "weight",
+        startValue: 84_200,
+        targetValue: 76_000,
+        startDate: addDays(today, -55),
+        targetDate: addDays(today, 120),
+      });
+    }
   });
 }
 

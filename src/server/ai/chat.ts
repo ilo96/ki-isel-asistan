@@ -14,7 +14,8 @@ import { env } from "@/server/env";
 import type { Engine } from "./engine";
 import { executeTool } from "./executor";
 import { offlineEngine } from "./offline/engine";
-import { getTool, listMemories, type AiUser, type ToolContext } from "./tools";
+import { getTool } from "./registry";
+import { listMemories, type AiUser, type ToolContext } from "./tools";
 
 /*
  * Bir sohbet turu: konuşmayı bulur ya da açar, kullanıcı mesajını kaydeder, motoru

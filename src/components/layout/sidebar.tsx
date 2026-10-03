@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, Plus } from "lucide-react";
+import { ArrowUp, Plus, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -8,7 +8,9 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { AssistantOrb } from "@/components/assistant/assistant-orb";
 import { cn } from "@/lib/cn";
+import type { ModuleKey } from "@/lib/modules";
 import { spring } from "@/lib/motion";
+import { moduleItems } from "./module-items";
 import { NAV_ITEMS, isActive } from "./nav-items";
 import { useShell } from "./ui-store";
 
@@ -16,7 +18,7 @@ import { useShell } from "./ui-store";
  * 1024–1279 px: 72 px ikon sidebar. ≥ 1280 px: 248 px tam sidebar + mini asistan kutusu.
  * Telefonda ve tablette gizli; orada alt bar kullanılır.
  */
-export function Sidebar() {
+export function Sidebar({ modules }: { modules: readonly ModuleKey[] }) {
   const t = useTranslations();
   const pathname = usePathname();
   const router = useRouter();
@@ -42,34 +44,23 @@ export function Sidebar() {
 
       <nav aria-label={t("nav.main")}>
         <ul className="flex flex-col gap-1">
-          {NAV_ITEMS.map(({ key, href, icon: Icon }) => {
-            const active = isActive(pathname, href);
-            return (
-              <li key={key}>
-                <Link
-                  href={href}
-                  aria-current={active ? "page" : undefined}
-                  title={t(`nav.${key}`)}
-                  className={cn(
-                    "relative flex h-11 items-center justify-center gap-3 rounded-button text-body transition-colors xl:justify-start xl:px-3",
-                    active ? "font-medium text-accent" : "text-muted hover:bg-surface-muted hover:text-text",
-                  )}
-                >
-                  {active && (
-                    <motion.span
-                      layoutId="sidebar-active"
-                      transition={spring.layout}
-                      className="absolute inset-0 rounded-button bg-accent-soft"
-                    />
-                  )}
-                  <Icon className="relative size-5" aria-hidden />
-                  <span className="relative hidden xl:inline">{t(`nav.${key}`)}</span>
-                </Link>
-              </li>
-            );
-          })}
+          {NAV_ITEMS.map(({ key, href, icon }) => (
+            <NavLink key={key} href={href} icon={icon} label={t(`nav.${key}`)} active={isActive(pathname, href)} />
+          ))}
         </ul>
       </nav>
+
+      {modules.length > 0 && (
+        <nav aria-label={t("modules.title")} className="mt-6">
+          <p className="mb-2 hidden px-3 text-caption tracking-wide text-muted uppercase xl:block">{t("modules.title")}</p>
+          <div className="mx-auto mb-2 h-px w-8 bg-border xl:hidden" aria-hidden />
+          <ul className="flex flex-col gap-1">
+            {moduleItems(modules).map(({ key, href, icon }) => (
+              <NavLink key={key} href={href} icon={icon} label={t(`modules.${key}`)} active={isActive(pathname, href)} />
+            ))}
+          </ul>
+        </nav>
+      )}
 
       {/* Mini asistan kutusu (yalnızca tam sidebar): yazılan soru sohbet ekranında açılır. */}
       <form
@@ -104,5 +95,31 @@ export function Sidebar() {
         </div>
       </form>
     </aside>
+  );
+}
+
+function NavLink({ href, icon: Icon, label, active }: { href: string; icon: LucideIcon; label: string; active: boolean }) {
+  return (
+    <li>
+      <Link
+        href={href}
+        aria-current={active ? "page" : undefined}
+        title={label}
+        className={cn(
+          "relative flex h-11 items-center justify-center gap-3 rounded-button text-body transition-colors xl:justify-start xl:px-3",
+          active ? "font-medium text-accent" : "text-muted hover:bg-surface-muted hover:text-text",
+        )}
+      >
+        {active && (
+          <motion.span
+            layoutId="sidebar-active"
+            transition={spring.layout}
+            className="absolute inset-0 rounded-button bg-accent-soft"
+          />
+        )}
+        <Icon className="relative size-5" aria-hidden />
+        <span className="relative hidden xl:inline">{label}</span>
+      </Link>
+    </li>
   );
 }

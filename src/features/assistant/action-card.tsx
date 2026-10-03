@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Activity,
   ArrowUpRight,
   Bell,
   Brain,
@@ -9,7 +10,9 @@ import {
   Navigation,
   PiggyBank,
   Receipt,
+  Scale,
   Sparkles,
+  Target,
   Trash2,
   TrendingDown,
   TrendingUp,
@@ -45,6 +48,9 @@ const ICONS: Record<CardIcon, LucideIcon> = {
   memory: Brain,
   delete: Trash2,
   navigate: Navigation,
+  fitness: Activity,
+  weight: Scale,
+  goal: Target,
 };
 
 const TONE: Record<CardIcon, string> = {
@@ -60,6 +66,9 @@ const TONE: Record<CardIcon, string> = {
   memory: "ai-gradient text-white",
   delete: "bg-negative-soft text-negative",
   navigate: "bg-surface-muted text-muted",
+  fitness: "bg-positive-soft text-positive",
+  weight: "bg-accent-soft text-accent",
+  goal: "bg-accent-soft text-accent",
 };
 
 const BADGE: Record<ActionState, "accent" | "positive" | "neutral" | "warning" | "negative"> = {

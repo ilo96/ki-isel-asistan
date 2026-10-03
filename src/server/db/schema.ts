@@ -372,6 +372,7 @@ export const notificationKind = pgEnum("notification_kind", [
   "reminder_due",
   "budget_threshold",
   "weekly_summary",
+  "fitness",
 ]);
 
 /**
@@ -432,6 +433,121 @@ export const pushSubscriptions = pgTable(
   (t) => [index("push_subscriptions_user_idx").on(t.userId)],
 );
 
+/* ------------------------------------------------------------- Eklentiler */
+
+/**
+ * Kullanıcı başına eklenti durumu (ör. "fitness"). Satır yoksa eklentinin varsayılanı geçerlidir;
+ * settings eklentiye özel tercihleri (bildirimler gibi) taşır.
+ */
+export const userModules = pgTable(
+  "user_modules",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    moduleKey: text("module_key").notNull(),
+    enabled: boolean("enabled").notNull(),
+    settings: jsonb("settings").$type<Record<string, unknown>>().notNull().default({}),
+    ...timestamps,
+  },
+  (t) => [uniqueIndex("user_modules_user_key_uq").on(t.userId, t.moduleKey)],
+);
+
+/* ------------------------------------------------------- Spor & Sağlık */
+
+/*
+ * Sağlıkla ilişkili veriler hassastır: yalnızca sahibine görünür (RLS + servis filtresi),
+ * loglara yazılmaz, üçüncü taraflara gönderilmez. Ölçüler tam sayı ve metrik tutulur
+ * (boy mm, kilo gram, mesafe metre); arayüz birimi src/lib/fitness/units.ts'te çevrilir.
+ */
+
+export const biologicalSex = pgEnum("biological_sex", ["female", "male", "other"]);
+export const workoutType = pgEnum("workout_type", [
+  "walking",
+  "running",
+  "cycling",
+  "swimming",
+  "fitness",
+  "strength",
+  "football",
+  "basketball",
+  "yoga",
+  "other",
+]);
+export const fitnessGoalKind = pgEnum("fitness_goal_kind", ["weight"]);
+
+/** Kullanıcı başına tek satır: değişmeyen ya da seyrek değişen vücut bilgileri. */
+export const bodyProfiles = pgTable("body_profiles", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  heightMm: integer("height_mm"),
+  /** Yaş yerine doğum yılı: yaş her yıl kendiliğinden güncel kalır. */
+  birthYear: integer("birth_year"),
+  sex: biologicalSex("sex"),
+  /** İleride imperial destek için; arayüz şimdilik yalnızca metrik. */
+  unitSystem: text("unit_system").notNull().default("metric"),
+  ...timestamps,
+});
+
+/** Günde bir ölçüm: aynı güne yeni kayıt öncekinin yerine geçer. */
+export const weightRecords = pgTable(
+  "weight_records",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    weightG: integer("weight_g").notNull(),
+    measuredOn: date("measured_on").notNull(),
+    createdVia: createdVia("created_via").notNull().default("manual"),
+    ...timestamps,
+  },
+  (t) => [uniqueIndex("weight_records_user_day_uq").on(t.userId, t.measuredOn)],
+);
+
+export const workouts = pgTable(
+  "workouts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: workoutType("type").notNull(),
+    durationMin: integer("duration_min").notNull(),
+    distanceM: integer("distance_m"),
+    calories: integer("calories"),
+    /** Kalori kullanıcıdan değil MET tahmininden geldiyse true. */
+    caloriesEstimated: boolean("calories_estimated").notNull().default(true),
+    performedOn: date("performed_on").notNull(),
+    note: text("note"),
+    createdVia: createdVia("created_via").notNull().default("manual"),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [index("workouts_user_day_idx").on(t.userId, t.performedOn)],
+);
+
+/** Kilo hedefi; değerler gram. Kullanıcının tek bir aktif hedefi olur. */
+export const fitnessGoals = pgTable(
+  "fitness_goals",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    kind: fitnessGoalKind("kind").notNull().default("weight"),
+    startValue: integer("start_value").notNull(),
+    targetValue: integer("target_value").notNull(),
+    startDate: date("start_date").notNull(),
+    targetDate: date("target_date"),
+    status: goalStatus("status").notNull().default("active"),
+    createdVia: createdVia("created_via").notNull().default("manual"),
+    ...timestamps,
+  },
+  (t) => [index("fitness_goals_user_status_idx").on(t.userId, t.status)],
+);
+
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
@@ -449,3 +565,8 @@ export type AiMessage = typeof aiMessages.$inferSelect;
 export type AiAction = typeof aiActions.$inferSelect;
 export type Notification = typeof notifications.$inferSelect;
 export type UserSettings = typeof userSettings.$inferSelect;
+export type UserModule = typeof userModules.$inferSelect;
+export type BodyProfile = typeof bodyProfiles.$inferSelect;
+export type WeightRecord = typeof weightRecords.$inferSelect;
+export type Workout = typeof workouts.$inferSelect;
+export type FitnessGoal = typeof fitnessGoals.$inferSelect;

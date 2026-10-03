@@ -28,7 +28,7 @@ for (const scheme of ["light", "dark"] as const) {
       await registerAndOnboard(page);
       await page.getByRole("button", { name: "Örnek veriyle dene" }).click();
       await expect(page.getByText("Son işlemler")).toBeVisible();
-      for (const path of ["/home", "/finance", "/finance/budgets", "/tasks", "/assistant", "/notifications", "/settings", "/profile"]) {
+      for (const path of ["/home", "/finance", "/finance/budgets", "/tasks", "/fitness", "/assistant", "/notifications", "/settings", "/profile"]) {
         await page.goto(path);
         await audit(page);
       }

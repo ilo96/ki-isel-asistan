@@ -38,6 +38,27 @@ Uygulama açılınca ve `/api/cron/notifications` (Bearer `CRON_SECRET`, `vercel
 üretilir; sessiz saatler ve günlük üst sınır Ayarlar'dan değişir. Web Push için
 `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` gerekir (`npx web-push generate-vapid-keys`).
 
+### Eklentiler: Spor & Sağlık
+
+Eklentiler `src/lib/modules.ts` listesinden gelir; kullanıcı Ayarlar › Eklentiler'den açıp
+kapatır (`user_modules` tablosu, kapatmak veri silmez). Spor & Sağlık şunları ekler:
+
+- `/fitness` ekranı: VKİ kartı (değer, kategori, renkli gösterge, açıklama), güncel kilo,
+  haftalık aktivite, hedef kartları; kilo ve haftalık aktivite grafikleri; ölçüm, aktivite ve
+  kilo hedefi formları (Türkçe ondalık, gerçek dışı değer reddi, alışılmadık değer uyarısı).
+- Asistan eklentisi `src/server/ai/plugins/fitness`: 9 araç (`calculate_bmi`,
+  `save_body_measurement`, `get_weight_history`, `save_workout`, `get_workout_summary`,
+  `create_fitness_goal`, `get_fitness_progress`, `get_fitness_dashboard`,
+  `delete_fitness_goal`) ve anahtarsız çalışan Türkçe ayrıştırıcı (“Boyum 180, kilom 80”,
+  “Bugün 30 dakika koştum”, eksik bilgi sorusu dahil). Hedef oluşturma her zaman onay kartıyla.
+- Seyrek bildirimler: pazartesi tartı ve hedef özeti, isteğe bağlı hareket hatırlatması.
+- Veriler metrik tam sayı (boy mm, kilo g, mesafe m) saklanır; `bodyProfiles.unitSystem` ile
+  başka birim sistemine hazırdır. Tablolarda satır düzeyi güvenlik (RLS) açıktır, loglara
+  değer yazılmaz, dışa aktarıma dahildir.
+
+Yeni bir eklenti: `MODULES`'a bir satır, `src/server/ai/plugins/<ad>` (araçlar, istem,
+çevrimdışı işleyici) ve `src/features/<ad>` ekranı.
+
 ### PWA
 
 `src/app/manifest.ts` ve `public/sw.js` (yalnızca production'da kaydedilir) uygulamayı

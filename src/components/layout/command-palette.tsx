@@ -22,8 +22,10 @@ import { Kbd } from "@/components/ui/kbd";
 import { searchAction, type SearchResults } from "@/features/assistant/search-action";
 import { cn } from "@/lib/cn";
 import { formatMoney } from "@/lib/money";
+import type { ModuleKey } from "@/lib/modules";
 import { fadeTransition, spring } from "@/lib/motion";
 import { SHOW_SHORTCUTS_EVENT } from "./keyboard-shortcuts";
+import { moduleItems } from "./module-items";
 import { NAV_ITEMS } from "./nav-items";
 import { useShell } from "./ui-store";
 
@@ -54,7 +56,7 @@ function normalize(value: string) {
  * ⌘K / Ctrl K komut paleti: gezinme, komutlar, kayıt araması ve "Asistana sor".
  * Yazılan her şey asistana da sorulabilir (plan: Komut paleti).
  */
-export function CommandPalette() {
+export function CommandPalette({ modules }: { modules: readonly ModuleKey[] }) {
   const t = useTranslations();
   const router = useRouter();
   const { overlay, open, close, edit, editLife } = useShell();
@@ -101,6 +103,13 @@ export function CommandPalette() {
         icon,
         run: () => router.push(href),
       })),
+      ...moduleItems(modules).map(({ key, href, icon }) => ({
+        id: `module-${key}`,
+        label: t(`modules.${key}`),
+        group: t("command.navigate"),
+        icon,
+        run: () => router.push(href),
+      })),
       {
         id: "quick-add",
         label: t("nav.quickAdd"),
@@ -123,7 +132,7 @@ export function CommandPalette() {
         run: () => setTheme(resolvedTheme === "dark" ? "light" : "dark"),
       },
     ],
-    [t, router, open, setTheme, resolvedTheme],
+    [t, router, open, setTheme, resolvedTheme, modules],
   );
 
   const results = useMemo(() => {

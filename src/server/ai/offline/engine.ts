@@ -1,6 +1,8 @@
 import { shiftMonth } from "@/lib/dates";
 import { dayLabel } from "../format";
 import type { Engine, EngineInput } from "../engine";
+import { PLUGINS } from "../plugins";
+import { say } from "./speech";
 import { parseIntent, type Intent } from "./parse";
 
 /*
@@ -14,23 +16,6 @@ const SUGGESTIONS = {
   afterSummary: ["Bütçem nasıl gidiyor?", "Geçen ay ne kadar harcadım?", "Yaklaşan ödemelerim neler?"],
   afterReminder: ["Yaklaşan ödemelerim neler?", "Görevlerime ekle: kargo gönder"],
 } as const;
-
-const wait = (ms: number, signal: AbortSignal) =>
-  new Promise<void>((resolve) => {
-    if (signal.aborted) return resolve();
-    const t = setTimeout(resolve, ms);
-    signal.addEventListener("abort", () => (clearTimeout(t), resolve()), { once: true });
-  });
-
-/** Cümleyi kelime kelime akıtır; arayüz Claude ile aynı görünür. */
-async function say(input: EngineInput, text: string) {
-  const parts = text.split(/(\s+)/);
-  for (let i = 0; i < parts.length; i += 4) {
-    if (input.signal.aborted) return;
-    input.emit({ type: "text-delta", text: parts.slice(i, i + 4).join("") });
-    await wait(18, input.signal);
-  }
-}
 
 type Data = Record<string, unknown>;
 const str = (v: unknown) => (typeof v === "string" ? v : "");
@@ -222,6 +207,14 @@ async function failed(input: EngineInput) {
 }
 
 export const offlineEngine: Engine = async (input) => {
+  // Önce eklentiler: "Boyum 180" gibi cümleler yoksa tutar sanılırdı.
+  for (const plugin of PLUGINS) {
+    const handled = await plugin.offline?.(input);
+    if (handled) {
+      if (handled.length) input.emit({ type: "suggestions", items: [...handled] });
+      return;
+    }
+  }
   const intent = parseIntent(input.text, input.ctx.today);
   const suggestions = await respond(input, intent);
   if (suggestions.length) input.emit({ type: "suggestions", items: [...suggestions] });

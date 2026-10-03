@@ -16,7 +16,10 @@ export type CardIcon =
   | "list"
   | "memory"
   | "delete"
-  | "navigate";
+  | "navigate"
+  | "fitness"
+  | "weight"
+  | "goal";
 
 export type ActionCard = {
   icon: CardIcon;

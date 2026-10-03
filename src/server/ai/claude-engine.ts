@@ -4,7 +4,7 @@ import { z } from "zod";
 import { env } from "@/server/env";
 import { MAX_TOOL_CALLS, type Engine } from "./engine";
 import { systemPrompt } from "./prompt";
-import { TOOLS } from "./tools";
+import { TOOLS } from "./registry";
 
 /*
  * Claude motoru: akışlı, elle yürütülen araç döngüsü. Araç girdileri akarken gelir

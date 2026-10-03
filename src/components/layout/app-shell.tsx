@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
+import type { ModuleKey } from "@/lib/modules";
 import { EditTransactionSheet } from "@/features/finance/edit-transaction-sheet";
 import { EditLifeSheet } from "@/features/tasks/edit-life-sheet";
 import { BottomNav } from "./bottom-nav";
@@ -10,7 +11,16 @@ import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
 import { ShellProvider } from "./ui-store";
 
-export async function AppShell({ children, unread }: { children: ReactNode; unread: number }) {
+export async function AppShell({
+  children,
+  unread,
+  modules = [],
+}: {
+  children: ReactNode;
+  unread: number;
+  /** Açık eklentiler; kenar çubuğu ve komut paleti bunları listeler. */
+  modules?: ModuleKey[];
+}) {
   const t = await getTranslations("nav");
   return (
     <ShellProvider>
@@ -21,7 +31,7 @@ export async function AppShell({ children, unread }: { children: ReactNode; unre
         {t("skipToContent")}
       </a>
       <div className="flex min-h-dvh">
-        <Sidebar />
+        <Sidebar modules={modules} />
         <div className="flex min-w-0 flex-1 flex-col">
           <TopBar unread={unread} />
           <main
@@ -36,7 +46,7 @@ export async function AppShell({ children, unread }: { children: ReactNode; unre
       <QuickAdd />
       <EditTransactionSheet />
       <EditLifeSheet />
-      <CommandPalette />
+      <CommandPalette modules={modules} />
       <KeyboardShortcuts />
     </ShellProvider>
   );

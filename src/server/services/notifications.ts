@@ -6,6 +6,7 @@ import type { Db } from "@/server/db/client";
 import { notifications, reminders, type Notification } from "@/server/db/schema";
 import { getMonthBudgets } from "./budgets";
 import { totalsBetween } from "./dashboard/totals";
+import { fitnessCandidates } from "./fitness-notifications";
 import { getSettings } from "./settings";
 
 /*
@@ -133,6 +134,9 @@ export async function buildCandidates(
       });
     }
   }
+
+  // Eklentilerin bildirimleri en düşük öncelikle gelir; günlük sınır önce asıl işlere yeter.
+  out.push(...(await fitnessCandidates(db, user, today, now)));
 
   return out.sort((a, b) => a.priority - b.priority);
 }
