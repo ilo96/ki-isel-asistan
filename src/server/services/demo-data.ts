@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { addDays, dayIn, monthOf, type DateString } from "@/lib/dates";
+import { addDays, dayIn, monthKeyOf, monthOf, shiftMonth, type DateString } from "@/lib/dates";
 import type { Db } from "@/server/db/client";
 import {
   budgets,
@@ -28,13 +28,48 @@ const THIS_MONTH: Expense[] = [
   ["groceries", "Manav", 312.75, 5],
 ];
 
-const LAST_MONTH: Expense[] = [
-  ["rent", "Kira", 18_000, 30],
-  ["groceries", "Haftalık market", 2_210, 31],
-  ["food", "Akşam yemeği", 960, 32],
-  ["shopping", "Spor ayakkabı", 2_450, 34],
-  ["bills", "Elektrik faturası", 640, 36],
+/** Geçmiş aylar: [systemKey, açıklama, lira, ayın günü]. Grafikler gerçekçi görünsün diye. */
+type PastExpense = [systemKey: string, description: string, lira: number, dayOfMonth: number];
+
+const PAST_MONTH: PastExpense[] = [
+  ["rent", "Kira", 18_000, 2],
+  ["groceries", "Haftalık market", 1_950, 4],
+  ["groceries", "Haftalık market", 2_120, 11],
+  ["groceries", "Manav", 340, 15],
+  ["groceries", "Haftalık market", 1_780, 18],
+  ["groceries", "Haftalık market", 2_040, 25],
+  ["food", "Öğle yemeği", 410, 7],
+  ["food", "Akşam yemeği", 960, 13],
+  ["food", "Kahve", 145, 20],
+  ["food", "Öğle yemeği", 385, 27],
+  ["transport", "İstanbulkart dolum", 500, 3],
+  ["transport", "Taksi", 320, 16],
+  ["bills", "Elektrik faturası", 640, 8],
+  ["bills", "İnternet faturası", 449.9, 12],
+  ["bills", "Telefon faturası", 329, 22],
+  ["entertainment", "Sinema", 420, 14],
 ];
+
+/** Ayları birbirinden ayıran ek harcamalar; index = kaç ay önce − 1. */
+const EXTRAS: PastExpense[][] = [
+  [
+    ["shopping", "Spor ayakkabı", 2_450, 6],
+    ["entertainment", "Konser bileti", 1_200, 21],
+  ],
+  [["health", "Diş kontrolü", 1_500, 9]],
+  [
+    ["shopping", "Mont", 3_400, 10],
+    ["food", "Doğum günü yemeği", 2_100, 19],
+  ],
+  [["entertainment", "Hafta sonu kaçamağı", 4_800, 23]],
+  [
+    ["health", "Eczane", 380, 5],
+    ["shopping", "Kulaklık", 1_650, 17],
+  ],
+];
+
+/** Kaç aylık geçmiş üretilir (bu ay hariç). */
+const HISTORY_MONTHS = 5;
 
 const kurus = (lira: number) => Math.round(lira * 100);
 
@@ -70,9 +105,50 @@ export async function seedDemoData(db: Db, userId: string, now = new Date()) {
       description,
       occurredOn: dayOf(daysAgo),
     });
+    // Geçmiş ayların tutarları ±%10 oynar; her ay biraz farklı görünür ama sonuç hep aynıdır.
+    const history = Array.from({ length: HISTORY_MONTHS }, (_, i) => {
+      const monthsAgo = i + 1;
+      const key = shiftMonth(monthKeyOf(today), -monthsAgo);
+      const last = Number(monthOf(`${key}-01`).end.slice(8));
+      const at = (day: number): DateString =>
+        `${key}-${String(Math.min(day, last)).padStart(2, "0")}`;
+      const wobble = (n: number, j: number) =>
+        n >= 10_000 ? n : Math.round(n * (0.9 + ((monthsAgo * 7 + j * 3) % 11) / 50));
+      return [
+        ...[...PAST_MONTH, ...(EXTRAS[i] ?? [])].map(([k, description, lira, day], j) => ({
+          ...expense([k, description, wobble(lira, j), 0]),
+          occurredOn: at(day),
+        })),
+        {
+          userId,
+          type: "income" as const,
+          amountMinor: kurus(monthsAgo <= 2 ? 42_000 : 39_500),
+          currency: user.currency,
+          categoryId: cat("salary"),
+          paymentMethodId: bank?.id,
+          description: "Maaş",
+          occurredOn: at(1),
+        },
+        ...(monthsAgo === 3
+          ? [
+              {
+                userId,
+                type: "income" as const,
+                amountMinor: kurus(6_500),
+                currency: user.currency,
+                categoryId: cat("other_income"),
+                paymentMethodId: bank?.id,
+                description: "Serbest çalışma",
+                occurredOn: at(18),
+              },
+            ]
+          : []),
+      ];
+    }).flat();
+
     await tx.insert(transactions).values([
       ...THIS_MONTH.map(expense),
-      ...LAST_MONTH.map(expense),
+      ...history,
       {
         userId,
         type: "income",
