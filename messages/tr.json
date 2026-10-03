@@ -144,7 +144,8 @@
       "label": "Finans bölümleri",
       "overview": "Özet",
       "transactions": "İşlemler",
-      "categories": "Kategoriler"
+      "categories": "Kategoriler",
+      "budgets": "Bütçeler"
     },
     "filters": {
       "search": "Açıklama, not ya da kategori ara",
@@ -439,6 +440,53 @@
     },
     "errors": {
       "invalid": "Bilgileri kontrol edip tekrar dene.",
+      "unknown": "Kaydedemedim. Bağlantını kontrol edip tekrar dene."
+    }
+  },
+  "budgets": {
+    "title": "Bütçeler",
+    "subtitle": "Ne kadar harcayacağına sen karar ver",
+    "emptyTitle": "Henüz bütçe yok",
+    "emptyBody": "Aylık bir sınır koy; yaklaştığında ve aştığında sana haber vereyim.",
+    "orSay": "Ya da yaz: “Market için aylık 6.000 TL bütçe koy”",
+    "setOverall": "Aylık bütçe belirle",
+    "editOverall": "Aylık bütçeyi düzenle",
+    "addCategory": "Kategori bütçesi ekle",
+    "editCategory": "{name} bütçesi",
+    "categoryBudgets": "Kategori bütçeleri",
+    "add": "Ekle",
+    "addShort": "Bütçe",
+    "noCategoryBudgets": "Market, yemek gibi kategorilere ayrı sınır koyabilirsin.",
+    "unbudgeted": "Bütçesi olmayanlar",
+    "unbudgetedHint": "Bu ay harcama yaptığın ama sınır koymadığın kategoriler",
+    "spentThisMonth": "Bu ay {amount}",
+    "over": "{amount} aşıldı",
+    "left": "{amount} kaldı",
+    "projectedOverShort": "{amount} kaldı · bu hızla aşacak",
+    "overall": "Aylık bütçe",
+    "noOverall": "Tüm harcamaların için tek bir aylık sınır belirlemedin.",
+    "suggestion": "Son 3 ayda ortalama {amount} harcadın.",
+    "categorySum": "Kategori bütçelerinde {limit} sınırın {spent} kadarını kullandın.",
+    "edit": "Düzenle",
+    "remaining": "Kalan",
+    "overBy": "Aşılan",
+    "spentOf": "{spent} harcandı",
+    "perDay": "Ay sonuna kadar günde {amount} harcayabilirsin ({days} gün).",
+    "projectedOver": "Bu hızla ay sonunda {amount} harcamış olacaksın; bütçeyi aşarsın.",
+    "projectedOk": "Bu hızla ay sonunda yaklaşık {amount} harcamış olacaksın.",
+    "inherited": "Önceki aydan devam ediyor.",
+    "close": "Kapat",
+    "category": "Kategori",
+    "monthlyLimit": "Aylık sınır",
+    "useSuggestion": "Son 3 ay ortalaması: {amount}",
+    "appliesFrom": "{month} ayından itibaren her ay geçerli.",
+    "remove": "Kaldır",
+    "save": "Kaydet",
+    "saved": "Bütçe kaydedildi",
+    "updated": "Bütçe güncellendi",
+    "removed": "Bütçe kaldırıldı",
+    "undo": "Geri al",
+    "errors": {
       "unknown": "Kaydedemedim. Bağlantını kontrol edip tekrar dene."
     }
   }

@@ -48,3 +48,16 @@ export const transactionFilterSchema = z.object({
 });
 
 export type TransactionFilter = z.infer<typeof transactionFilterSchema>;
+
+/** Bütçe: kategori boşsa genel aylık bütçe. Seçilen aydan itibaren her ay geçerlidir. */
+export const budgetInputSchema = z.object({
+  categoryId: z.uuid("categoryRequired").nullable(),
+  amountMinor: z
+    .number("amount")
+    .int("amount")
+    .positive("amountPositive")
+    .max(MAX_AMOUNT_MINOR, "amountMax"),
+  month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "date"),
+});
+
+export type BudgetInput = z.infer<typeof budgetInputSchema>;

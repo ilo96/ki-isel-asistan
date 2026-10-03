@@ -161,9 +161,21 @@ export async function seedDemoData(db: Db, userId: string, now = new Date()) {
       },
     ]);
 
+    // Bütçeler üç ay önce kurulmuş gibi: bu ay "önceki aydan devam ediyor" görünür.
+    const budgetStart = `${shiftMonth(monthKeyOf(today), -3)}-01`;
     await tx
       .insert(budgets)
-      .values({ userId, amountMinor: kurus(25_000), startsOn: month.start })
+      .values([
+        { userId, amountMinor: kurus(25_000), startsOn: budgetStart },
+        { userId, categoryId: cat("groceries"), amountMinor: kurus(7_500), startsOn: budgetStart },
+        { userId, categoryId: cat("food"), amountMinor: kurus(2_000), startsOn: budgetStart },
+        {
+          userId,
+          categoryId: cat("entertainment"),
+          amountMinor: kurus(1_500),
+          startsOn: budgetStart,
+        },
+      ])
       .onConflictDoNothing();
 
     const at = (days: number) => {
