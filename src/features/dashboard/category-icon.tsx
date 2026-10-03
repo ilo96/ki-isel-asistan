@@ -1,15 +1,27 @@
 import {
+  Baby,
   Briefcase,
   Bus,
+  Car,
   CirclePlus,
+  Coffee,
+  Dumbbell,
   Ellipsis,
+  Gift,
+  GraduationCap,
   HeartPulse,
   Home,
+  PawPrint,
+  PiggyBank,
+  Plane,
   Receipt,
+  Shirt,
   ShoppingBag,
   ShoppingCart,
+  Smartphone,
   Ticket,
   Utensils,
+  Wifi,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
@@ -27,7 +39,24 @@ const ICONS: Record<IconName, LucideIcon> = {
   briefcase: Briefcase,
   "circle-plus": CirclePlus,
   ellipsis: Ellipsis,
+  car: Car,
+  plane: Plane,
+  coffee: Coffee,
+  gift: Gift,
+  "graduation-cap": GraduationCap,
+  dumbbell: Dumbbell,
+  "paw-print": PawPrint,
+  baby: Baby,
+  shirt: Shirt,
+  smartphone: Smartphone,
+  wifi: Wifi,
+  "piggy-bank": PiggyBank,
 };
+
+/** Kategori düzenlerken ikon seçicide de aynı eşleme kullanılır. */
+export function categoryIconComponent(name: string): LucideIcon {
+  return ICONS[name as IconName] ?? Ellipsis;
+}
 
 // Tailwind sınıfları derleme anında görülmeli; bu yüzden dinamik değil, tek tek yazılı.
 const TONES: Record<CategoryColor, string> = {
@@ -45,7 +74,7 @@ type Props = { icon: string; colorToken: string; className?: string };
 
 /** Kategorinin ikonu, kendi renginin yumuşak zemininde. Bilinmeyen ad gelirse nötr görünür. */
 export function CategoryIcon({ icon, colorToken, className }: Props) {
-  const Icon = ICONS[icon as IconName] ?? Ellipsis;
+  const Icon = categoryIconComponent(icon);
   const tone = TONES[colorToken as CategoryColor] ?? TONES["cat-8"];
   return (
     <span

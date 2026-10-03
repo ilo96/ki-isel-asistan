@@ -6,7 +6,7 @@ import { getDb } from "@/server/db";
 import { isProduction } from "@/server/env";
 import { clearFinanceData, seedDemoData } from "@/server/services/demo-data";
 
-/** Yalnızca geliştirme: işlem ekleme ekranı gelene kadar dashboard'u doldurup boşaltmak için. */
+/** Yalnızca geliştirme: dashboard'u örnek veriyle doldurup boşaltmak için. */
 export async function demoDataAction(mode: "seed" | "clear"): Promise<{ ok: boolean }> {
   if (isProduction()) return { ok: false };
   const session = await getSession();

@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
+import { EditTransactionSheet } from "@/features/finance/edit-transaction-sheet";
 import { BottomNav } from "./bottom-nav";
 import { CommandPalette } from "./command-palette";
 import { QuickAdd } from "./quick-add";
@@ -31,6 +32,7 @@ export async function AppShell({ children }: { children: ReactNode }) {
       </div>
       <BottomNav />
       <QuickAdd />
+      <EditTransactionSheet />
       <CommandPalette />
     </ShellProvider>
   );
