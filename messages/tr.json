@@ -349,7 +349,8 @@
     "toggleTheme": "Temayı değiştir",
     "assistant": "Asistan",
     "ask": "Asistana sor: “{query}”",
-    "records": "Kayıtlar"
+    "records": "Kayıtlar",
+    "shortcuts": "Klavye kısayolları"
   },
   "state": {
     "errorTitle": "Bir şeyler ters gitti",
@@ -679,5 +680,18 @@
     "pushDenied": "Tarayıcı izni kapalı; tarayıcı ayarlarından açabilirsin.",
     "pushUnsupported": "Bu tarayıcı anlık bildirimleri desteklemiyor.",
     "pushNotConfigured": "Sunucuda anlık bildirim henüz yapılandırılmadı; uygulama içi bildirimler çalışıyor."
+  },
+  "shortcuts": {
+    "title": "Klavye kısayolları",
+    "close": "Kapat",
+    "palette": "Komut paleti",
+    "search": "Ara",
+    "quickAdd": "Hızlı ekle",
+    "home": "Ana sayfaya git",
+    "finance": "Finansa git",
+    "assistant": "Asistana git",
+    "tasks": "Görevlere git",
+    "notifications": "Bildirimlere git",
+    "help": "Bu liste"
   }
 }

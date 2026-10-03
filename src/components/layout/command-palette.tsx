@@ -5,6 +5,7 @@ import {
   Bell,
   CheckSquare,
   CornerDownLeft,
+  Keyboard,
   Palette,
   Plus,
   Receipt,
@@ -22,6 +23,7 @@ import { searchAction, type SearchResults } from "@/features/assistant/search-ac
 import { cn } from "@/lib/cn";
 import { formatMoney } from "@/lib/money";
 import { fadeTransition, spring } from "@/lib/motion";
+import { SHOW_SHORTCUTS_EVENT } from "./keyboard-shortcuts";
 import { NAV_ITEMS } from "./nav-items";
 import { useShell } from "./ui-store";
 
@@ -105,6 +107,13 @@ export function CommandPalette() {
         group: t("command.actions"),
         icon: Plus,
         run: () => open("quickAdd"),
+      },
+      {
+        id: "shortcuts",
+        label: t("command.shortcuts"),
+        group: t("command.actions"),
+        icon: Keyboard,
+        run: () => window.dispatchEvent(new Event(SHOW_SHORTCUTS_EVENT)),
       },
       {
         id: "toggle-theme",

@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, CircleAlert } from "lucide-react";
+import { CircleAlert } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   createContext,
@@ -12,7 +12,6 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { cn } from "@/lib/cn";
 import { spring } from "@/lib/motion";
 
 type ToastOptions = {
@@ -48,7 +47,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   }, [toast, dismiss]);
 
   const value = useMemo(() => show, [show]);
-  const Icon = toast?.tone === "error" ? CircleAlert : CheckCircle2;
 
   return (
     <ToastContext.Provider value={value}>
@@ -68,13 +66,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               transition={spring.sheet}
               className="pointer-events-auto flex min-h-12 w-full max-w-sm items-center gap-3 rounded-card border border-border bg-surface-raised py-2 pr-2 pl-4 text-text shadow-raised"
             >
-              <Icon
-                className={cn(
-                  "size-[18px] shrink-0",
-                  toast.tone === "error" ? "text-negative" : "text-positive",
-                )}
-                aria-hidden
-              />
+              {toast.tone === "error" ? (
+                <CircleAlert className="size-[18px] shrink-0 text-negative" aria-hidden />
+              ) : (
+                <SuccessMark />
+              )}
               <p className="flex-1 text-small">{toast.message}</p>
               {toast.action && (
                 <button
@@ -93,6 +89,35 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         </AnimatePresence>
       </div>
     </ToastContext.Provider>
+  );
+}
+
+/** Başarı anı (plan: Faz 11): daire dolar, tik çizilir. */
+function SuccessMark() {
+  return (
+    <svg viewBox="0 0 24 24" className="size-[18px] shrink-0 text-positive" aria-hidden>
+      <motion.circle
+        cx="12"
+        cy="12"
+        r="10"
+        fill="currentColor"
+        initial={{ scale: 0.4, opacity: 0 }}
+        animate={{ scale: 1, opacity: 0.18 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
+        style={{ transformOrigin: "12px 12px" }}
+      />
+      <motion.path
+        d="M7.5 12.5l3 3 6-6.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.25"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 0.3, delay: 0.12, ease: "easeOut" }}
+      />
+    </svg>
   );
 }
 
