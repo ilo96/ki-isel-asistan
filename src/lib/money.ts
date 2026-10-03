@@ -20,8 +20,12 @@ type FormatOptions = {
 };
 
 export function formatMoney(amountMinor: number | bigint, options: FormatOptions = {}): string {
-  const { currency = DEFAULT_CURRENCY, signed = false, compact = false, locale = DEFAULT_LOCALE } =
-    options;
+  const {
+    currency = DEFAULT_CURRENCY,
+    signed = false,
+    compact = false,
+    locale = DEFAULT_LOCALE,
+  } = options;
   const minor = typeof amountMinor === "bigint" ? Number(amountMinor) : amountMinor;
   if (!Number.isSafeInteger(minor)) {
     throw new RangeError(`Geçersiz kuruş tutarı: ${String(amountMinor)}`);

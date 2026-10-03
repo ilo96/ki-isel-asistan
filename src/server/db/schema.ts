@@ -237,12 +237,45 @@ export const reminders = pgTable(
     allDay: boolean("all_day").notNull().default(false),
     priority: priority("priority").notNull().default("normal"),
     amountMinor: bigint("amount_minor", { mode: "number" }),
+    /** Fatura ödendiğinde eklenecek giderin kategorisi; boşsa "Faturalar". */
+    categoryId: uuid("category_id").references(() => categories.id),
+    /**
+     * RFC 5545 RRULE alt kümesi (ör. "FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=5"). Tekrarlayan
+     * hatırlatıcı tamamlanınca tamamlanmış bir kopyası kalır, kendisi sonraki tarihe geçer.
+     */
+    recurrence: text("recurrence"),
+    /** Tekrarlayan bir hatırlatıcının tamamlanmış kopyasıysa asıl satır. */
+    seriesId: uuid("series_id"),
     completedAt: timestamp("completed_at", { withTimezone: true }),
     snoozedUntil: timestamp("snoozed_until", { withTimezone: true }),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     ...timestamps,
   },
-  (t) => [index("reminders_user_due_idx").on(t.userId, t.dueAt)],
+  (t) => [
+    index("reminders_user_due_idx").on(t.userId, t.dueAt),
+    index("reminders_user_completed_idx").on(t.userId, t.completedAt),
+  ],
+);
+
+/** Saatsiz yapılacaklar; due_on boşsa "Bugün" listesinde durur. */
+export const tasks = pgTable(
+  "tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    note: text("note"),
+    dueOn: date("due_on"),
+    priority: priority("priority").notNull().default("normal"),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdVia: createdVia("created_via").notNull().default("manual"),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [index("tasks_user_due_idx").on(t.userId, t.completedAt, t.dueOn)],
 );
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -256,3 +289,4 @@ export type FinancialGoal = typeof financialGoals.$inferSelect;
 export type Category = typeof categories.$inferSelect;
 export type Transaction = typeof transactions.$inferSelect;
 export type Reminder = typeof reminders.$inferSelect;
+export type Task = typeof tasks.$inferSelect;

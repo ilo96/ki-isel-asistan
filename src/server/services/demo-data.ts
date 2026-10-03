@@ -1,11 +1,20 @@
 import { eq } from "drizzle-orm";
-import { addDays, dayIn, monthKeyOf, monthOf, shiftMonth, type DateString } from "@/lib/dates";
+import {
+  addDays,
+  dayIn,
+  daysBetween,
+  monthKeyOf,
+  monthOf,
+  shiftMonth,
+  type DateString,
+} from "@/lib/dates";
 import type { Db } from "@/server/db/client";
 import {
   budgets,
   categories,
   paymentMethods,
   reminders,
+  tasks,
   transactions,
   users,
 } from "@/server/db/schema";
@@ -202,16 +211,49 @@ export async function seedDemoData(db: Db, userId: string, now = new Date()) {
         amountMinor: kurus(329),
       },
       { userId, kind: "important_date", title: "Annemin doğum günü", dueAt: at(9), allDay: true },
+      {
+        userId,
+        kind: "bill",
+        title: "Kira",
+        dueAt: at(daysBetween(today, `${shiftMonth(monthKeyOf(today), 1)}-01`) + 1),
+        allDay: true,
+        amountMinor: kurus(18_000),
+        categoryId: cat("rent"),
+        recurrence: "FREQ=MONTHLY;INTERVAL=1;BYMONTHDAY=2",
+      },
+      {
+        userId,
+        kind: "reminder",
+        title: "Spor salonu",
+        dueAt: at(0.3),
+        priority: "low",
+        recurrence: "FREQ=WEEKLY;INTERVAL=1",
+      },
+    ]);
+
+    await tx.insert(tasks).values([
+      { userId, title: "Vergi levhasını indir", dueOn: addDays(today, -1), priority: "high" },
+      { userId, title: "Sigorta teklifi karşılaştır", dueOn: today, sortOrder: 1 },
+      { userId, title: "Kitap siparişi ver", priority: "low", sortOrder: 2 },
+      { userId, title: "Ev sahibine kira artışını sor", dueOn: addDays(today, 4), sortOrder: 3 },
+      {
+        userId,
+        title: "Arabanın muayene randevusu",
+        dueOn: addDays(today, -3),
+        completedAt: new Date(now.getTime() - 86_400_000),
+        sortOrder: 4,
+      },
     ]);
   });
 }
 
-/** Kullanıcının bütün finans ve hatırlatıcı kayıtlarını siler; kategoriler ve hedefler kalır. */
+/** Kullanıcının bütün finans, hatırlatıcı ve görev kayıtlarını siler; kategoriler ve hedefler kalır. */
 export async function clearFinanceData(db: Db, userId: string) {
   await db.transaction(async (tx) => {
     await tx.delete(transactions).where(eq(transactions.userId, userId));
     await tx.delete(budgets).where(eq(budgets.userId, userId));
     await tx.delete(reminders).where(eq(reminders.userId, userId));
+    await tx.delete(tasks).where(eq(tasks.userId, userId));
     await tx.delete(paymentMethods).where(eq(paymentMethods.userId, userId));
   });
 }

@@ -98,3 +98,58 @@ export function shiftMonth(key: MonthKey, delta: number): MonthKey {
   const d = new Date(Date.UTC(year, month - 1 + delta, 1));
   return toDateString(d.getUTCFullYear(), d.getUTCMonth() + 1, 1).slice(0, 7);
 }
+
+/** "HH:MM" biçiminde gün içi saat. */
+export type TimeString = string;
+
+/** Anın verilen saat dilimindeki ofseti (ms): yerel saat − UTC. */
+function offsetMs(date: Date, timeZone: string) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).formatToParts(date);
+  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
+  const asUtc = Date.UTC(
+    get("year"),
+    get("month") - 1,
+    get("day"),
+    get("hour"),
+    get("minute"),
+    get("second"),
+  );
+  return asUtc - Math.floor(date.getTime() / 1000) * 1000;
+}
+
+/**
+ * Kullanıcının saat dilimindeki takvim günü ve saatini ana çevirir:
+ * ("2026-10-05", "09:00", "Europe/Istanbul") → 2026-10-05T06:00:00Z. Yaz saati geçişlerinde de doğru.
+ */
+export function zonedDateTime(day: DateString, time: TimeString, timeZone: string): Date {
+  const { year, month, day: d } = parse(day);
+  const [hour = 0, minute = 0] = time.split(":").map(Number);
+  const guess = Date.UTC(year, month - 1, d, hour, minute);
+  const first = guess - offsetMs(new Date(guess), timeZone);
+  // Ofset tahmin edilen anda farklıysa (DST sınırı) bir kez daha düzelt.
+  return new Date(guess - offsetMs(new Date(first), timeZone));
+}
+
+/** Anın kullanıcının saat dilimindeki saati: "09:00". */
+export function timeIn(date: Date, timeZone: string): TimeString {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone,
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(date);
+}
+
+/** Ayın gün sayısı. */
+export function daysInMonth(year: number, month: number) {
+  return new Date(Date.UTC(year, month, 0)).getUTCDate();
+}

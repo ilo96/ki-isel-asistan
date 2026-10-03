@@ -23,13 +23,13 @@ export function FirstSteps() {
           </button>
         </li>
         <li>
-          <button type="button" className={chip} onClick={() => open("quickAdd")}>
+          <button type="button" className={chip} onClick={() => open("quickAdd", { kind: "reminder" })}>
             <BellPlus aria-hidden />
             {t("suggestions.rent")}
           </button>
         </li>
         <li>
-          <Link href="/finance" className={chip}>
+          <Link href="/finance/budgets" className={chip}>
             <PiggyBank aria-hidden />
             {t("suggestions.budget")}
           </Link>

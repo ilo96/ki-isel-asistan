@@ -193,16 +193,6 @@
     "inputPlaceholder": "Asistana yaz…",
     "comingSoon": "Sohbet çok yakında burada."
   },
-  "tasks": {
-    "title": "Görevler",
-    "subtitle": "Hatırlatıcılar ve yapılacaklar",
-    "today": "Bugün",
-    "upcoming": "Yaklaşan",
-    "done": "Tamamlanan",
-    "emptyTitle": "Bugün için bir şey yok",
-    "emptyBody": "Bir hatırlatıcı ya da görev ekle, zamanı gelince sana haber vereyim.",
-    "add": "Görev ekle"
-  },
   "profile": {
     "title": "Profil",
     "subtitle": "Tercihlerin ve hedeflerin",
@@ -222,7 +212,6 @@
     "income": "Gelir",
     "reminder": "Hatırlatıcı",
     "task": "Görev",
-    "comingSoon": "Hatırlatıcı ve görev ekleme sonraki aşamalarda burada olacak.",
     "close": "Kapat"
   },
   "transactionForm": {
@@ -391,7 +380,9 @@
     "descriptionMax": "Açıklama en fazla 120 karakter olabilir.",
     "noteMax": "Not en fazla 500 karakter olabilir.",
     "date": "Geçerli bir tarih seç.",
-    "categoryNameMax": "Kategori adı en fazla 40 karakter olabilir."
+    "categoryNameMax": "Kategori adı en fazla 40 karakter olabilir.",
+    "titleMax": "Başlık en fazla 120 karakter olabilir.",
+    "time": "Geçerli bir saat seç."
   },
   "onboarding": {
     "skip": "Atla",
@@ -489,5 +480,129 @@
     "errors": {
       "unknown": "Kaydedemedim. Bağlantını kontrol edip tekrar dene."
     }
+  },
+  "life": {
+    "title": "Görevler",
+    "subtitle": "Hatırlatıcılar, faturalar ve yapılacaklar",
+    "tabs": {
+      "label": "Görev listeleri",
+      "today": "Bugün",
+      "upcoming": "Yaklaşan",
+      "done": "Tamamlanan"
+    },
+    "groups": {
+      "overdue": "Gecikenler",
+      "today": "Bugün",
+      "someday": "Tarihsiz"
+    },
+    "empty": {
+      "today": {
+        "title": "Bugün için bir şey yok",
+        "body": "Bir görev ya da hatırlatıcı ekle, zamanı gelince sana haber vereyim."
+      },
+      "upcoming": {
+        "title": "Yaklaşan bir şey yok",
+        "body": "Faturalarını ve önemli günlerini ekle; önümüzdeki 60 gün burada görünür."
+      },
+      "done": {
+        "title": "Henüz tamamlanan yok",
+        "body": "Son 30 günde tamamladıkların burada listelenir."
+      }
+    },
+    "addTask": "Görev ekle",
+    "addReminder": "Hatırlatıcı ekle",
+    "orSay": "Ya da yaz: “Her ayın 5'inde kirayı hatırlat, 25.000 TL”",
+    "day": {
+      "today": "Bugün",
+      "tomorrow": "Yarın",
+      "yesterday": "Dün",
+      "inDays": "{count} gün sonra"
+    },
+    "repeat": {
+      "daily": "Her gün",
+      "weekly": "Her hafta",
+      "monthly": "Her ay",
+      "yearly": "Her yıl"
+    },
+    "repeatLabel": "Tekrar",
+    "repeatOption": {
+      "none": "Tekrar yok",
+      "daily": "Her gün",
+      "weekly": "Her hafta",
+      "monthly": "Her ay",
+      "yearly": "Her yıl"
+    },
+    "kindLabel": "Tür",
+    "kind": {
+      "reminder": "Hatırlatıcı",
+      "bill": "Fatura",
+      "important_date": "Önemli gün"
+    },
+    "titlePlaceholder": {
+      "reminder": "Ör. Diş randevusu",
+      "bill": "Ör. Elektrik faturası",
+      "important_date": "Ör. Annemin doğum günü"
+    },
+    "amount": "Tutar",
+    "amountHint": "Ödendi dediğinde bu tutarı gider olarak eklemeyi öneririm.",
+    "date": "Tarih",
+    "time": "Saat",
+    "allDay": "Tüm gün",
+    "expenseCategory": "Gider kategorisi",
+    "expenseCategoryHint": "İsteğe bağlı. Seçmezsen Faturalar kullanılır.",
+    "more": "Daha fazla",
+    "note": "Not",
+    "notePlaceholder": "İsteğe bağlı",
+    "priorityLabel": "Öncelik",
+    "priority": {
+      "low": "Düşük",
+      "normal": "Normal",
+      "high": "Yüksek"
+    },
+    "taskTitle": "Ne yapılacak?",
+    "taskPlaceholder": "Ör. Vergi beyannamesini gönder",
+    "dueLabel": "Ne zaman?",
+    "due": {
+      "none": "Tarihsiz",
+      "today": "Bugün",
+      "tomorrow": "Yarın",
+      "pick": "Tarih seç"
+    },
+    "save": "Kaydet",
+    "update": "Değişiklikleri kaydet",
+    "delete": "Sil",
+    "close": "Kapat",
+    "editTask": "Görevi düzenle",
+    "editReminder": "Hatırlatıcıyı düzenle",
+    "snooze": "Ertele:",
+    "snoozeHour": "1 saat",
+    "snoozeTomorrow": "Yarın",
+    "snoozedHour": "1 saat ertelendi",
+    "snoozedTomorrow": "Yarına ertelendi",
+    "reminderAdded": "Hatırlatıcı eklendi",
+    "taskAdded": "Görev eklendi",
+    "updated": "Kaydedildi",
+    "taskDone": "Görev tamamlandı",
+    "reminderDone": "Tamamlandı",
+    "completedNext": "Tamamlandı. Sonraki: {date}",
+    "billPaid": "{title} ödendi olarak işaretlendi",
+    "addAsExpense": "Gider olarak ekle",
+    "expenseAdded": "Gider eklendi",
+    "deleted": "Silindi",
+    "undo": "Geri al",
+    "undone": "Geri alındı",
+    "overdue": "Gecikti",
+    "completeLabel": "Tamamla: {title}",
+    "reopenLabel": "Yeniden aç: {title}",
+    "completedAt": "{when} tamamlandı",
+    "checkToPay": "İşaretleyince ödendi sayılır",
+    "errors": {
+      "invalid": "Bilgileri kontrol edip tekrar dene.",
+      "unauthorized": "Oturumun kapanmış. Tekrar giriş yap.",
+      "not_found": "Bu kayıt artık yok. Sayfayı yenile.",
+      "category_not_found": "Kategori bulunamadı.",
+      "unknown": "Kaydedemedim. Bağlantını kontrol edip tekrar dene."
+    },
+    "titleLabel": "Başlık"
   }
 }
