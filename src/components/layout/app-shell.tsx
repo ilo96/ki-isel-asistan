@@ -9,7 +9,7 @@ import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
 import { ShellProvider } from "./ui-store";
 
-export async function AppShell({ children }: { children: ReactNode }) {
+export async function AppShell({ children, unread }: { children: ReactNode; unread: number }) {
   const t = await getTranslations("nav");
   return (
     <ShellProvider>
@@ -22,7 +22,7 @@ export async function AppShell({ children }: { children: ReactNode }) {
       <div className="flex min-h-dvh">
         <Sidebar />
         <div className="flex min-w-0 flex-1 flex-col">
-          <TopBar />
+          <TopBar unread={unread} />
           <main
             id="main"
             className="mx-auto w-full max-w-[1200px] flex-1 px-4 pt-2 pb-32 sm:px-6 lg:px-8 lg:pb-12"

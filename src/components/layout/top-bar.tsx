@@ -1,6 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { Bell, Search } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
@@ -11,7 +11,7 @@ import { ThemeToggle } from "./theme-toggle";
 import { useShell } from "./ui-store";
 
 /** Üst bar: sayfa kaydırılınca cam efekti alır. Arama alanı komut paletini açar. */
-export function TopBar() {
+export function TopBar({ unread }: { unread: number }) {
   const t = useTranslations("nav");
   const { open } = useShell();
   const [scrolled, setScrolled] = useState(false);
@@ -50,6 +50,18 @@ export function TopBar() {
 
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle className="hidden sm:inline-flex" />
+          <Link
+            href="/notifications"
+            aria-label={unread ? t("notificationsUnread", { count: unread }) : t("notifications")}
+            className="relative grid size-10 place-items-center rounded-full border border-border bg-surface text-text transition-colors hover:border-accent/40"
+          >
+            <Bell className="size-[18px]" aria-hidden />
+            {unread > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-negative px-1 text-[11px] leading-none font-semibold text-white tabular-nums">
+                {unread > 9 ? "9+" : unread}
+              </span>
+            )}
+          </Link>
         </div>
       </div>
     </header>

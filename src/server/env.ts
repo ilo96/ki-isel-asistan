@@ -21,6 +21,12 @@ const schema = z.object({
   ANTHROPIC_API_KEY: z.string().min(1).optional(),
   AI_MODEL: z.string().min(1).default("claude-opus-5-5"),
   AI_FAST_MODEL: z.string().min(1).default("claude-haiku-4-5"),
+  /** Web Push (isteğe bağlı): `npx web-push generate-vapid-keys` ile üretilir. */
+  VAPID_PUBLIC_KEY: z.string().min(1).optional(),
+  VAPID_PRIVATE_KEY: z.string().min(1).optional(),
+  VAPID_SUBJECT: z.string().min(1).default("mailto:destek@example.com"),
+  /** Zamanlanmış bildirim işinin (cron) Authorization: Bearer değeri. */
+  CRON_SECRET: z.string().min(16).optional(),
 });
 
 export type ServerEnv = z.infer<typeof schema>;

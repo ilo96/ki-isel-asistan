@@ -365,6 +365,73 @@ export const userMemories = pgTable(
   (t) => [index("user_memories_user_idx").on(t.userId)],
 );
 
+/* ----------------------------------------------------------- Bildirimler */
+
+export const notificationKind = pgEnum("notification_kind", [
+  "bill_due",
+  "reminder_due",
+  "budget_threshold",
+  "weekly_summary",
+]);
+
+/**
+ * Uygulama içi bildirimler. dedupe_key aynı olayın iki kez bildirilmesini engeller
+ * (ör. "bill:<id>:2026-10-05"). priority küçük olan önce gelir; günlük sınır buna göre uygulanır.
+ */
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    kind: notificationKind("kind").notNull(),
+    title: text("title").notNull(),
+    body: text("body").notNull(),
+    href: text("href"),
+    dedupeKey: text("dedupe_key").notNull(),
+    priority: integer("priority").notNull(),
+    readAt: timestamp("read_at", { withTimezone: true }),
+    pushedAt: timestamp("pushed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("notifications_user_dedupe_uq").on(t.userId, t.dedupeKey),
+    index("notifications_user_created_idx").on(t.userId, t.createdAt.desc()),
+  ],
+);
+
+/** Kullanıcı başına tek satır; yoksa varsayılanlar geçerlidir. */
+export const userSettings = pgTable("user_settings", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  notifyBills: boolean("notify_bills").notNull().default(true),
+  notifyReminders: boolean("notify_reminders").notNull().default(true),
+  notifyBudget: boolean("notify_budget").notNull().default(true),
+  notifyWeekly: boolean("notify_weekly").notNull().default(true),
+  /** "HH:MM" kullanıcının saatinde; aralıkta push gönderilmez. */
+  quietStart: text("quiet_start").notNull().default("22:00"),
+  quietEnd: text("quiet_end").notNull().default("08:00"),
+  dailyLimit: integer("daily_limit").notNull().default(3),
+  ...timestamps,
+});
+
+export const pushSubscriptions = pgTable(
+  "push_subscriptions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    endpoint: text("endpoint").notNull().unique(),
+    p256dh: text("p256dh").notNull(),
+    auth: text("auth").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("push_subscriptions_user_idx").on(t.userId)],
+);
+
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
@@ -380,3 +447,5 @@ export type Task = typeof tasks.$inferSelect;
 export type AiConversation = typeof aiConversations.$inferSelect;
 export type AiMessage = typeof aiMessages.$inferSelect;
 export type AiAction = typeof aiActions.$inferSelect;
+export type Notification = typeof notifications.$inferSelect;
+export type UserSettings = typeof userSettings.$inferSelect;

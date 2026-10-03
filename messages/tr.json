@@ -14,7 +14,8 @@
     "main": "Ana menü",
     "quickAdd": "Hızlı ekle",
     "search": "Ara veya komut yaz",
-    "skipToContent": "İçeriğe geç"
+    "skipToContent": "İçeriğe geç",
+    "notificationsUnread": "Bildirimler, {count} okunmamış"
   },
   "greeting": {
     "morning": "Günaydın",
@@ -236,7 +237,8 @@
     "currency": "Para birimi",
     "monthlyIncome": "Aylık gelir",
     "notSet": "Belirtilmedi",
-    "signOutBody": "Bu cihazdaki oturumun kapanır."
+    "signOutBody": "Bu cihazdaki oturumun kapanır.",
+    "settingsLink": "Bildirim ve hesap ayarları"
   },
   "quickAdd": {
     "title": "Hızlı ekle",
@@ -640,5 +642,42 @@
       "unknown": "Kaydedemedim. Bağlantını kontrol edip tekrar dene."
     },
     "titleLabel": "Başlık"
+  },
+  "notificationsPage": {
+    "title": "Bildirimler",
+    "subtitle": "Ödemeler, hatırlatıcılar ve bütçe uyarıları",
+    "markAll": "Tümünü okundu say",
+    "emptyTitle": "Her şey yolunda",
+    "emptyBody": "Yaklaşan bir ödeme ya da bütçe uyarısı olduğunda burada göreceksin.",
+    "today": "Bugün",
+    "earlier": "Daha önce",
+    "settings": "Bildirim ayarları",
+    "unread": "Okunmadı"
+  },
+  "settingsPage": {
+    "title": "Ayarlar",
+    "subtitle": "Bildirimler ve hesap",
+    "notifications": "Bildirimler",
+    "notificationsBody": "Hangi durumlarda haber vereceğimi seç. Günde en fazla {limit} bildirim gönderirim.",
+    "bills": "Yaklaşan ve geciken ödemeler",
+    "reminders": "Hatırlatıcılar",
+    "budget": "Bütçe uyarıları (%80 ve %100)",
+    "weekly": "Pazartesi sabahı haftalık özet",
+    "quiet": "Sessiz saatler",
+    "quietBody": "Bu aralıkta bildirim göndermem; birikenler sonra gelir.",
+    "from": "Başlangıç",
+    "to": "Bitiş",
+    "dailyLimit": "Günlük en fazla",
+    "save": "Kaydet",
+    "saved": "Ayarlar kaydedildi",
+    "error": "Kaydedilemedi, tekrar dener misin?",
+    "push": "Bu cihaza bildirim",
+    "pushBody": "Uygulama kapalıyken de ödemelerini hatırlatayım.",
+    "pushEnable": "Bildirimlere izin ver",
+    "pushDisable": "Bu cihazda kapat",
+    "pushOn": "Bu cihazda açık",
+    "pushDenied": "Tarayıcı izni kapalı; tarayıcı ayarlarından açabilirsin.",
+    "pushUnsupported": "Bu tarayıcı anlık bildirimleri desteklemiyor.",
+    "pushNotConfigured": "Sunucuda anlık bildirim henüz yapılandırılmadı; uygulama içi bildirimler çalışıyor."
   }
 }

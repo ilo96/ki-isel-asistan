@@ -1,4 +1,4 @@
-import { ChevronRight, Palette } from "lucide-react";
+import { Bell, ChevronRight, Palette } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -58,6 +58,14 @@ export default async function ProfilePage() {
           <p className="mt-1 mb-4 text-small text-muted">{t("appearanceBody")}</p>
           <ThemeToggle withLabels />
         </Card>
+        <Link
+          href="/settings"
+          className="flex items-center gap-3 rounded-card border border-border/60 bg-surface p-5 text-text shadow-card transition-colors hover:border-accent/40 dark:border-transparent"
+        >
+          <Bell className="size-5 text-accent" aria-hidden />
+          <span className="flex-1">{t("settingsLink")}</span>
+          <ChevronRight className="size-5 text-muted" aria-hidden />
+        </Link>
         <Link
           href="/dev/components"
           className="flex items-center gap-3 rounded-card border border-border/60 bg-surface p-5 text-text shadow-card transition-colors hover:border-accent/40 dark:border-transparent"
