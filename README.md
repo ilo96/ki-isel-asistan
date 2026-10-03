@@ -10,24 +10,33 @@ pnpm install
 pnpm dev        # http://localhost:3000
 ```
 
+Yerelde hiçbir hesap veya anahtar gerekmez: `DATABASE_URL` tanımlı değilse veriler
+`.data/pglite` klasöründeki gömülü Postgres'te tutulur (migration'lar açılışta uygulanır),
+şifre sıfırlama bağlantıları sunucu konsoluna yazılır. Production için gereken değişkenler
+`.env.example` içinde.
+
 | Komut            | Ne yapar                         |
 | ---------------- | -------------------------------- |
 | `pnpm lint`      | ESLint                           |
 | `pnpm typecheck` | TypeScript (strict)              |
 | `pnpm test`      | Vitest birim testleri            |
 | `pnpm build`     | Production derlemesi             |
+| `pnpm db:generate` | Şemadan yeni migration üretir  |
+| `pnpm db:migrate`  | Migration'ları `DATABASE_URL`'deki veritabanına uygular |
 
 ## Yapı
 
 ```
 src/
-  app/              route'lar; (app) grubu uygulama kabuğunu kullanır
+  app/              route'lar; (auth) giriş akışı, onboarding, (app) oturum gerektiren kabuk
   components/
     ui/             primitives (Button, Card, Sheet, Skeleton, EmptyState …)
     layout/         sidebar, alt bar, üst bar, komut paleti, hızlı ekle
     assistant/      asistan küresi
   features/         ekranlara özel parçalar (dashboard, tasks, assistant …)
-  lib/              para (kuruş), hareket sabitleri, yardımcılar
+  lib/              para (kuruş), hareket sabitleri, form şemaları (Zod), auth istemcisi
+  server/           yalnızca sunucu: db (Drizzle şeması), auth (Better Auth), services
+drizzle/            SQL migration'ları
   styles/tokens.css light/dark design token'ları
 messages/tr.json    arayüz metinleri (next-intl)
 ```
@@ -38,5 +47,6 @@ Kurallar:
 - Para her yerde kuruş cinsinden tam sayıdır; ekrana `formatMoney` / `<Amount>` ile yazılır.
 - Animasyon süreleri ve eğrileri `src/lib/motion.ts` içinde; `prefers-reduced-motion` otomatik desteklenir.
 - Tüm metinler `messages/tr.json` içinde.
+- Oturum gereken sayfa ve action'lar kullanıcıyı `requireUser()` / `getSession()` ile sunucuda alır; `src/middleware.ts` yalnızca çerez yoksa erken yönlendirir.
 
 Tasarım sistemi önizlemesi: `/dev/components`.
