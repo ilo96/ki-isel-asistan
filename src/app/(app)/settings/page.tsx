@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { PageHeader } from "@/components/layout/page-header";
+import { DataSettings } from "@/features/settings/data-settings";
 import { NotificationSettings } from "@/features/settings/notification-settings";
 import { PushSettings } from "@/features/settings/push-settings";
 import { requireUser } from "@/server/auth";
@@ -19,6 +20,7 @@ export default async function SettingsPage() {
       <div className="space-y-4">
         <NotificationSettings initial={settings} />
         <PushSettings publicKey={pushPublicKey()} />
+        <DataSettings />
       </div>
     </>
   );

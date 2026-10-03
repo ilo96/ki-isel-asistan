@@ -27,6 +27,9 @@ const schema = z.object({
   VAPID_SUBJECT: z.string().min(1).default("mailto:destek@example.com"),
   /** Zamanlanmış bildirim işinin (cron) Authorization: Bearer değeri. */
   CRON_SECRET: z.string().min(16).optional(),
+  /** Paylaşılan hız sınırı sayacı (birden çok sunucu örneği için). */
+  UPSTASH_REDIS_REST_URL: z.string().url().optional(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
 });
 
 export type ServerEnv = z.infer<typeof schema>;

@@ -238,7 +238,10 @@
     "monthlyIncome": "Aylık gelir",
     "notSet": "Belirtilmedi",
     "signOutBody": "Bu cihazdaki oturumun kapanır.",
-    "settingsLink": "Bildirim ve hesap ayarları"
+    "settingsLink": "Bildirim ve hesap ayarları",
+    "memories": "Asistanın hatırladıkları",
+    "memoriesEmpty": "Asistana “Unutma: …” dediğin bilgiler burada görünür ve istediğinde silebilirsin.",
+    "forget": "Unut"
   },
   "quickAdd": {
     "title": "Hızlı ekle",
@@ -679,7 +682,18 @@
     "pushOn": "Bu cihazda açık",
     "pushDenied": "Tarayıcı izni kapalı; tarayıcı ayarlarından açabilirsin.",
     "pushUnsupported": "Bu tarayıcı anlık bildirimleri desteklemiyor.",
-    "pushNotConfigured": "Sunucuda anlık bildirim henüz yapılandırılmadı; uygulama içi bildirimler çalışıyor."
+    "pushNotConfigured": "Sunucuda anlık bildirim henüz yapılandırılmadı; uygulama içi bildirimler çalışıyor.",
+    "data": "Verilerin",
+    "dataBody": "Tüm kayıtlarını istediğin zaman indirebilirsin.",
+    "exportJson": "Tümünü indir (JSON)",
+    "exportCsv": "İşlemler (CSV)",
+    "deleteTitle": "Hesabı sil",
+    "deleteBody": "Hesabın ve tüm verilerin kalıcı olarak silinir. Bu işlem geri alınamaz.",
+    "deleteButton": "Hesabımı sil",
+    "deleteSheetBody": "İşlemlerin, bütçelerin, hatırlatıcıların ve asistan sohbetlerin kalıcı olarak silinecek.",
+    "deleteType": "Onaylamak için {word} yaz",
+    "deleteConfirm": "Kalıcı olarak sil",
+    "deleteError": "Onay kelimesi eşleşmedi."
   },
   "shortcuts": {
     "title": "Klavye kısayolları",

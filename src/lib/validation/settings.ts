@@ -24,3 +24,6 @@ export const DEFAULT_SETTINGS: SettingsInput = {
   quietEnd: "08:00",
   dailyLimit: 3,
 };
+
+/** Hesap silme, yanlışlıkla olmasın diye kullanıcının bu kelimeyi yazmasını ister. */
+export const DELETE_CONFIRM_WORD = "SİL";

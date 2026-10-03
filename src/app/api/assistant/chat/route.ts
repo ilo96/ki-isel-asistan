@@ -21,9 +21,11 @@ const bodySchema = z.object({
   text: z.string().trim().min(1).max(1000),
 });
 
-/** Plan: kullanıcı başına dakikada 10 mesaj. */
+/** Plan: kullanıcı başına dakikada 10 mesaj; ayrıca günlük kota (maliyet sınırı). */
 const LIMIT = 10;
 const WINDOW_MS = 60_000;
+const DAILY_LIMIT = 200;
+const DAY_MS = 24 * 60 * 60_000;
 
 const sse = (event: ChatEvent) => `data: ${JSON.stringify(event)}\n\n`;
 
@@ -38,9 +40,11 @@ export async function POST(request: Request) {
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return single({ type: "error", code: "invalid" }, 400);
 
-  if (!rateLimit(`chat:${session.user.id}`, LIMIT, WINDOW_MS).ok) {
-    return single({ type: "error", code: "rate_limited" }, 429);
-  }
+  const [minute, day] = await Promise.all([
+    rateLimit(`chat:${session.user.id}`, LIMIT, WINDOW_MS),
+    rateLimit(`chat-day:${session.user.id}`, DAILY_LIMIT, DAY_MS),
+  ]);
+  if (!minute.ok || !day.ok) return single({ type: "error", code: "rate_limited" }, 429);
 
   const user = {
     id: session.user.id,
