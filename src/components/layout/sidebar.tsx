@@ -2,9 +2,10 @@
 
 import { ArrowUp, Plus } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
+import { useState } from "react";
 import { AssistantOrb } from "@/components/assistant/assistant-orb";
 import { cn } from "@/lib/cn";
 import { spring } from "@/lib/motion";
@@ -18,7 +19,9 @@ import { useShell } from "./ui-store";
 export function Sidebar() {
   const t = useTranslations();
   const pathname = usePathname();
+  const router = useRouter();
   const { open } = useShell();
+  const [question, setQuestion] = useState("");
 
   return (
     <aside className="sticky top-0 hidden h-dvh w-[72px] shrink-0 flex-col border-r border-border bg-surface px-3 py-5 lg:flex xl:w-[248px] xl:px-4">
@@ -68,22 +71,38 @@ export function Sidebar() {
         </ul>
       </nav>
 
-      {/* Mini asistan kutusu (yalnızca tam sidebar) */}
-      <div className="mt-auto hidden xl:block">
-        <Link
-          href="/assistant"
-          className="group block rounded-card border border-border bg-bg p-4 transition-colors hover:border-accent/40"
-        >
-          <div className="mb-3 flex items-center gap-2.5">
-            <AssistantOrb size="sm" />
-            <span className="text-small text-text">{t("assistant.miniTitle")}</span>
-          </div>
-          <div className="flex items-center justify-between gap-2 rounded-input bg-surface px-3 py-2.5 text-small text-muted">
-            <span className="truncate">{t("assistant.miniPlaceholder")}</span>
-            <ArrowUp className="size-4 shrink-0 text-accent transition-transform group-hover:-translate-y-0.5" aria-hidden />
-          </div>
-        </Link>
-      </div>
+      {/* Mini asistan kutusu (yalnızca tam sidebar): yazılan soru sohbet ekranında açılır. */}
+      <form
+        className="mt-auto hidden rounded-card border border-border bg-bg p-4 transition-colors focus-within:border-accent/40 xl:block"
+        onSubmit={(e) => {
+          e.preventDefault();
+          const q = question.trim();
+          if (!q) return;
+          setQuestion("");
+          router.push(`/assistant?q=${encodeURIComponent(q)}`);
+        }}
+      >
+        <div className="mb-3 flex items-center gap-2.5">
+          <AssistantOrb size="sm" />
+          <span className="text-small text-text">{t("assistant.miniTitle")}</span>
+        </div>
+        <div className="flex items-center gap-2 rounded-input bg-surface py-1 pr-1 pl-3">
+          <input
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder={t("assistant.miniPlaceholder")}
+            aria-label={t("assistant.miniTitle")}
+            className="h-8 min-w-0 flex-1 bg-transparent text-small text-text outline-none placeholder:text-muted focus-visible:outline-none"
+          />
+          <button
+            type="submit"
+            aria-label={t("assistant.miniTitle")}
+            className="grid size-8 shrink-0 place-items-center rounded-full text-accent transition-colors hover:bg-accent-soft"
+          >
+            <ArrowUp className="size-4" aria-hidden />
+          </button>
+        </div>
+      </form>
     </aside>
   );
 }

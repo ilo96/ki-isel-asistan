@@ -17,6 +17,10 @@ const schema = z.object({
   APPLE_APP_BUNDLE_IDENTIFIER: z.string().min(1).optional(),
   RESEND_API_KEY: z.string().min(1).optional(),
   EMAIL_FROM: z.string().min(3).optional(),
+  /** Yoksa asistan çevrimdışı (kural tabanlı) motorla çalışır. */
+  ANTHROPIC_API_KEY: z.string().min(1).optional(),
+  AI_MODEL: z.string().min(1).default("claude-opus-5-5"),
+  AI_FAST_MODEL: z.string().min(1).default("claude-haiku-4-5"),
 });
 
 export type ServerEnv = z.infer<typeof schema>;

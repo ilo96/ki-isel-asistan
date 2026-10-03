@@ -5,6 +5,7 @@ import {
   date,
   index,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -278,6 +279,92 @@ export const tasks = pgTable(
   (t) => [index("tasks_user_due_idx").on(t.userId, t.completedAt, t.dueOn)],
 );
 
+/* -------------------------------------------------------------- Asistan */
+
+export const aiRole = pgEnum("ai_role", ["user", "assistant"]);
+export const aiActionStatus = pgEnum("ai_action_status", [
+  "proposed",
+  "executed",
+  "rejected",
+  "undone",
+  "expired",
+]);
+
+export const aiConversations = pgTable(
+  "ai_conversations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    lastMessageAt: timestamp("last_message_at", { withTimezone: true }).notNull().defaultNow(),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [index("ai_conversations_user_last_idx").on(t.userId, t.lastMessageAt.desc())],
+);
+
+/** parts: araç kartları ve onay istekleri; metin content'te durur. */
+export const aiMessages = pgTable(
+  "ai_messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    conversationId: uuid("conversation_id")
+      .notNull()
+      .references(() => aiConversations.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    role: aiRole("role").notNull(),
+    content: text("content").notNull(),
+    parts: jsonb("parts").$type<unknown[]>().notNull().default([]),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("ai_messages_conversation_idx").on(t.conversationId, t.createdAt)],
+);
+
+/**
+ * Asistanın yaptığı ya da önerdiği her yazma işlemi. Önerilenler 15 dakika içinde
+ * onaylanmazsa süresi dolar; yapılanlar undo bilgisiyle geri alınabilir.
+ */
+export const aiActions = pgTable(
+  "ai_actions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    conversationId: uuid("conversation_id").references(() => aiConversations.id, {
+      onDelete: "set null",
+    }),
+    tool: text("tool").notNull(),
+    input: jsonb("input").notNull(),
+    status: aiActionStatus("status").notNull(),
+    result: jsonb("result"),
+    undo: jsonb("undo"),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    executedAt: timestamp("executed_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [index("ai_actions_user_status_idx").on(t.userId, t.status)],
+);
+
+/** Kullanıcının "bunu unutma" dediği kısa bilgiler; sistem istemine eklenir. */
+export const userMemories = pgTable(
+  "user_memories",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    content: text("content").notNull(),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (t) => [index("user_memories_user_idx").on(t.userId)],
+);
+
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
@@ -290,3 +377,6 @@ export type Category = typeof categories.$inferSelect;
 export type Transaction = typeof transactions.$inferSelect;
 export type Reminder = typeof reminders.$inferSelect;
 export type Task = typeof tasks.$inferSelect;
+export type AiConversation = typeof aiConversations.$inferSelect;
+export type AiMessage = typeof aiMessages.$inferSelect;
+export type AiAction = typeof aiActions.$inferSelect;

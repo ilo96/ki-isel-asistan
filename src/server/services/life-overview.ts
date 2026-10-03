@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, gte, isNotNull, isNull, lt, or } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, isNotNull, isNull, lt, or } from "drizzle-orm";
 import { addDays, dayIn, zonedDateTime } from "@/lib/dates";
 import type { LifeItem } from "@/lib/life/types";
 import type { LifeTab } from "@/lib/validation/life";
@@ -139,4 +139,46 @@ export async function getLifeCounts(
     getLifeItems(db, user, "upcoming", now),
   ]);
   return { today: today.length, upcoming: upcoming.length };
+}
+
+/** Komut paleti araması: başlıkta geçen açık hatırlatıcı ve görevler. */
+export async function searchLife(
+  db: Db,
+  user: { id: string; timezone: string },
+  q: string,
+  now = new Date(),
+  limit = 5,
+): Promise<LifeItem[]> {
+  const pattern = `%${q.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+  const today = dayIn(now, user.timezone);
+  const [r, t] = await Promise.all([
+    db
+      .select()
+      .from(reminders)
+      .where(
+        and(
+          eq(reminders.userId, user.id),
+          isNull(reminders.deletedAt),
+          isNull(reminders.completedAt),
+          ilike(reminders.title, pattern),
+        ),
+      )
+      .orderBy(asc(reminders.dueAt))
+      .limit(limit),
+    db
+      .select()
+      .from(tasks)
+      .where(
+        and(
+          eq(tasks.userId, user.id),
+          isNull(tasks.deletedAt),
+          isNull(tasks.completedAt),
+          ilike(tasks.title, pattern),
+        ),
+      )
+      .limit(limit),
+  ]);
+  return [...r.map((x) => toLifeItem(x, user.timezone, now)), ...t.map((x) => taskToLifeItem(x, today))]
+    .sort(sortOpen)
+    .slice(0, limit);
 }

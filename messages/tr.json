@@ -104,7 +104,11 @@
       "clear": "Finans verilerimi temizle",
       "devOnly": "Yalnızca geliştirme ortamında görünür.",
       "failed": "İşlem yapılamadı."
-    }
+    },
+    "askChips": [
+      "Bu ay ne kadar harcadım?",
+      "Bütçem nasıl gidiyor?"
+    ]
   },
   "finance": {
     "title": "Finans",
@@ -187,11 +191,40 @@
     "emptyBody": "Harcamalarını sorabilir, gider ekletebilir ya da hatırlatıcı kurdurabilirsin.",
     "suggestions": [
       "Bu ay ne kadar harcadım?",
-      "Kira ödemem 25.000 TL, gider olarak ekle",
-      "Yarın 10'da faturayı hatırlat"
+      "Bugün 350 TL yemek harcadım",
+      "Her ayın 5'inde kira hatırlat 25.000 TL"
     ],
     "inputPlaceholder": "Asistana yaz…",
-    "comingSoon": "Sohbet çok yakında burada."
+    "send": "Gönder",
+    "stop": "Durdur",
+    "thinking": "Düşünüyorum…",
+    "suggestionsLabel": "Önerilen sorular",
+    "offlineNote": "Çevrimdışı mod: asistan temel komutları kendi kurallarıyla anlıyor.",
+    "aiNote": "Asistan hata yapabilir; önemli işlemlerden önce onayını ister.",
+    "history": "Geçmiş sohbetler",
+    "historyEmpty": "Henüz bir sohbet yok.",
+    "newChat": "Yeni sohbet",
+    "deleteChat": "Sohbeti sil",
+    "close": "Kapat",
+    "confirm": "Onayla",
+    "reject": "Vazgeç",
+    "undo": "Geri al",
+    "open": "Aç",
+    "undone": "Geri alındı",
+    "states": {
+      "proposed": "Onayın bekleniyor",
+      "executed": "Yapıldı",
+      "rejected": "Vazgeçildi",
+      "undone": "Geri alındı",
+      "expired": "Süresi doldu",
+      "failed": "Yapılamadı"
+    },
+    "errors": {
+      "rateLimited": "Biraz hızlı gittik; bir dakika sonra tekrar dener misin?",
+      "unauthorized": "Oturumun kapanmış görünüyor, yeniden giriş yap.",
+      "unknown": "Bir sorun oldu, tekrar dener misin?",
+      "expired": "Bu önerinin süresi doldu; istersen yeniden iste."
+    }
   },
   "profile": {
     "title": "Profil",
@@ -307,11 +340,14 @@
   },
   "command": {
     "title": "Komut paleti",
-    "placeholder": "Bir sayfa ya da komut ara…",
+    "placeholder": "Ara, git ya da asistana sor…",
     "empty": "Sonuç yok",
     "navigate": "Git",
     "actions": "Komutlar",
-    "toggleTheme": "Temayı değiştir"
+    "toggleTheme": "Temayı değiştir",
+    "assistant": "Asistan",
+    "ask": "Asistana sor: “{query}”",
+    "records": "Kayıtlar"
   },
   "state": {
     "errorTitle": "Bir şeyler ters gitti",

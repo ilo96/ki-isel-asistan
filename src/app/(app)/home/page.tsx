@@ -26,6 +26,7 @@ export default async function HomePage() {
       <section className="space-y-4 pt-2">
         <Greeting name={firstName} />
         <AssistantSummary
+          userId={user.id}
           insights={buildInsights(data)}
           isEmpty={data.isEmpty}
           currency={currency}
