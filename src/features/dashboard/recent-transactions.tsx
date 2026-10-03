@@ -2,12 +2,11 @@ import { ReceiptText } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { QuickAddButton } from "@/components/layout/quick-add-button";
-import { Amount } from "@/components/ui/amount";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { CurrencyCode } from "@/lib/money";
+import { TransactionRow } from "@/features/finance/transaction-row";
 import type { RecentTransaction } from "@/server/services/dashboard";
-import { CategoryIcon } from "./category-icon";
 import { dayLabel, noonOf } from "./day-label";
 
 type Props = { items: RecentTransaction[]; currency: CurrencyCode };
@@ -20,7 +19,7 @@ export async function RecentTransactions({ items, currency }: Props) {
       <CardHeader>
         <CardTitle>{t("recent")}</CardTitle>
         {items.length > 0 && (
-          <Link href="/finance" className="text-small text-accent hover:underline">
+          <Link href="/finance/transactions" className="text-small text-accent hover:underline">
             {t("seeAll")}
           </Link>
         )}
@@ -35,21 +34,12 @@ export async function RecentTransactions({ items, currency }: Props) {
         />
       ) : (
         <ul className="-mx-2">
-          {items.map((tx) => (
-            <li key={tx.id} className="flex min-h-14 items-center gap-3 rounded-input px-2 py-2">
-              <CategoryIcon icon={tx.category.icon} colorToken={tx.category.colorToken} />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-body text-text">{tx.description}</p>
-                <p className="truncate text-small text-muted">
-                  {tx.category.name} ·{" "}
-                  {dayLabel(t, tx.daysAgo, noonOf(tx.occurredOn), "UTC", { past: true })}
-                </p>
-              </div>
-              <Amount
-                minor={tx.amountMinor}
+          {items.map(({ daysAgo, ...tx }) => (
+            <li key={tx.id}>
+              <TransactionRow
+                item={tx}
                 currency={currency}
-                kind={tx.type}
-                className="text-body"
+                meta={dayLabel(t, daysAgo, noonOf(tx.occurredOn), "UTC", { past: true })}
               />
             </li>
           ))}

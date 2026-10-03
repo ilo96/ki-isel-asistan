@@ -27,6 +27,19 @@ export const CATEGORY_ICONS = [
   "briefcase",
   "circle-plus",
   "ellipsis",
+  // Kullanıcının kendi kategorileri için ek seçenekler
+  "car",
+  "plane",
+  "coffee",
+  "gift",
+  "graduation-cap",
+  "dumbbell",
+  "paw-print",
+  "baby",
+  "shirt",
+  "smartphone",
+  "wifi",
+  "piggy-bank",
 ] as const;
 export type CategoryIcon = (typeof CATEGORY_ICONS)[number];
 

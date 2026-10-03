@@ -1,4 +1,5 @@
 import type { DateString } from "@/lib/dates";
+import type { TransactionItem } from "@/lib/finance/types";
 
 export type UpcomingItem = {
   id: string;
@@ -12,15 +13,7 @@ export type UpcomingItem = {
   overdue: boolean;
 };
 
-export type RecentTransaction = {
-  id: string;
-  type: "income" | "expense";
-  amountMinor: number;
-  description: string;
-  occurredOn: DateString;
-  daysAgo: number;
-  category: { name: string; icon: string; colorToken: string };
-};
+export type RecentTransaction = TransactionItem & { daysAgo: number };
 
 export type DashboardData = {
   today: DateString;

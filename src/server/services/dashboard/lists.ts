@@ -1,7 +1,8 @@
-import { and, asc, desc, eq, gte, isNull, lt, lte } from "drizzle-orm";
+import { and, asc, eq, gte, isNull, lt } from "drizzle-orm";
 import { dayIn, daysBetween } from "@/lib/dates";
-import { budgets, categories, reminders, transactions } from "@/server/db/schema";
-import { alive, type Context } from "./context";
+import { budgets, reminders } from "@/server/db/schema";
+import { listTransactions } from "../transactions";
+import type { Context } from "./context";
 import type { RecentTransaction, UpcomingItem } from "./types";
 
 export const UPCOMING_DAYS = 14;
@@ -50,32 +51,14 @@ export async function upcomingItems({ db, userId, today }: Context, now: Date, t
   );
 }
 
+/** Son beş işlem; ileri tarihli (planlanmış) işlemler bugüne gelene kadar burada görünmez. */
 export async function recentTransactions({
   db,
   userId,
   today,
 }: Context): Promise<RecentTransaction[]> {
-  const rows = await db
-    .select({
-      id: transactions.id,
-      type: transactions.type,
-      amountMinor: transactions.amountMinor,
-      description: transactions.description,
-      occurredOn: transactions.occurredOn,
-      name: categories.name,
-      icon: categories.icon,
-      colorToken: categories.colorToken,
-    })
-    .from(transactions)
-    .innerJoin(categories, eq(categories.id, transactions.categoryId))
-    .where(and(alive(userId), lte(transactions.occurredOn, today)))
-    .orderBy(desc(transactions.occurredOn), desc(transactions.createdAt))
-    .limit(LIST_LIMIT);
-  return rows.map(({ name, icon, colorToken, ...t }) => ({
-    ...t,
-    daysAgo: daysBetween(t.occurredOn, today),
-    category: { name, icon, colorToken },
-  }));
+  const { items } = await listTransactions(db, userId, { end: today, limit: LIST_LIMIT });
+  return items.map((t) => ({ ...t, daysAgo: daysBetween(t.occurredOn, today) }));
 }
 
 export async function hasRemindersOrBudgets({ db, userId }: Context) {

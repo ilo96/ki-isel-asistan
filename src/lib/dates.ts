@@ -76,3 +76,25 @@ export function previousMonthToDate(value: DateString): { start: DateString; end
 export function monthBounds(date: Date, timeZone: string): { start: DateString; end: DateString } {
   return monthOf(dayIn(date, timeZone));
 }
+
+/** "2026-10" biçimindeki ay anahtarı. Finans ekranında URL'de taşınır (?month=2026-10). */
+export type MonthKey = string;
+
+export function monthKeyOf(value: DateString): MonthKey {
+  return value.slice(0, 7);
+}
+
+/** Geçerli bir ay anahtarıysa ayın sınırlarını, değilse null döner. */
+export function parseMonthKey(key: string | null | undefined) {
+  if (!key || !/^\d{4}-(0[1-9]|1[0-2])$/.test(key)) return null;
+  const year = Number(key.slice(0, 4));
+  if (year < 2000 || year > 2100) return null;
+  return monthOf(`${key}-01`);
+}
+
+/** Ay anahtarını ileri/geri kaydırır: shiftMonth("2026-01", -1) → "2025-12". */
+export function shiftMonth(key: MonthKey, delta: number): MonthKey {
+  const { year, month } = parse(`${key}-01`);
+  const d = new Date(Date.UTC(year, month - 1 + delta, 1));
+  return toDateString(d.getUTCFullYear(), d.getUTCMonth() + 1, 1).slice(0, 7);
+}

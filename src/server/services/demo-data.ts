@@ -13,7 +13,7 @@ import { ensureDefaultCategories } from "./categories";
 
 /*
  * Yalnızca geliştirme: dashboard'u dolu haliyle görmek için örnek veri.
- * İşlem ekleme ekranı Faz 4'te gelene kadar tek veri kaynağı budur.
+ * Boş bir hesapta ekranları hızlıca dolu görmek için.
  */
 
 type Expense = [systemKey: string, description: string, lira: number, daysAgo: number];
