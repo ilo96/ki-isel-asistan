@@ -1,0 +1,113 @@
+{
+  "app": {
+    "name": "Asistan",
+    "tagline": "Kişisel asistanın"
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "finance": "Finans",
+    "assistant": "Asistan",
+    "tasks": "Görevler",
+    "profile": "Profil",
+    "settings": "Ayarlar",
+    "notifications": "Bildirimler",
+    "main": "Ana menü",
+    "quickAdd": "Hızlı ekle",
+    "search": "Ara veya komut yaz",
+    "skipToContent": "İçeriğe geç"
+  },
+  "greeting": {
+    "morning": "Günaydın",
+    "afternoon": "İyi günler",
+    "evening": "İyi akşamlar",
+    "night": "İyi geceler"
+  },
+  "theme": {
+    "label": "Tema",
+    "system": "Sistem",
+    "light": "Açık",
+    "dark": "Koyu"
+  },
+  "assistant": {
+    "miniTitle": "Asistana sor",
+    "miniPlaceholder": "Bu ay ne kadar harcadım?",
+    "idle": "Buradayım",
+    "thinking": "Verilerine bakıyorum…"
+  },
+  "home": {
+    "summaryEmpty": "Henüz bir şey kaydetmedin. İlk gelirini ya da giderini eklediğinde sana her gün kısa bir özet çıkaracağım.",
+    "balance": "Toplam bakiye",
+    "income": "Bu ayki gelir",
+    "expense": "Bu ayki gider",
+    "budgetLeft": "Kalan bütçe",
+    "upcoming": "Yaklaşanlar",
+    "upcomingEmptyTitle": "Yaklaşan ödeme yok",
+    "upcomingEmptyBody": "Faturalarını ve hatırlatıcılarını eklediğinde burada tarih sırasıyla görünecek.",
+    "addReminder": "Hatırlatıcı ekle",
+    "orSay": "Ya da yaz: “Her ayın 5'inde kirayı hatırlat”",
+    "noBudget": "Bütçe belirlenmedi",
+    "summaryLabel": "Asistanın özeti",
+    "hello": "Merhaba"
+  },
+  "finance": {
+    "title": "Finans",
+    "subtitle": "Gelirin, giderin ve bütçen tek yerde",
+    "emptyTitle": "Henüz işlem yok",
+    "emptyBody": "İlk giderini ekle, harcamalarını anlamaya başlayalım.",
+    "addExpense": "Gider ekle",
+    "orSay": "Ya da yaz: “Bugün 350 TL yemek harcadım”"
+  },
+  "assistantPage": {
+    "title": "Asistan",
+    "subtitle": "Sor, ekle, hatırlat",
+    "emptyTitle": "Neyle başlayalım?",
+    "emptyBody": "Harcamalarını sorabilir, gider ekletebilir ya da hatırlatıcı kurdurabilirsin.",
+    "suggestions": [
+      "Bu ay ne kadar harcadım?",
+      "Kira ödemem 25.000 TL, gider olarak ekle",
+      "Yarın 10'da faturayı hatırlat"
+    ],
+    "inputPlaceholder": "Asistana yaz…",
+    "comingSoon": "Sohbet çok yakında burada."
+  },
+  "tasks": {
+    "title": "Görevler",
+    "subtitle": "Hatırlatıcılar ve yapılacaklar",
+    "today": "Bugün",
+    "upcoming": "Yaklaşan",
+    "done": "Tamamlanan",
+    "emptyTitle": "Bugün için bir şey yok",
+    "emptyBody": "Bir hatırlatıcı ya da görev ekle, zamanı gelince sana haber vereyim.",
+    "add": "Görev ekle"
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Tercihlerin ve hedeflerin",
+    "appearance": "Görünüm",
+    "appearanceBody": "Uygulamanın temasını seç. Sistem, cihazının ayarını izler.",
+    "componentsLink": "Tasarım sistemi önizlemesi"
+  },
+  "quickAdd": {
+    "title": "Hızlı ekle",
+    "description": "Ne eklemek istiyorsun?",
+    "expense": "Gider",
+    "income": "Gelir",
+    "reminder": "Hatırlatıcı",
+    "task": "Görev",
+    "comingSoon": "Ekleme formu bir sonraki aşamada burada olacak.",
+    "close": "Kapat"
+  },
+  "command": {
+    "title": "Komut paleti",
+    "placeholder": "Bir sayfa ya da komut ara…",
+    "empty": "Sonuç yok",
+    "navigate": "Git",
+    "actions": "Komutlar",
+    "toggleTheme": "Temayı değiştir"
+  },
+  "state": {
+    "errorTitle": "Bir şeyler ters gitti",
+    "errorBody": "Bu bölümü şu an yükleyemedik.",
+    "retry": "Tekrar dene"
+  }
+}

@@ -1,0 +1,74 @@
+/*
+ * Design token'ları. Componentler asla hex kullanmaz; yalnızca bu değişkenleri
+ * (Tailwind üzerinden bg-surface, text-muted gibi) kullanır.
+ *
+ * Light finans renkleri plandakilerden bir ton koyu: plandaki #17915A, #D93A3F
+ * ve #C97A06 sayfa zemininde WCAG AA (4,5:1) eşiğinin altında kalıyordu.
+ */
+
+:root {
+  --bg: #f7f8fb;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-muted: #eff1f6;
+  --border: #e6e8ef;
+  --text: #0f1220;
+  --text-muted: #5d6478;
+
+  --accent: #5b4bdb;
+  --accent-strong: #5b4bdb;
+  --accent-soft: #ecebfd;
+  --on-accent: #ffffff;
+
+  --positive: #12804f;
+  --positive-soft: #e5f5ed;
+  --negative: #c9323a;
+  --negative-soft: #fcebec;
+  --warning: #a05e04;
+  --warning-soft: #fdf3e2;
+
+  --ai-1: #6d5df6;
+  --ai-2: #a26bf5;
+  --ai-3: #5ec8f2;
+
+  --skeleton-base: #eceef3;
+  --skeleton-shine: #f7f8fb;
+
+  /* İki katmanlı, çok yumuşak gölge */
+  --elevation-1: 0 1px 2px rgb(15 18 32 / 0.04), 0 4px 16px -4px rgb(15 18 32 / 0.06);
+  --elevation-2: 0 2px 6px rgb(15 18 32 / 0.06), 0 16px 40px -8px rgb(15 18 32 / 0.14);
+}
+
+.dark {
+  --bg: #0b0d12;
+  --surface: #12151c;
+  --surface-raised: #181c25;
+  --surface-muted: #1b1f29;
+  --border: #232733;
+  --text: #f5f7fa;
+  --text-muted: #8b93a7;
+
+  --accent: #7c6cf6;
+  /* Beyaz yazıyla 4,5:1 için buton zemini bir ton koyu */
+  --accent-strong: #6d5df6;
+  --accent-soft: #221f3d;
+  --on-accent: #ffffff;
+
+  --positive: #3dd68c;
+  --positive-soft: #10261c;
+  --negative: #f2666a;
+  --negative-soft: #2b1418;
+  --warning: #f5a524;
+  --warning-soft: #2a1f0c;
+
+  --ai-1: rgb(109 93 246 / 0.8);
+  --ai-2: rgb(162 107 245 / 0.8);
+  --ai-3: rgb(94 200 242 / 0.8);
+
+  --skeleton-base: #181c25;
+  --skeleton-shine: #222734;
+
+  /* Dark modda gölge yok: yükseklik açık yüzey + üst kenarda %6 beyaz çizgi */
+  --elevation-1: inset 0 1px 0 rgb(255 255 255 / 0.06);
+  --elevation-2: inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
