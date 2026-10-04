@@ -9,7 +9,10 @@ import { useAuthErrorMessage } from "./use-auth-error";
 
 export type SocialProviders = { google: boolean; apple: boolean };
 
-/** Yalnızca anahtarı tanımlı sağlayıcılar gösterilir; hiçbiri yoksa bileşen hiçbir şey çizmez. */
+/**
+ * Yalnızca anahtarı tanımlı sağlayıcılar gösterilir; hiçbiri yoksa bileşen hiçbir şey çizmez.
+ * Giriş ve kayıt aynı düğmeyi kullanır: hesabı yoksa sağlayıcı dönüşünde açılır ve onboarding'e gidilir.
+ */
 export function SocialButtons({ providers }: { providers: SocialProviders }) {
   const t = useTranslations("auth");
   const toMessage = useAuthErrorMessage();
@@ -36,6 +39,21 @@ export function SocialButtons({ providers }: { providers: SocialProviders }) {
 
   return (
     <div className="space-y-3">
+      {providers.apple && (
+        <Button
+          variant="secondary"
+          // Apple kuralı: açık temada siyah, koyu temada beyaz düğme.
+          className="border-transparent bg-black text-white hover:bg-black/85 dark:bg-white dark:text-black dark:hover:bg-white/90"
+          size="lg"
+          block
+          loading={pending === "apple"}
+          disabled={pending !== null}
+          onClick={() => signIn("apple")}
+        >
+          {pending !== "apple" && <AppleIcon />}
+          {t("apple")}
+        </Button>
+      )}
       {providers.google && (
         <Button
           variant="secondary"
@@ -47,19 +65,6 @@ export function SocialButtons({ providers }: { providers: SocialProviders }) {
         >
           {pending !== "google" && <GoogleIcon />}
           {t("google")}
-        </Button>
-      )}
-      {providers.apple && (
-        <Button
-          variant="secondary"
-          size="lg"
-          block
-          loading={pending === "apple"}
-          disabled={pending !== null}
-          onClick={() => signIn("apple")}
-        >
-          {pending !== "apple" && <AppleIcon />}
-          {t("apple")}
         </Button>
       )}
       {error && (

@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
+import { APP_DESCRIPTION, APP_FULL_NAME, APP_NAME } from "@/config/brand";
 
 /** PWA: ana ekrana eklenince tam ekran açılır, kısayollar uzun basınca görünür. */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Asistan: kişisel finans ve gün asistanı",
-    short_name: "Asistan",
-    description: "Gelirini, giderini ve gününü senin yerine takip eden kişisel AI asistanın.",
+    name: APP_FULL_NAME,
+    short_name: APP_NAME,
+    description: APP_DESCRIPTION,
     lang: "tr",
     start_url: "/home",
     scope: "/",
@@ -19,9 +20,21 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: "/icons/maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
     shortcuts: [
-      { name: "Asistana sor", url: "/assistant", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
-      { name: "Görevler", url: "/tasks", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
-      { name: "Finans", url: "/finance", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
+      {
+        name: "Asistana sor",
+        url: "/assistant",
+        icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }],
+      },
+      {
+        name: "Görevler",
+        url: "/tasks",
+        icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }],
+      },
+      {
+        name: "Finans",
+        url: "/finance",
+        icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }],
+      },
     ],
   };
 }

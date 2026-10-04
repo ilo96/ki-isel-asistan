@@ -1,4 +1,5 @@
 import "server-only";
+import { APP_NAME } from "@/config/brand";
 import { env } from "@/server/env";
 
 type Email = { to: string; subject: string; text: string };
@@ -17,7 +18,7 @@ export async function sendEmail({ to, subject, text }: Email): Promise<void> {
     method: "POST",
     headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      from: EMAIL_FROM ?? "Asistan <onboarding@resend.dev>",
+      from: EMAIL_FROM ?? `${APP_NAME} <onboarding@resend.dev>`,
       to,
       subject,
       text,

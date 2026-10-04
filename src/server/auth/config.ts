@@ -1,6 +1,7 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
+import { APP_NAME } from "@/config/brand";
 import type { Db } from "@/server/db/client";
 import * as schema from "@/server/db/schema";
 import { PASSWORD_MIN } from "@/lib/validation/auth";
@@ -27,7 +28,7 @@ export function createAuth(deps: AuthDeps) {
   if (deps.apple) socialProviders.apple = deps.apple;
 
   return betterAuth({
-    appName: "Asistan",
+    appName: APP_NAME,
     secret: deps.secret,
     baseURL: deps.baseURL,
     trustedOrigins: deps.apple ? [deps.baseURL, "https://appleid.apple.com"] : [deps.baseURL],

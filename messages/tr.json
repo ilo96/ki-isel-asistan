@@ -1,6 +1,5 @@
 {
   "app": {
-    "name": "Asistan",
     "tagline": "Kişisel asistanın"
   },
   "nav": {
@@ -106,10 +105,7 @@
       "devOnly": "Yalnızca geliştirme ortamında görünür.",
       "failed": "İşlem yapılamadı."
     },
-    "askChips": [
-      "Bu ay ne kadar harcadım?",
-      "Bütçem nasıl gidiyor?"
-    ]
+    "askChips": ["Bu ay ne kadar harcadım?", "Bütçem nasıl gidiyor?"]
   },
   "finance": {
     "title": "Finans",
