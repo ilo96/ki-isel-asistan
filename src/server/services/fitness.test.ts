@@ -93,6 +93,13 @@ describe("ölçüm ve VKİ", () => {
     expect(h.thisMonth).toEqual({ fromDate: "2026-09-28", deltaG: -1_200 });
     expect(h.total).toEqual({ fromDate: "2026-08-25", deltaG: -3_000 });
   });
+
+  it("ayın 1'inde ölçüm yapılınca bu ayın değişimi önceki ölçüme göre hesaplanır", async () => {
+    await measure({ weightKg: 81.2 }, "2026-09-28");
+    await measure({ weightKg: 80 }, "2026-10-01");
+    const h = await weightHistory(db, "u1", "2026-10-01");
+    expect(h.thisMonth).toEqual({ fromDate: "2026-09-28", deltaG: -1_200 });
+  });
 });
 
 describe("aktiviteler", () => {

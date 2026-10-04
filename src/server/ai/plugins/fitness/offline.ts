@@ -234,7 +234,8 @@ export function parseFitness(text: string, today: DateString): FitnessIntent | n
   const activity = findActivity(n);
   const duration = findDuration(n);
   const logWorkout =
-    /\b(sporumu|antrenmanimi|egzersizimi|aktivitemi|idmanimi)\b.*\b(kaydet|ekle|gir|yaz)/.test(n);
+    /\b(sporumu|antrenmanimi|egzersizimi|aktivitemi|idmanimi)\b.*\b(kaydet|ekle|gir|yaz)/.test(n) ||
+    /\b(spor|antrenman|egzersiz|idman)\w*\s+(yaptim|ettim)\b/.test(n);
   if (
     logWorkout ||
     (activity &&

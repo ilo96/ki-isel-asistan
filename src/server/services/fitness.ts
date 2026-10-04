@@ -508,7 +508,8 @@ export async function weightHistory(
   const since = (from: DateString) => {
     if (!latest) return null;
     // Aralığın başındaki ölçüm: başlangıçtan önceki son kayıt, yoksa aralıktaki ilk kayıt.
-    const before = [...all].reverse().find((w) => w.date <= from);
+    // Son ölçüm tam başlangıç günündeyse (ör. ayın 1'i) kendisiyle değil bir öncekiyle karşılaştırılır.
+    const before = [...all].reverse().find((w) => w.date <= from && w.date !== latest.date);
     const base = before ?? all.find((w) => w.date > from && w.date < latest.date);
     if (!base || base.date === latest.date) return null;
     return { fromDate: base.date, deltaG: latest.weightG - base.weightG };

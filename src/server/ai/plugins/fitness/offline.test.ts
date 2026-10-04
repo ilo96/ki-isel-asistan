@@ -51,6 +51,9 @@ describe("parseFitness", () => {
       type: null,
       durationMin: null,
     });
+    expect(p("Spor yaptım")).toMatchObject({ kind: "workout", type: null, durationMin: null });
+    expect(p("45 dakika antrenman yaptım")).toMatchObject({ kind: "workout", type: null, durationMin: 45 });
+    expect(p("Bu hafta kaç gün spor yaptım?")).toMatchObject({ kind: "workout_summary" });
     expect(p("yüzdüm")).toMatchObject({ kind: "workout", type: "swimming", durationMin: null });
   });
 
