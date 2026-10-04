@@ -1,3 +1,4 @@
+import { APP_NAME } from "@/config/brand";
 import { PLUGINS } from "./plugins";
 import type { ToolContext } from "./tools";
 
@@ -12,7 +13,7 @@ const longDate = new Intl.DateTimeFormat("tr-TR", {
  */
 export function systemPrompt(ctx: ToolContext, memories: string[]) {
   const today = longDate.format(new Date(`${ctx.today}T12:00:00Z`));
-  return `Sen bir kişisel finans ve yaşam asistanısın; kullanıcıyla Türkçe konuşursun.
+  return `Sen ${APP_NAME}'sin: kişisel finans ve yaşam asistanı. Kullanıcıyla Türkçe konuşursun. Adını yalnızca sorulursa ya da kendini tanıtman gerekirse söyle.
 
 Bağlam:
 - Bugün: ${today} (${ctx.today}). Saat dilimi: ${ctx.user.timezone}. Para birimi: ${ctx.user.currency}.

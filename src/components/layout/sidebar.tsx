@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { AssistantOrb } from "@/components/assistant/assistant-orb";
+import { BrandMark } from "@/components/brand/brand-mark";
 import { cn } from "@/lib/cn";
 import type { ModuleKey } from "@/lib/modules";
 import { spring } from "@/lib/motion";
@@ -28,8 +29,8 @@ export function Sidebar({ modules }: { modules: readonly ModuleKey[] }) {
   return (
     <aside className="sticky top-0 hidden h-dvh w-[72px] shrink-0 flex-col border-r border-border bg-surface px-3 py-5 lg:flex xl:w-[248px] xl:px-4">
       <Link href="/home" className="mb-8 flex items-center gap-3 px-1.5 xl:px-2">
-        <AssistantOrb size="sm" />
-        <span className="hidden text-h2 tracking-tight xl:inline">{t("app.name")}</span>
+        <BrandMark size="sm" />
+        <span className="hidden text-h2 font-semibold tracking-[-0.03em] xl:inline">{t("app.name")}</span>
       </Link>
 
       <button

@@ -2,7 +2,7 @@ import { Bot, Camera, Flame, Mic, Plus } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { AssistantOrb } from "@/components/assistant/assistant-orb";
+import { BrandLogo } from "@/components/brand/brand-mark";
 import { Amount } from "@/components/ui/amount";
 import { APP_NAME } from "@/config/brand";
 import { cn } from "@/lib/cn";
@@ -50,8 +50,7 @@ export default async function WidgetPage() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-4 bg-bg px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]">
       <header className="flex items-center gap-2.5 pt-2">
-        <AssistantOrb size="sm" />
-        <span className="text-body font-semibold text-text">{APP_NAME}</span>
+        <BrandLogo name={APP_NAME} nameClassName="text-body" />
         {streak.current > 0 && (
           <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-warning-soft px-2.5 py-1 text-caption text-warning">
             <Flame className="size-3.5" aria-hidden />
