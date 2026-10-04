@@ -1,17 +1,10 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { BMI_BANDS, BMI_SCALE, bmiPosition, type BmiCategory } from "@/lib/fitness/bmi";
+import { BMI_BANDS, BMI_SCALE, bmiPosition } from "@/lib/fitness/bmi";
 import { cn } from "@/lib/cn";
 import { duration, ease } from "@/lib/motion";
-
-/** Kategori renkleri: mavi, yeşil, turuncu, kırmızı. Renk tek başına anlam taşımaz; metin hep yanında. */
-export const BMI_TONE: Record<BmiCategory, { bar: string; text: string; soft: string }> = {
-  underweight: { bar: "bg-cat-4", text: "text-cat-4", soft: "bg-cat-4/12" },
-  normal: { bar: "bg-positive", text: "text-positive", soft: "bg-positive-soft" },
-  overweight: { bar: "bg-warning", text: "text-warning", soft: "bg-warning-soft" },
-  obese: { bar: "bg-negative", text: "text-negative", soft: "bg-negative-soft" },
-};
+import { BMI_TONE } from "./bmi-tone";
 
 const span = BMI_SCALE.max - BMI_SCALE.min;
 const width = (from: number, to: number) =>

@@ -13,7 +13,11 @@ const schema = z.object({
   GOOGLE_CLIENT_ID: z.string().min(1).optional(),
   GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
   APPLE_CLIENT_ID: z.string().min(1).optional(),
+  /** Ya hazır JWT (6 ayda bir yenilenmeli) ya da aşağıdaki üçlü verilir; üçlü verilirse JWT kendiliğinden üretilir. */
   APPLE_CLIENT_SECRET: z.string().min(1).optional(),
+  APPLE_TEAM_ID: z.string().min(1).optional(),
+  APPLE_KEY_ID: z.string().min(1).optional(),
+  APPLE_PRIVATE_KEY: z.string().min(1).optional(),
   APPLE_APP_BUNDLE_IDENTIFIER: z.string().min(1).optional(),
   RESEND_API_KEY: z.string().min(1).optional(),
   EMAIL_FROM: z.string().min(3).optional(),

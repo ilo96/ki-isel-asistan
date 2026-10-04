@@ -43,7 +43,8 @@ import {
   restoreGoalAction,
   restoreWeightAction,
 } from "./actions";
-import { BmiGauge, BMI_TONE } from "./bmi-gauge";
+import { BmiGauge } from "./bmi-gauge";
+import { BMI_TONE } from "./bmi-tone";
 import { ActivityChart, WeightChart } from "./charts";
 import { relativeDay, shortDate } from "./format";
 import { GoalSheet } from "./goal-sheet";

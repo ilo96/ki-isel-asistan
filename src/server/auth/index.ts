@@ -4,29 +4,61 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import { getDb } from "@/server/db";
 import { sendEmail } from "@/server/email";
-import { env, isProduction } from "@/server/env";
+import { env, isProduction, type ServerEnv } from "@/server/env";
+import { createAppleClientSecret } from "./apple-secret";
 import { createAuth, type Auth, type Session } from "./config";
 
 export type { Session } from "./config";
 
 const DEV_SECRET = "dev-only-secret-change-me-dev-only-secret";
 
-const globalForAuth = globalThis as unknown as { authPromise?: Promise<Auth> };
+const globalForAuth = globalThis as unknown as {
+  authPromise?: Promise<Auth>;
+  authBuiltAt?: number;
+};
+
+/** Kendi ürettiğimiz Apple JWT'si süresi dolmadan yenilensin diye auth ara ara yeniden kurulur. */
+const REBUILD_AFTER_MS = 1000 * 60 * 60 * 24 * 30;
 
 export function getAuth(): Promise<Auth> {
-  globalForAuth.authPromise ??= build().catch((error: unknown) => {
+  if (globalForAuth.authBuiltAt && Date.now() - globalForAuth.authBuiltAt > REBUILD_AFTER_MS) {
     globalForAuth.authPromise = undefined;
-    throw error;
-  });
+  }
+  if (!globalForAuth.authPromise) {
+    globalForAuth.authBuiltAt = Date.now();
+    globalForAuth.authPromise = build().catch((error: unknown) => {
+      globalForAuth.authPromise = undefined;
+      throw error;
+    });
+  }
   return globalForAuth.authPromise;
 }
+
+/** Apple anahtarı: hazır JWT ya da Team ID + Key ID + .p8 içeriğinden üretilen JWT. */
+function appleClientSecret(e: ServerEnv): string | undefined {
+  if (e.APPLE_TEAM_ID && e.APPLE_KEY_ID && e.APPLE_PRIVATE_KEY && e.APPLE_CLIENT_ID) {
+    return createAppleClientSecret({
+      teamId: e.APPLE_TEAM_ID,
+      keyId: e.APPLE_KEY_ID,
+      privateKey: e.APPLE_PRIVATE_KEY,
+      clientId: e.APPLE_CLIENT_ID,
+    });
+  }
+  return e.APPLE_CLIENT_SECRET;
+}
+
+const appleConfigured = (e: ServerEnv) =>
+  Boolean(
+    e.APPLE_CLIENT_ID &&
+    (e.APPLE_CLIENT_SECRET || (e.APPLE_TEAM_ID && e.APPLE_KEY_ID && e.APPLE_PRIVATE_KEY)),
+  );
 
 /** Google / Apple düğmeleri yalnızca anahtarları tanımlıysa gösterilir. */
 export function enabledSocialProviders() {
   const e = env();
   return {
     google: Boolean(e.GOOGLE_CLIENT_ID && e.GOOGLE_CLIENT_SECRET),
-    apple: Boolean(e.APPLE_CLIENT_ID && e.APPLE_CLIENT_SECRET),
+    apple: appleConfigured(e),
   };
 }
 
@@ -44,11 +76,12 @@ async function build(): Promise<Auth> {
     e.GOOGLE_CLIENT_ID && e.GOOGLE_CLIENT_SECRET
       ? { clientId: e.GOOGLE_CLIENT_ID, clientSecret: e.GOOGLE_CLIENT_SECRET }
       : undefined;
+  const appleSecret = e.APPLE_CLIENT_ID ? appleClientSecret(e) : undefined;
   const apple =
-    e.APPLE_CLIENT_ID && e.APPLE_CLIENT_SECRET
+    e.APPLE_CLIENT_ID && appleSecret
       ? {
           clientId: e.APPLE_CLIENT_ID,
-          clientSecret: e.APPLE_CLIENT_SECRET,
+          clientSecret: appleSecret,
           appBundleIdentifier: e.APPLE_APP_BUNDLE_IDENTIFIER,
         }
       : undefined;

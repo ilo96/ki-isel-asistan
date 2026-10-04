@@ -9,7 +9,7 @@ import { formatDuration, formatWeight, formatWeightDelta } from "@/lib/fitness/u
 import type { Db } from "@/server/db/client";
 import { getFitnessDashboard } from "@/server/services/fitness";
 import { getModuleState } from "@/server/services/modules";
-import { BMI_TONE } from "./bmi-gauge";
+import { BMI_TONE } from "./bmi-tone";
 
 /** Ana sayfadaki Spor & Sağlık kartı: eklenti açıksa görünür, ekrana götürür. */
 export async function FitnessHomeCard({
