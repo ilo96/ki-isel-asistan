@@ -1,4 +1,4 @@
-# Asistan
+# Vantrel
 
 Kişisel AI asistanı + kişisel finans uygulaması. Mimari ve UI/UX planı:
 [plan dokümanı](https://claude.ai/code/artifact/3b2c6c31-1486-4135-95fb-f7c0adc0829a).

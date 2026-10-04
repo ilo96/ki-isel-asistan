@@ -53,10 +53,10 @@ self.addEventListener("push", (event) => {
   try {
     data = event.data ? event.data.json() : {};
   } catch {
-    data = { title: "Asistan", body: event.data ? event.data.text() : "" };
+    data = { title: "Vantrel", body: event.data ? event.data.text() : "" };
   }
   event.waitUntil(
-    self.registration.showNotification(data.title || "Asistan", {
+    self.registration.showNotification(data.title || "Vantrel", {
       body: data.body || "",
       tag: data.tag,
       icon: "/icons/icon-192.png",

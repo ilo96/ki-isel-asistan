@@ -4,7 +4,7 @@ import { Bell, Search } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { AssistantOrb } from "@/components/assistant/assistant-orb";
+import { BrandMark } from "@/components/brand/brand-mark";
 import { Kbd } from "@/components/ui/kbd";
 import { cn } from "@/lib/cn";
 import { ThemeToggle } from "./theme-toggle";
@@ -32,7 +32,7 @@ export function TopBar({ unread }: { unread: number }) {
     >
       <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-3 px-4 sm:px-6 lg:px-8">
         <Link href="/home" className="flex items-center gap-2 lg:hidden" aria-label={t("home")}>
-          <AssistantOrb size="sm" />
+          <BrandMark size="sm" />
         </Link>
 
         <button

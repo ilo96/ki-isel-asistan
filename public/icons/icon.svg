@@ -6,11 +6,12 @@
       <stop offset="1" stop-color="#5ec8f2"/>
     </linearGradient>
     <radialGradient id="h" cx="0.36" cy="0.3" r="0.3">
-      <stop offset="0" stop-color="#fff" stop-opacity="0.55"/>
+      <stop offset="0" stop-color="#fff" stop-opacity="0.45"/>
       <stop offset="1" stop-color="#fff" stop-opacity="0"/>
     </radialGradient>
   </defs>
   <rect width="512" height="512" fill="#0b0d12"/>
   <circle cx="256" cy="256" r="150" fill="url(#g)"/>
   <circle cx="256" cy="256" r="150" fill="url(#h)"/>
+  <path d="M205 213 L256 297 L307 213" fill="none" stroke="#fff" stroke-width="27" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

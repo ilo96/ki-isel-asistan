@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { AssistantOrb } from "@/components/assistant/assistant-orb";
+import { BrandLogo } from "@/components/brand/brand-mark";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { APP_NAME } from "@/config/brand";
@@ -40,9 +41,8 @@ export default async function LandingPage({ searchParams }: Props) {
       />
 
       <header className="relative mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2.5">
-          <AssistantOrb size="sm" />
-          <span className="text-h2 tracking-tight text-text">{app("name")}</span>
+        <Link href="/">
+          <BrandLogo name={app("name")} />
         </Link>
         <nav className="flex items-center gap-2">
           <ThemeToggle className="hidden sm:inline-flex" />

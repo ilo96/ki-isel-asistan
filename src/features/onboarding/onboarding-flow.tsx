@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { AnimatePresence, motion, type PanInfo } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState, type ComponentType } from "react";
-import { AssistantOrb } from "@/components/assistant/assistant-orb";
+import { BrandMark } from "@/components/brand/brand-mark";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 import { duration, ease, spring } from "@/lib/motion";
@@ -64,7 +64,7 @@ export function OnboardingFlow({ defaultName }: { defaultName: string }) {
             <ArrowLeft />
           </Button>
         ) : (
-          <AssistantOrb size="sm" />
+          <BrandMark size="sm" />
         )}
         <Progress step={step} label={t("step", { current: step + 1, total: TOTAL })} />
         {isForm ? (
