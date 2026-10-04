@@ -10,6 +10,7 @@ import {
   type CategoryInput,
   type TransactionInput,
 } from "@/lib/validation/finance";
+import { receiptReadable } from "@/server/ai/receipt";
 import { getSession } from "@/server/auth";
 import { getDb } from "@/server/db";
 import {
@@ -65,6 +66,8 @@ export type QuickAddData = {
   categories: CategoryOption[];
   today: DateString;
   currency: CurrencyCode;
+  /** Fiş okuma sunucuda yapılandırıldı mı (ANTHROPIC_API_KEY). */
+  receiptScan: boolean;
 };
 
 /** Hızlı ekle sheet'i açılırken bir kez çağrılır. */
@@ -75,6 +78,7 @@ export async function getQuickAddDataAction(): Promise<
     categories: await listCategories(await getDb(), user.id, { includeArchived: true }),
     today: dayIn(new Date(), user.timezone),
     currency: user.currency,
+    receiptScan: receiptReadable(),
   }));
 }
 

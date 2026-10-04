@@ -61,3 +61,24 @@ export const budgetInputSchema = z.object({
 });
 
 export type BudgetInput = z.infer<typeof budgetInputSchema>;
+
+/** Abonelik: nextChargeOn ilk (ya da bilinen bir) ödeme günüdür; sonrakiler hesaplanır. */
+export const subscriptionInputSchema = z.object({
+  name: z.string().trim().min(1, "required").max(60, "subscriptionNameMax"),
+  amountMinor: z
+    .number("amount")
+    .int("amount")
+    .positive("amountPositive")
+    .max(MAX_AMOUNT_MINOR, "amountMax"),
+  cycle: z.enum(["weekly", "monthly", "yearly"]),
+  nextChargeOn: z.iso.date("date"),
+  categoryId: z.uuid().nullable(),
+  remindDaysBefore: z.number().int().min(0).max(14),
+  note: z
+    .string()
+    .trim()
+    .max(200, "noteMax")
+    .transform((v) => (v === "" ? null : v)),
+});
+
+export type SubscriptionInput = z.input<typeof subscriptionInputSchema>;

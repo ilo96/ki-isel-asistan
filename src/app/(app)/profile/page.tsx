@@ -1,4 +1,4 @@
-import { Activity, Bell, ChevronRight, Palette } from "lucide-react";
+import { Activity, Bell, ChevronRight, Flame, LayoutGrid, Palette, Repeat, Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
@@ -71,6 +71,27 @@ export default async function ProfilePage() {
           <span className="flex-1">{t("settingsLink")}</span>
           <ChevronRight className="size-5 text-muted" aria-hidden />
         </Link>
+        {(
+          [
+            { href: "/achievements", icon: Flame, tone: "text-warning", key: "achievements" },
+            { href: "/recap", icon: Sparkles, tone: "text-accent", key: "recap" },
+            { href: "/finance/subscriptions", icon: Repeat, tone: "text-accent", key: "subscriptions" },
+            { href: "/widget", icon: LayoutGrid, tone: "text-accent", key: "widget" },
+          ] as const
+        ).map(({ href, icon: Icon, tone, key }) => (
+          <Link
+            key={href}
+            href={href}
+            className="flex items-center gap-3 rounded-card border border-border/60 bg-surface p-5 text-text shadow-card transition-colors hover:border-accent/40 dark:border-transparent"
+          >
+            <Icon className={`size-5 ${tone}`} aria-hidden />
+            <span className="flex-1">
+              <span className="block">{t(`${key}Link`)}</span>
+              <span className="block text-small text-muted">{t(`${key}LinkBody`)}</span>
+            </span>
+            <ChevronRight className="size-5 text-muted" aria-hidden />
+          </Link>
+        ))}
         <Link
           href="/fitness"
           className="flex items-center gap-3 rounded-card border border-border/60 bg-surface p-5 text-text shadow-card transition-colors hover:border-accent/40 dark:border-transparent"

@@ -1,18 +1,7 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import {
-  Bell,
-  CheckSquare,
-  CornerDownLeft,
-  Keyboard,
-  Palette,
-  Plus,
-  Receipt,
-  Search,
-  Sparkles,
-  type LucideIcon,
-} from "lucide-react";
+import { Bell, CheckSquare, CornerDownLeft, Flame, Keyboard, Mic, Palette, Plus, Receipt, Repeat, Search, Sparkles, type LucideIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -110,6 +99,26 @@ export function CommandPalette({ modules }: { modules: readonly ModuleKey[] }) {
         icon,
         run: () => router.push(href),
       })),
+      ...(
+        [
+          { id: "subscriptions", label: t("subscriptions.title"), href: "/finance/subscriptions", icon: Repeat },
+          { id: "achievements", label: t("achievements.title"), href: "/achievements", icon: Flame },
+          { id: "recap", label: t("recap.pageTitle"), href: "/recap", icon: Sparkles },
+        ] as const
+      ).map(({ id, label, href, icon }) => ({
+        id: `nav-${id}`,
+        label,
+        group: t("command.navigate"),
+        icon,
+        run: () => router.push(href),
+      })),
+      {
+        id: "voice-add",
+        label: t("command.voiceAdd"),
+        group: t("command.actions"),
+        icon: Mic,
+        run: () => open("quickAdd", { capture: "voice" }),
+      },
       {
         id: "quick-add",
         label: t("nav.quickAdd"),

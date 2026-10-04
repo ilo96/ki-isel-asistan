@@ -11,6 +11,8 @@ import { useTransactionFeedback } from "@/features/finance/use-transaction-feedb
 import { ReminderForm } from "@/features/tasks/reminder-form";
 import { TaskForm } from "@/features/tasks/task-form";
 import { useToast } from "@/components/ui/toast";
+import { CaptureBar } from "@/features/capture/capture-bar";
+import type { TransactionDraft } from "@/lib/finance/draft";
 import { useShell, type QuickAddKind as Kind } from "./ui-store";
 
 /** Yazı yazılan bir alandayken kısayollar devreye girmez. */
@@ -27,9 +29,11 @@ function isTyping(target: EventTarget | null) {
  */
 export function QuickAdd() {
   const t = useTranslations("quickAdd");
-  const { overlay, open, close, quickAddKind } = useShell();
+  const { overlay, open, close, quickAddKind, quickAddCapture } = useShell();
   const isOpen = overlay === "quickAdd";
   const [kind, setKind] = useState<Kind>(quickAddKind);
+  // Taslak gelince form yeniden kurulur (key), böylece alanlar taslakla dolar.
+  const [draft, setDraft] = useState<{ value: TransactionDraft; seq: number } | null>(null);
   const { data, failed, retry } = useQuickAddData(isOpen);
   const feedback = useTransactionFeedback();
   const tl = useTranslations("life");
@@ -38,6 +42,7 @@ export function QuickAdd() {
   // Her açılışta istenen türle başla (ör. Finans'taki "Gelir ekle").
   useEffect(() => {
     if (isOpen) setKind(quickAddKind);
+    else setDraft(null);
   }, [isOpen, quickAddKind]);
 
   useEffect(() => {
@@ -90,16 +95,27 @@ export function QuickAdd() {
               }}
             />
           ) : (
-            <TransactionForm
-              // Tür değişince form sıfırlanır: seçili kategori diğer türde geçerli değil.
-              key={kind}
-              data={loaded}
-              type={kind === "income" ? "income" : "expense"}
-              onSaved={(id) => {
-                close();
-                feedback.added(id, kind === "income" ? "income" : "expense");
-              }}
-            />
+            <>
+              <CaptureBar
+                receiptScan={loaded.receiptScan}
+                autoStart={quickAddCapture}
+                onDraft={(value) => {
+                  setKind(value.type);
+                  setDraft((d) => ({ value, seq: (d?.seq ?? 0) + 1 }));
+                }}
+              />
+              <TransactionForm
+                // Tür değişince form sıfırlanır: seçili kategori diğer türde geçerli değil.
+                key={`${kind}-${draft?.seq ?? 0}`}
+                data={loaded}
+                type={kind === "income" ? "income" : "expense"}
+                draft={draft?.value.type === kind ? draft.value : null}
+                onSaved={(id) => {
+                  close();
+                  feedback.added(id, kind === "income" ? "income" : "expense");
+                }}
+              />
+            </>
           )
         }
       </FormLoader>

@@ -19,22 +19,12 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
       { src: "/icons/maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
+    // Simgeye uzun basınca: widget'a en yakın, tek dokunuşla ekleme yolları.
     shortcuts: [
-      {
-        name: "Asistana sor",
-        url: "/assistant",
-        icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }],
-      },
-      {
-        name: "Görevler",
-        url: "/tasks",
-        icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }],
-      },
-      {
-        name: "Finans",
-        url: "/finance",
-        icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }],
-      },
+      { name: "Sesle ekle", short_name: "Sesle", url: "/home?ekle=ses", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
+      { name: "Fiş tara", short_name: "Fiş", url: "/home?ekle=fis", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
+      { name: "Gider ekle", short_name: "Gider", url: "/home?ekle=gider", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
+      { name: "Asistana sor", short_name: "Asistan", url: "/assistant", icons: [{ src: "/icons/icon-192.png", sizes: "192x192" }] },
     ],
   };
 }

@@ -80,7 +80,7 @@ export function notifyUserThrottled(db: Db, user: NotificationUser): Promise<voi
 /** Zamanlanmış iş: onboarding'i bitirmiş her kullanıcı. */
 export async function notifyAll(db: Db, now = new Date()) {
   const rows = await db
-    .select({ id: users.id, timezone: users.timezone, currency: users.currency })
+    .select({ id: users.id, name: users.name, timezone: users.timezone, currency: users.currency })
     .from(users)
     .where(isNotNull(users.onboardedAt));
   let created = 0;
@@ -90,6 +90,7 @@ export async function notifyAll(db: Db, now = new Date()) {
         db,
         {
           id: u.id,
+          name: u.name,
           timezone: u.timezone ?? DEFAULT_TIMEZONE,
           currency: (u.currency ?? DEFAULT_CURRENCY) as CurrencyCode,
         },

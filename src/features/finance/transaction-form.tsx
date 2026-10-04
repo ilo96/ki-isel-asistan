@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronDown, Trash2 } from "lucide-react";
+import { Camera, ChevronDown, Mic, Trash2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useMemo, useState, useTransition } from "react";
@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { FormAlert } from "@/features/auth/form-alert";
 import { useValidationMessage } from "@/features/auth/use-auth-error";
 import { cn } from "@/lib/cn";
+import type { TransactionDraft } from "@/lib/finance/draft";
 import type { CategoryOption, TransactionItem, TransactionType } from "@/lib/finance/types";
 import { fadeTransition } from "@/lib/motion";
 import { formatMoney, parseMoneyInput, type CurrencyCode } from "@/lib/money";
@@ -56,6 +57,8 @@ type Props = {
   data: QuickAddData;
   type: TransactionType;
   initial?: TransactionItem;
+  /** Sesle ya da fişten gelen taslak; form onunla dolu açılır. */
+  draft?: TransactionDraft | null;
   onSaved: (id: string) => void;
   onDelete?: () => void;
 };
@@ -64,13 +67,15 @@ type Props = {
  * Gider/gelir formu. Hızlı ekle ve düzenleme aynı formu kullanır: tutar odaklı açılır,
  * kategori chip'le seçilir; açıklama, tarih ve not "Daha fazla" altında katlıdır.
  */
-export function TransactionForm({ data, type, initial, onSaved, onDelete }: Props) {
+export function TransactionForm({ data, type, initial, draft, onSaved, onDelete }: Props) {
   const t = useTranslations("transactionForm");
   const v = useValidationMessage();
   const [pending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<ActionError | null>(null);
   const [showAll, setShowAll] = useState(false);
-  const [more, setMore] = useState(Boolean(initial?.note));
+  const [more, setMore] = useState(
+    Boolean(initial?.note) || Boolean(draft && (draft.description || draft.occurredOn !== data.today)),
+  );
 
   const {
     register,
@@ -81,13 +86,13 @@ export function TransactionForm({ data, type, initial, onSaved, onDelete }: Prop
   } = useForm<FormValues, unknown, z.output<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      amount: initial ? toInput(initial.amountMinor) : "",
-      categoryId: initial?.category.id ?? "",
+      amount: initial ? toInput(initial.amountMinor) : draft?.amountMinor ? toInput(draft.amountMinor) : "",
+      categoryId: initial?.category.id ?? draft?.categoryId ?? "",
       // Açıklama kategori adından türediyse boş gelir; kategori değişince yeni adı alır.
       description:
-        initial && initial.description !== initial.category.name ? initial.description : "",
+        initial && initial.description !== initial.category.name ? initial.description : (draft?.description ?? ""),
       note: initial?.note ?? "",
-      occurredOn: initial?.occurredOn ?? data.today,
+      occurredOn: initial?.occurredOn ?? draft?.occurredOn ?? data.today,
     },
   });
 
@@ -126,6 +131,19 @@ export function TransactionForm({ data, type, initial, onSaved, onDelete }: Prop
 
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-5">
+      {draft && (
+        <p className="flex items-start gap-2 rounded-input bg-accent-soft px-3.5 py-2.5 text-small text-text" role="status">
+          {draft.source === "voice" ? (
+            <Mic className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden />
+          ) : (
+            <Camera className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden />
+          )}
+          <span>
+            {draft.source === "voice" && draft.heard ? t("draftHeard", { text: draft.heard }) : t("draftReceipt")}{" "}
+            <span className="text-muted">{t("draftCheck")}</span>
+          </span>
+        </p>
+      )}
       {serverError && (
         <FormAlert>
           {t.has(`errors.${serverError}`) ? t(`errors.${serverError}`) : t("errors.unknown")}

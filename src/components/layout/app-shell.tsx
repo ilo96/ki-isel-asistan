@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import type { ModuleKey } from "@/lib/modules";
 import { EditTransactionSheet } from "@/features/finance/edit-transaction-sheet";
 import { EditLifeSheet } from "@/features/tasks/edit-life-sheet";
@@ -7,6 +7,7 @@ import { BottomNav } from "./bottom-nav";
 import { CommandPalette } from "./command-palette";
 import { KeyboardShortcuts } from "./keyboard-shortcuts";
 import { QuickAdd } from "./quick-add";
+import { ShellEffects } from "./shell-effects";
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
 import { ShellProvider } from "./ui-store";
@@ -48,6 +49,9 @@ export async function AppShell({
       <EditLifeSheet />
       <CommandPalette modules={modules} />
       <KeyboardShortcuts />
+      <Suspense>
+        <ShellEffects unread={unread} />
+      </Suspense>
     </ShellProvider>
   );
 }

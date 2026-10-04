@@ -16,6 +16,7 @@ import {
   fitnessGoals,
   paymentMethods,
   reminders,
+  subscriptions,
   tasks,
   transactions,
   users,
@@ -62,6 +63,8 @@ const PAST_MONTH: PastExpense[] = [
   ["bills", "İnternet faturası", 449.9, 12],
   ["bills", "Telefon faturası", 329, 22],
   ["entertainment", "Sinema", 420, 14],
+  // Takip edilmeyen düzenli ödeme: Abonelikler'de "abonelik gibi görünenler"e düşer.
+  ["entertainment", "YouTube Premium", 79.99, 9],
 ];
 
 /** Ayları birbirinden ayıran ek harcamalar; index = kaç ay önce − 1. */
@@ -197,6 +200,13 @@ export async function seedDemoData(db: Db, userId: string, now = new Date()) {
       d.setUTCMinutes(0, 0, 0);
       return d;
     };
+    // Netflix iki gün sonra yenilenir (bildirim düşer), Spotify ayın ortasında.
+    await tx.insert(subscriptions).values([
+      { userId, name: "Netflix", amountMinor: kurus(229.99), currency: user.currency, cycle: "monthly", nextChargeOn: dayOf(-2), categoryId: cat("entertainment") },
+      { userId, name: "Spotify", amountMinor: kurus(99.99), currency: user.currency, cycle: "monthly", nextChargeOn: dayOf(-12), categoryId: cat("entertainment") },
+      { userId, name: "iCloud+", amountMinor: kurus(39.99), currency: user.currency, cycle: "monthly", nextChargeOn: dayOf(-20), categoryId: cat("bills") },
+    ]);
+
     await tx.insert(reminders).values([
       {
         userId,
@@ -305,5 +315,6 @@ export async function clearFinanceData(db: Db, userId: string) {
     await tx.delete(reminders).where(eq(reminders.userId, userId));
     await tx.delete(tasks).where(eq(tasks.userId, userId));
     await tx.delete(paymentMethods).where(eq(paymentMethods.userId, userId));
+    await tx.delete(subscriptions).where(eq(subscriptions.userId, userId));
   });
 }
