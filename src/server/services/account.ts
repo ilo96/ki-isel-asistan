@@ -10,6 +10,7 @@ import {
   fitnessGoals,
   notifications,
   reminders,
+  subscriptions,
   tasks,
   transactions,
   userMemories,
@@ -54,7 +55,7 @@ export async function exportAccount(db: Db, userId: string) {
     db.select().from(notifications).where(eq(notifications.userId, userId)),
     db.select().from(aiConversations).where(and(eq(aiConversations.userId, userId), isNull(aiConversations.deletedAt))),
   ]);
-  const [modules, body, weights, sport, fitGoals] = await Promise.all([
+  const [modules, body, weights, sport, fitGoals, subs] = await Promise.all([
     db.select().from(userModules).where(eq(userModules.userId, userId)),
     db.select().from(bodyProfiles).where(eq(bodyProfiles.userId, userId)),
     db.select().from(weightRecords).where(eq(weightRecords.userId, userId)).orderBy(asc(weightRecords.measuredOn)),
@@ -64,6 +65,7 @@ export async function exportAccount(db: Db, userId: string) {
       .where(and(eq(workouts.userId, userId), isNull(workouts.deletedAt)))
       .orderBy(asc(workouts.performedOn)),
     db.select().from(fitnessGoals).where(eq(fitnessGoals.userId, userId)),
+    db.select().from(subscriptions).where(eq(subscriptions.userId, userId)),
   ]);
   const messages = convs.length
     ? await db.select().from(aiMessages).where(eq(aiMessages.userId, userId)).orderBy(asc(aiMessages.createdAt))
@@ -84,6 +86,7 @@ export async function exportAccount(db: Db, userId: string) {
     goals: strip(goals),
     memories: strip(mem),
     notifications: strip(notes),
+    subscriptions: strip(subs),
     modules: strip(modules),
     fitness: {
       note: "Boy mm, kilo gram, mesafe metre cinsindendir (heightMm: 1800 = 180 cm, weightG: 80500 = 80,5 kg).",

@@ -105,7 +105,10 @@
       "devOnly": "Yalnızca geliştirme ortamında görünür.",
       "failed": "İşlem yapılamadı."
     },
-    "askChips": ["Bu ay ne kadar harcadım?", "Bütçem nasıl gidiyor?"]
+    "askChips": [
+      "Bu ay ne kadar harcadım?",
+      "Bütçem nasıl gidiyor?"
+    ]
   },
   "finance": {
     "title": "Finans",
@@ -146,7 +149,8 @@
       "overview": "Özet",
       "transactions": "İşlemler",
       "categories": "Kategoriler",
-      "budgets": "Bütçeler"
+      "budgets": "Bütçeler",
+      "subscriptions": "Abonelikler"
     },
     "filters": {
       "search": "Açıklama, not ya da kategori ara",
@@ -221,7 +225,10 @@
       "unauthorized": "Oturumun kapanmış görünüyor, yeniden giriş yap.",
       "unknown": "Bir sorun oldu, tekrar dener misin?",
       "expired": "Bu önerinin süresi doldu; istersen yeniden iste."
-    }
+    },
+    "listening": "Dinliyorum…",
+    "speak": "Sesle yaz",
+    "stopListening": "Dinlemeyi bitir"
   },
   "profile": {
     "title": "Profil",
@@ -239,7 +246,15 @@
     "memoriesEmpty": "Asistana “Unutma: …” dediğin bilgiler burada görünür ve istediğinde silebilirsin.",
     "forget": "Unut",
     "fitnessLink": "Spor & Sağlık",
-    "fitnessLinkBody": "VKİ, kilo takibi, aktiviteler ve hedefin"
+    "fitnessLinkBody": "VKİ, kilo takibi, aktiviteler ve hedefin",
+    "achievementsLink": "Seriler ve rozetler",
+    "achievementsLinkBody": "Kayıt serin ve kazandığın rozetler",
+    "recapLink": "Aylık özet",
+    "recapLinkBody": "Ayının karnesi, paylaşmaya hazır",
+    "subscriptionsLink": "Abonelikler",
+    "subscriptionsLinkBody": "Her ay çekilenler ve yenileme hatırlatmaları",
+    "widgetLink": "Hızlı panel",
+    "widgetLinkBody": "Ana ekrana ekleyebileceğin tek bakışta bugün"
   },
   "quickAdd": {
     "title": "Hızlı ekle",
@@ -281,7 +296,10 @@
       "category_type_mismatch": "Bu kategori bu işlem türüne ait değil.",
       "category_archived": "Bu kategori arşivde. Başka bir kategori seç.",
       "unknown": "Kaydedemedim. Bağlantını kontrol edip tekrar dene."
-    }
+    },
+    "draftHeard": "Duyduğum: “{text}”.",
+    "draftReceipt": "Fişten okudum.",
+    "draftCheck": "Kontrol edip kaydet."
   },
   "categories": {
     "title": "Kategoriler",
@@ -351,7 +369,8 @@
     "assistant": "Asistan",
     "ask": "Asistana sor: “{query}”",
     "records": "Kayıtlar",
-    "shortcuts": "Klavye kısayolları"
+    "shortcuts": "Klavye kısayolları",
+    "voiceAdd": "Sesle ekle"
   },
   "state": {
     "errorTitle": "Bir şeyler ters gitti",
@@ -422,7 +441,8 @@
     "date": "Geçerli bir tarih seç.",
     "categoryNameMax": "Kategori adı en fazla 40 karakter olabilir.",
     "titleMax": "Başlık en fazla 120 karakter olabilir.",
-    "time": "Geçerli bir saat seç."
+    "time": "Geçerli bir saat seç.",
+    "subscriptionNameMax": "En fazla 60 karakter olabilir."
   },
   "onboarding": {
     "skip": "Atla",
@@ -661,10 +681,15 @@
     "subtitle": "Bildirimler ve hesap",
     "notifications": "Bildirimler",
     "notificationsBody": "Hangi durumlarda haber vereceğimi seç. Günde en fazla {limit} bildirim gönderirim.",
+    "daily": "Sabah özeti",
+    "dailyBody": "Her sabah tek bildirimle günün ödemeleri, bütçende kalan ve serin.",
+    "dailyTime": "Saat",
     "bills": "Yaklaşan ve geciken ödemeler",
     "reminders": "Hatırlatıcılar",
     "budget": "Bütçe uyarıları (%80 ve %100)",
     "weekly": "Pazartesi sabahı haftalık özet",
+    "subscriptions": "Abonelik yenilemeleri",
+    "achievements": "Seri ve rozet kutlamaları",
     "quiet": "Sessiz saatler",
     "quietBody": "Bu aralıkta bildirim göndermem; birikenler sonra gelir.",
     "from": "Başlangıç",
@@ -953,6 +978,257 @@
       "durationLong": "Bu süre oldukça uzun.",
       "heightInMeters": "Boyu metre olarak yazdın; cm'ye çevirdim.",
       "confirm": "Doğruysa yeniden kaydet'e bas."
+    }
+  },
+  "capture": {
+    "voice": "Söyle",
+    "receipt": "Fiş tara",
+    "listening": "Dinliyorum… örneğin “Markete 450 lira verdim”",
+    "understanding": "Anlıyorum…",
+    "scanning": "Fiş okunuyor…",
+    "done": "Bitti",
+    "voiceUnsupported": "Bu tarayıcı sesle eklemeyi desteklemiyor",
+    "voiceFailed": "Söylediğini anlayamadım, tekrar dener misin?",
+    "voiceErrors": {
+      "denied": "Mikrofon izni kapalı; tarayıcı ayarlarından açabilirsin.",
+      "no-speech": "Bir şey duyamadım, tekrar dener misin?",
+      "network": "Ses tanıma için internet bağlantısı gerekiyor.",
+      "unknown": "Mikrofon başlatılamadı, tekrar dener misin?"
+    },
+    "receiptNotConfigured": "Fiş okuma, sunucuya yapay zekâ anahtarı eklenince çalışır.",
+    "receiptErrors": {
+      "unauthorized": "Oturumun kapanmış görünüyor, yeniden giriş yap.",
+      "not_configured": "Fiş okuma, sunucuya yapay zekâ anahtarı eklenince çalışır.",
+      "invalid": "Bu dosyayı açamadım; JPG ya da PNG fotoğraf dener misin?",
+      "too_large": "Fotoğraf çok büyük.",
+      "rate_limited": "Bu saatlik fiş okuma hakkın doldu, biraz sonra tekrar dene.",
+      "not_receipt": "Bu fotoğrafta fiş göremedim. Fişi düz ve aydınlık çekip tekrar dener misin?",
+      "unknown": "Fiş okunamadı, tekrar dener misin?"
+    }
+  },
+  "achievements": {
+    "title": "Seriler ve rozetler",
+    "subtitle": "Küçük alışkanlıklar, büyük fark",
+    "streakTitle": "Serin",
+    "days": "{count} gün",
+    "best": "En iyi serin",
+    "bestLine": "En iyi serin: {count} gün",
+    "todayDone": "Bugünü kaydettin, seri sürüyor.",
+    "todayPending": "Bugün bir harcama girersen seri {next} gün olur.",
+    "startAgain": "Bugün bir kayıt gir, yeni seri başlasın.",
+    "weekLabel": "Son 7 gün",
+    "howStreak": "Seri, üst üste işlem girdiğin günleri sayar. Unuttuğun bir günün harcamasını sonradan eklersen o gün de sayılır.",
+    "badges": "Rozetler",
+    "badgeCount": "{earned}/{total} rozet",
+    "earned": "Kazanıldı",
+    "locked": "Henüz kazanılmadı",
+    "list": {
+      "first_step": {
+        "title": "İlk adım",
+        "body": "İlk işlemini ekledin"
+      },
+      "streak_3": {
+        "title": "Isınma turu",
+        "body": "3 gün üst üste kayıt"
+      },
+      "streak_7": {
+        "title": "Tam bir hafta",
+        "body": "7 gün üst üste kayıt"
+      },
+      "streak_30": {
+        "title": "Alışkanlık ustası",
+        "body": "30 gün üst üste kayıt"
+      },
+      "tx_50": {
+        "title": "Not defteri",
+        "body": "50 işlem kaydettin"
+      },
+      "tx_250": {
+        "title": "Arşivci",
+        "body": "250 işlem kaydettin"
+      },
+      "budget_set": {
+        "title": "Planlı",
+        "body": "İlk bütçeni kurdun"
+      },
+      "budget_kept": {
+        "title": "Bütçede kaldın",
+        "body": "Geçen ayı bütçeni aşmadan kapattın"
+      },
+      "saver": {
+        "title": "Artıda kapattın",
+        "body": "Geçen ay gelirin giderinden fazlaydı"
+      },
+      "planner": {
+        "title": "Unutmayan",
+        "body": "İlk hatırlatıcını kurdun"
+      },
+      "assistant_friend": {
+        "title": "Asistan dostu",
+        "body": "Asistanla 5 işlem ekledin"
+      },
+      "sub_tracker": {
+        "title": "Abonelik dedektifi",
+        "body": "3 aboneliğini takibe aldın"
+      },
+      "sub_hunter": {
+        "title": "Makas",
+        "body": "Kullanmadığın bir aboneliği iptal ettin"
+      }
+    }
+  },
+  "recap": {
+    "pageTitle": "Aylık özet",
+    "pageSubtitle": "Ayının karnesi, paylaşmaya hazır",
+    "title": "{month} karnem",
+    "titlePartial": "{month} (şimdiye kadar)",
+    "spent": "{amount} harcadın",
+    "transactions": "{count} kayıt girdin",
+    "changeLess": "Geçen aya göre %{percent} daha az harcadın",
+    "changeMore": "Geçen aya göre %{percent} daha fazla harcadın",
+    "changeSame": "Geçen ayla aynı harcadın",
+    "statTransactions": "işlem",
+    "statNoSpend": "harcamasız gün",
+    "statStreak": "en uzun seri",
+    "statSaved": "biriktirdin",
+    "statOver": "gelirden fazla harcadın",
+    "statBusiest": "en çok harcanan gün",
+    "daysValue": "{count} gün",
+    "biggest": "En büyük harcama: {what} ({amount})",
+    "weekdays": {
+      "0": "Pazar",
+      "1": "Pazartesi",
+      "2": "Salı",
+      "3": "Çarşamba",
+      "4": "Perşembe",
+      "5": "Cuma",
+      "6": "Cumartesi"
+    },
+    "personas": {
+      "saver": {
+        "title": "Birikim ustası",
+        "body": "Gelirinin en az beşte birini kenara koydun."
+      },
+      "chef": {
+        "title": "Mutfak şefi",
+        "body": "En çok market alışverişine harcadın."
+      },
+      "gourmet": {
+        "title": "Gurme",
+        "body": "Lezzetten taviz yok: en çok yemeğe harcadın."
+      },
+      "traveler": {
+        "title": "Yolların hakimi",
+        "body": "En çok ulaşıma harcadın."
+      },
+      "fun": {
+        "title": "Keyif avcısı",
+        "body": "En çok eğlenceye harcadın."
+      },
+      "shopper": {
+        "title": "Alışveriş tutkunu",
+        "body": "En çok alışverişe harcadın."
+      },
+      "steady": {
+        "title": "Düzenli ödeyici",
+        "body": "Faturaların bütçenin başrolündeydi."
+      },
+      "home": {
+        "title": "Yuva bekçisi",
+        "body": "En büyük kalem evindi."
+      },
+      "healthy": {
+        "title": "Sağlık önce",
+        "body": "En çok sağlığına harcadın."
+      },
+      "balanced": {
+        "title": "Dengeli harcayıcı",
+        "body": "Harcamaların farklı alanlara dağıldı."
+      }
+    },
+    "footer": "{app} ile takip ediyorum",
+    "shareTitle": "Paylaş",
+    "shareBody": "Kartı görsel olarak Instagram hikâyene ya da WhatsApp'a gönderebilirsin.",
+    "showAmounts": "Tutarları göster",
+    "showAmountsBody": "Kapalıyken yalnızca oranlar ve gün sayıları görünür.",
+    "share": "Paylaş",
+    "download": "Görseli indir",
+    "downloaded": "Görsel indirildi; galeriden paylaşabilirsin.",
+    "shareFailed": "Görsel hazırlanamadı, tekrar dener misin?",
+    "shareText": "{month} karnem 👀 ({app})",
+    "emptyTitle": "Bu ay için kayıt yok",
+    "emptyBody": "Harcamalarını girdikçe ayın karnesi burada oluşur.",
+    "emptyAction": "İlk harcamanı ekle",
+    "homeTitle": "{month} karnen hazır",
+    "homeBody": "Bu ay neye harcadığını ve kişiliğini gör, istersen paylaş."
+  },
+  "widget": {
+    "today": "Bugün harcadığın",
+    "month": "Bu ay",
+    "budgetLeft": "Bütçede kalan",
+    "noBudget": "Bütçe yok",
+    "streak": "{count} gün",
+    "nextToday": "Bugün: {title}",
+    "nextIn": "{days} gün sonra: {title}",
+    "actions": "Hızlı işlemler",
+    "voice": "Sesle ekle",
+    "receipt": "Fiş tara",
+    "expense": "Gider ekle",
+    "assistant": "Asistana sor",
+    "hint": "Bu sayfayı tarayıcı menüsünden “Ana ekrana ekle” ile ayrı bir simge olarak ekleyebilirsin.",
+    "settingsTitle": "Ana ekran kısayolları",
+    "settingsBody": "Telefonunda uygulama simgesine basılı tutunca Sesle ekle, Fiş tara ve Gider ekle kısayolları çıkar. Tek bakışta bugünü gösteren Hızlı paneli de ayrı simge olarak ekleyebilirsin.",
+    "settingsOpen": "Hızlı paneli aç"
+  },
+  "subscriptions": {
+    "title": "Abonelikler",
+    "subtitle": "Her ay sessizce çekilenler",
+    "monthlyTotal": "Aylık abonelik toplamın",
+    "yearlyLine": "{count, plural, =0 {Henüz abonelik yok · yılda} other {# abonelik · yılda}}",
+    "add": "Abonelik ekle",
+    "addBody": "Netflix, Spotify, spor salonu... Yenilenmeden önce haber veririm.",
+    "suggestionsTitle": "Abonelik gibi görünenler",
+    "seenMonths": "{count, plural, =1 {bilinen hizmet} other {# ayda görüldü}}",
+    "track": "Takibe al",
+    "activeTitle": "Aktif abonelikler",
+    "emptyTitle": "Henüz abonelik eklemedin",
+    "emptyBody": "Eklediğinde aylık ve yıllık toplamı burada görür, yenilemeden önce bildirim alırsın.",
+    "today": "bugün",
+    "tomorrow": "yarın",
+    "inDays": "{count} gün sonra",
+    "cancelledTitle": "İptal ettiklerin",
+    "savingPerMonth": "aylık tasarruf",
+    "restore": "{name} aboneliğini geri al",
+    "restored": "{name} yeniden takipte",
+    "close": "Kapat",
+    "name": "Ad",
+    "namePlaceholder": "Örneğin Netflix",
+    "amount": "Tutar",
+    "cycle": "Yenilenme sıklığı",
+    "cycles": {
+      "weekly": "Haftalık",
+      "monthly": "Aylık",
+      "yearly": "Yıllık"
+    },
+    "nextCharge": "Sonraki ödeme",
+    "remind": "Haber ver",
+    "remindSameDay": "O gün",
+    "remindDays": "{count} gün önce",
+    "category": "Kategori",
+    "noCategory": "Seçilmedi",
+    "note": "Not",
+    "notePlaceholder": "İsteğe bağlı",
+    "save": "Kaydet",
+    "update": "Güncelle",
+    "cancel": "İptal ettim",
+    "delete": "Sil",
+    "saved": "{name} takibe alındı",
+    "updated": "{name} güncellendi",
+    "cancelled": "{name} iptal edildi. Ayda {amount} tasarruf!",
+    "deleted": "{name} silindi",
+    "undo": "Geri al",
+    "errors": {
+      "unknown": "Kaydedilemedi, tekrar dener misin?"
     }
   }
 }

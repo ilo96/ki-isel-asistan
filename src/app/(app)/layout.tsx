@@ -14,6 +14,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   // Cron yokken de (yerelde) bildirimler oluşsun; en sık 5 dakikada bir çalışır.
   await notifyUserThrottled(db, {
     id: user.id,
+    name: user.name,
     timezone: user.timezone ?? DEFAULT_TIMEZONE,
     currency: (user.currency ?? DEFAULT_CURRENCY) as CurrencyCode,
   });

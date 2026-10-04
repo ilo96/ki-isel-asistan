@@ -373,6 +373,9 @@ export const notificationKind = pgEnum("notification_kind", [
   "budget_threshold",
   "weekly_summary",
   "fitness",
+  "daily_digest",
+  "achievement",
+  "subscription_due",
 ]);
 
 /**
@@ -411,6 +414,11 @@ export const userSettings = pgTable("user_settings", {
   notifyReminders: boolean("notify_reminders").notNull().default(true),
   notifyBudget: boolean("notify_budget").notNull().default(true),
   notifyWeekly: boolean("notify_weekly").notNull().default(true),
+  /** Her sabah tek bildirimlik günün özeti; daily_time kullanıcının saatinde. */
+  notifyDaily: boolean("notify_daily").notNull().default(true),
+  dailyTime: text("daily_time").notNull().default("08:30"),
+  notifyAchievements: boolean("notify_achievements").notNull().default(true),
+  notifySubscriptions: boolean("notify_subscriptions").notNull().default(true),
   /** "HH:MM" kullanıcının saatinde; aralıkta push gönderilmez. */
   quietStart: text("quiet_start").notNull().default("22:00"),
   quietEnd: text("quiet_end").notNull().default("08:00"),
@@ -431,6 +439,37 @@ export const pushSubscriptions = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("push_subscriptions_user_idx").on(t.userId)],
+);
+
+/* ------------------------------------------------------------ Abonelikler */
+
+export const subscriptionCycle = pgEnum("subscription_cycle", ["weekly", "monthly", "yearly"]);
+
+/**
+ * Düzenli ödenen abonelikler (Netflix, Spotify, spor salonu...). next_charge_on geçince
+ * okuma sırasında bir sonraki döneme kaydırılır; iptal edilenler cancelled_at ile saklanır.
+ */
+export const subscriptions = pgTable(
+  "subscriptions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    amountMinor: bigint("amount_minor", { mode: "number" }).notNull(),
+    currency: text("currency").notNull(),
+    cycle: subscriptionCycle("cycle").notNull().default("monthly"),
+    nextChargeOn: date("next_charge_on").notNull(),
+    categoryId: uuid("category_id").references(() => categories.id),
+    note: text("note"),
+    /** Yenilemeden kaç gün önce haber verilsin (0 = o gün). */
+    remindDaysBefore: integer("remind_days_before").notNull().default(2),
+    cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
+    createdVia: createdVia("created_via").notNull().default("manual"),
+    ...timestamps,
+  },
+  (t) => [index("subscriptions_user_next_idx").on(t.userId, t.nextChargeOn)],
 );
 
 /* ------------------------------------------------------------- Eklentiler */
@@ -565,6 +604,7 @@ export type AiMessage = typeof aiMessages.$inferSelect;
 export type AiAction = typeof aiActions.$inferSelect;
 export type Notification = typeof notifications.$inferSelect;
 export type UserSettings = typeof userSettings.$inferSelect;
+export type Subscription = typeof subscriptions.$inferSelect;
 export type UserModule = typeof userModules.$inferSelect;
 export type BodyProfile = typeof bodyProfiles.$inferSelect;
 export type WeightRecord = typeof weightRecords.$inferSelect;

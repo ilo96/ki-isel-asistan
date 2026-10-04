@@ -8,13 +8,16 @@ import type { LifeItem } from "@/lib/life/types";
 type Overlay = "quickAdd" | "command" | "editTransaction" | "editLife" | null;
 
 export type QuickAddKind = "expense" | "income" | "reminder" | "task";
+/** Hızlı ekle açılınca hemen başlasın: mikrofon ya da fiş fotoğrafı (ana ekran kısayolları). */
+export type QuickAddCapture = "voice" | "receipt" | null;
 
 type ShellContextValue = {
   overlay: Overlay;
-  open: (overlay: "quickAdd" | "command", options?: { kind?: QuickAddKind }) => void;
+  open: (overlay: "quickAdd" | "command", options?: { kind?: QuickAddKind; capture?: QuickAddCapture }) => void;
   close: () => void;
   /** Hızlı ekle hangi türle açılsın (ör. Finans'taki "Gelir ekle"). */
   quickAddKind: QuickAddKind;
+  quickAddCapture: QuickAddCapture;
   /** Düzenleme sheet'inde açık olan işlem. */
   editing: TransactionItem | null;
   edit: (transaction: TransactionItem) => void;
@@ -29,9 +32,13 @@ const ShellContext = createContext<ShellContextValue | null>(null);
 export function ShellProvider({ children }: { children: ReactNode }) {
   const [overlay, setOverlay] = useState<Overlay>(null);
   const [quickAddKind, setQuickAddKind] = useState<QuickAddKind>("expense");
+  const [quickAddCapture, setQuickAddCapture] = useState<QuickAddCapture>(null);
   const [editing, setEditing] = useState<TransactionItem | null>(null);
   const open = useCallback<ShellContextValue["open"]>((next, options) => {
-    if (next === "quickAdd") setQuickAddKind(options?.kind ?? "expense");
+    if (next === "quickAdd") {
+      setQuickAddKind(options?.kind ?? "expense");
+      setQuickAddCapture(options?.capture ?? null);
+    }
     setOverlay(next);
   }, []);
   const close = useCallback(() => setOverlay(null), []);
@@ -45,8 +52,8 @@ export function ShellProvider({ children }: { children: ReactNode }) {
     setOverlay("editLife");
   }, []);
   const value = useMemo(
-    () => ({ overlay, open, close, quickAddKind, editing, edit, editingLife, editLife }),
-    [overlay, open, close, quickAddKind, editing, edit, editingLife, editLife],
+    () => ({ overlay, open, close, quickAddKind, quickAddCapture, editing, edit, editingLife, editLife }),
+    [overlay, open, close, quickAddKind, quickAddCapture, editing, edit, editingLife, editLife],
   );
   return (
     <ShellContext.Provider value={value}>

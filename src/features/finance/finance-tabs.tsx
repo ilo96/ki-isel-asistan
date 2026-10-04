@@ -11,10 +11,11 @@ const TABS = [
   { key: "overview", href: "/finance" },
   { key: "transactions", href: "/finance/transactions" },
   { key: "budgets", href: "/finance/budgets" },
+  { key: "subscriptions", href: "/finance/subscriptions" },
   { key: "categories", href: "/finance/categories" },
 ] as const;
 
-/** Finans'ın alt sayfaları: Özet, İşlemler, Bütçeler, Kategoriler. */
+/** Finans'ın alt sayfaları: Özet, İşlemler, Bütçeler, Abonelikler, Kategoriler. */
 export function FinanceTabs() {
   const t = useTranslations("finance.tabs");
   const pathname = usePathname();

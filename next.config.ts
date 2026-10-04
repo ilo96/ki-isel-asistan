@@ -9,6 +9,7 @@ const isDev = process.env.NODE_ENV !== "production";
  * Güvenlik başlıkları (plan: Faz 14). Next.js ve next-themes satır içi betik eklediği için
  * script-src 'unsafe-inline' gerekir; eval yalnızca geliştirmede (hızlı yenileme) açıktır.
  * Dış kaynak yalnızca Google profil fotoğrafları; AI ve e-posta çağrıları sunucudan yapılır.
+ * Mikrofon (sesle ekleme) ve kamera (fiş fotoğrafı) yalnızca uygulamanın kendisine açık.
  */
 const csp = [
   "default-src 'self'",
@@ -30,7 +31,7 @@ const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
+  { key: "Permissions-Policy", value: "camera=(self), microphone=(self), geolocation=(), payment=()" },
   ...(isDev ? [] : [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }]),
 ];
 

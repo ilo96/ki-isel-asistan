@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, Check, Loader2, Square, X } from "lucide-react";
+import { ArrowUp, Check, Loader2, Mic, Square, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
@@ -8,6 +8,7 @@ import { AssistantOrb, type OrbState } from "@/components/assistant/assistant-or
 import type { ChatMessage, MessagePart } from "@/lib/assistant/types";
 import { cn } from "@/lib/cn";
 import { fadeTransition, staggerDelay } from "@/lib/motion";
+import { useSpeech, useSpeechSupported } from "@/features/capture/use-speech";
 import { ActionCardView } from "./action-card";
 import { useChat } from "./use-chat";
 
@@ -80,6 +81,7 @@ export function ChatView({
   offline: boolean;
 }) {
   const t = useTranslations("assistantPage");
+  const tc = useTranslations("capture");
   const chat = useChat({ conversationId, initialMessages });
   const [value, setValue] = useState("");
   const [orbDone, setOrbDone] = useState(false);
@@ -117,6 +119,11 @@ export function ChatView({
   const orb: OrbState = chat.status === "error" ? "error" : streaming ? "thinking" : orbDone ? "done" : "idle";
   const empty = chat.messages.length === 0;
   const starters = t.raw("suggestions") as string[];
+
+  // Sesle yazma: söylenen cümle kutuya düşer ve bitince gönderilir.
+  const speechSupported = useSpeechSupported();
+  const speech = useSpeech({ onFinal: (text) => void chat.send(text) });
+  const listening = speech.state === "listening";
 
   const submit = () => {
     if (!value.trim() || streaming) return;
@@ -201,6 +208,12 @@ export function ChatView({
         )}
       </AnimatePresence>
 
+      {speech.error && !listening && (
+        <p role="alert" className="mb-3 rounded-input bg-surface-muted px-4 py-3 text-small text-muted">
+          {tc(`voiceErrors.${speech.error}`)}
+        </p>
+      )}
+
       {!streaming && chat.suggestions.length > 0 && (
         <ul className="mb-3 flex flex-wrap gap-2" aria-label={t("suggestionsLabel")}>
           {chat.suggestions.map((s) => (
@@ -229,7 +242,8 @@ export function ChatView({
           <textarea
             ref={input}
             rows={1}
-            value={value}
+            value={listening ? speech.interim : value}
+            readOnly={listening}
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
@@ -238,7 +252,7 @@ export function ChatView({
               }
             }}
             maxLength={1000}
-            placeholder={t("inputPlaceholder")}
+            placeholder={listening ? t("listening") : t("inputPlaceholder")}
             aria-label={t("inputPlaceholder")}
             className="max-h-40 min-h-11 flex-1 resize-none bg-transparent py-2.5 text-body text-text outline-none [field-sizing:content] placeholder:text-muted focus-visible:outline-none"
           />
@@ -250,6 +264,22 @@ export function ChatView({
               className="grid size-11 shrink-0 place-items-center rounded-full bg-surface-muted text-text transition-transform active:scale-95"
             >
               <Square className="size-4 fill-current" aria-hidden />
+            </button>
+          ) : listening || (speechSupported && !value.trim()) ? (
+            <button
+              type="button"
+              onClick={listening ? speech.stop : speech.start}
+              aria-label={listening ? t("stopListening") : t("speak")}
+              aria-pressed={listening}
+              className={cn(
+                "relative grid size-11 shrink-0 place-items-center rounded-full transition-transform active:scale-95",
+                listening ? "bg-accent-strong text-on-accent" : "bg-accent-soft text-accent",
+              )}
+            >
+              {listening && (
+                <span className="absolute inset-0 animate-ping rounded-full bg-accent/30 motion-reduce:animate-none" aria-hidden />
+              )}
+              <Mic className="relative size-5" aria-hidden />
             </button>
           ) : (
             <button

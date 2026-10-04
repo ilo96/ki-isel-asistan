@@ -1,22 +1,25 @@
 import { and, count, desc, eq, gte, inArray, isNull, lt } from "drizzle-orm";
 import { addDays, dayIn, monthOf, timeIn, zonedDateTime, type DateString } from "@/lib/dates";
+import { buildDigest, inDigestWindow } from "@/lib/daily-digest";
 import { formatMoney, type CurrencyCode } from "@/lib/money";
 import type { SettingsInput } from "@/lib/validation/settings";
 import type { Db } from "@/server/db/client";
-import { notifications, reminders, type Notification } from "@/server/db/schema";
-import { getMonthBudgets } from "./budgets";
+import { notifications, reminders, transactions, type Notification } from "@/server/db/schema";
+import { achievementCandidates, getStreak } from "./achievements";
+import { getMonthBudgets, type MonthBudgets } from "./budgets";
 import { totalsBetween } from "./dashboard/totals";
 import { fitnessCandidates } from "./fitness-notifications";
 import { getSettings } from "./settings";
+import { subscriptionCandidates, subscriptionsDueOn } from "./subscriptions";
 
 /*
  * Bildirim üretimi (plan: Bildirim stratejisi). Her çalıştırmada adaylar yeniden hesaplanır;
- * dedupe_key aynı olayın ikinci kez yazılmasını engeller. Öncelik: ödeme > hatırlatıcı >
- * bütçe > haftalık özet. Sessiz saatlerde hiçbir şey üretilmez (sonraki çalıştırmada gelir),
+ * dedupe_key aynı olayın ikinci kez yazılmasını engeller. Öncelik: sabah özeti > ödeme >
+ * hatırlatıcı ve abonelik > bütçe > rozet ve haftalık özet. Sessiz saatlerde hiçbir şey üretilmez (sonraki çalıştırmada gelir),
  * günlük sınır kullanıcının gününe göre sayılır.
  */
 
-export type NotificationUser = { id: string; timezone: string; currency: CurrencyCode };
+export type NotificationUser = { id: string; timezone: string; currency: CurrencyCode; name?: string | null };
 
 export type Candidate = Pick<Notification, "kind" | "title" | "body" | "href" | "dedupeKey" | "priority">;
 
@@ -93,9 +96,18 @@ export async function buildCandidates(
     }
   }
 
+  const month = monthOf(today);
+  const b = await getMonthBudgets(db, user.id, month, today);
+
+  if (settings.notifyDaily && inDigestWindow(timeIn(now, tz), settings.dailyTime)) {
+    const digest = await dailyDigest(db, user, today, b, money);
+    if (digest) out.push(digest);
+  }
+
+  if (settings.notifySubscriptions) out.push(...(await subscriptionCandidates(db, user, today, money)));
+  if (settings.notifyAchievements) out.push(...(await achievementCandidates(db, user, today, now)));
+
   if (settings.notifyBudget) {
-    const month = monthOf(today);
-    const b = await getMonthBudgets(db, user.id, month, today);
     const lines = [...(b.overall ? [b.overall] : []), ...b.lines];
     for (const l of lines) {
       const threshold = l.ratio >= 1 ? 100 : l.ratio >= 0.8 ? 80 : null;
@@ -142,6 +154,55 @@ export async function buildCandidates(
 }
 
 const weekday = (day: DateString) => new Date(`${day}T12:00:00Z`).getUTCDay();
+
+/** Sabah özeti: bugünün ödemeleri, en sıkışık bütçe, dün ya da seri. */
+async function dailyDigest(
+  db: Db,
+  user: NotificationUser,
+  today: DateString,
+  budgets: MonthBudgets,
+  money: (minor: number) => string,
+): Promise<Candidate | null> {
+  const tz = user.timezone;
+  const ctx = { db, userId: user.id, today };
+  const [dueToday, subs, yesterday, streak, [any]] = await Promise.all([
+    db
+      .select({ kind: reminders.kind, amountMinor: reminders.amountMinor })
+      .from(reminders)
+      .where(
+        and(
+          eq(reminders.userId, user.id),
+          isNull(reminders.deletedAt),
+          isNull(reminders.completedAt),
+          gte(reminders.dueAt, zonedDateTime(today, "00:00", tz)),
+          lt(reminders.dueAt, zonedDateTime(addDays(today, 1), "00:00", tz)),
+        ),
+      ),
+    subscriptionsDueOn(db, user.id, today),
+    totalsBetween(ctx, addDays(today, -1), addDays(today, -1)),
+    getStreak(db, user.id, today),
+    db.select({ n: count() }).from(transactions).where(eq(transactions.userId, user.id)),
+  ]);
+  const bills = dueToday.filter((r) => r.kind === "bill");
+  const lines = [...(budgets.overall ? [budgets.overall] : []), ...budgets.lines];
+  const open = lines.filter((l) => l.ratio < 1).sort((a, c) => c.ratio - a.ratio)[0];
+  const digest = buildDigest(
+    {
+      firstName: user.name?.split(" ")[0] ?? null,
+      bills: { count: bills.length, totalMinor: bills.reduce((s, r) => s + (r.amountMinor ?? 0), 0) },
+      subscriptions: subs,
+      reminders: dueToday.length - bills.length,
+      tightestBudget: open ? { name: open.categoryId ? open.name : null, leftMinor: open.limitMinor - open.spentMinor } : null,
+      overBudgets: lines.filter((l) => l.ratio >= 1).length,
+      yesterdayExpenseMinor: yesterday.expense,
+      streak: streak.current,
+      hasData: (any?.n ?? 0) > 0 || dueToday.length > 0 || subs.count > 0,
+    },
+    money,
+  );
+  if (!digest) return null;
+  return { kind: "daily_digest", ...digest, href: "/home", dedupeKey: `daily:${today}`, priority: 0 };
+}
 
 /** Adayları sınırlar içinde yazar; yeni yazılanları döndürür (push için). */
 export async function generateNotifications(db: Db, user: NotificationUser, now = new Date()) {
