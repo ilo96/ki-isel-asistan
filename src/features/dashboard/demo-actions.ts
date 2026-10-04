@@ -3,12 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { getSession } from "@/server/auth";
 import { getDb } from "@/server/db";
-import { isProduction } from "@/server/env";
+import { demoEnabled } from "@/server/env";
 import { clearFinanceData, seedDemoData } from "@/server/services/demo-data";
 
 /** Yalnızca geliştirme: dashboard'u örnek veriyle doldurup boşaltmak için. */
 export async function demoDataAction(mode: "seed" | "clear"): Promise<{ ok: boolean }> {
-  if (isProduction()) return { ok: false };
+  if (!demoEnabled()) return { ok: false };
   const session = await getSession();
   if (!session) return { ok: false };
   try {

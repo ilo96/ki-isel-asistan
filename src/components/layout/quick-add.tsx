@@ -1,6 +1,5 @@
 "use client";
 
-import { Bell, CheckCircle2, type LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { SegmentedControl } from "@/components/ui/segmented-control";
@@ -9,11 +8,10 @@ import { FormLoader } from "@/features/finance/form-loader";
 import { TransactionForm } from "@/features/finance/transaction-form";
 import { useQuickAddData } from "@/features/finance/use-quick-add-data";
 import { useTransactionFeedback } from "@/features/finance/use-transaction-feedback";
-import { useShell } from "./ui-store";
-
-type Kind = "expense" | "income" | "reminder" | "task";
-
-const LATER: Partial<Record<Kind, LucideIcon>> = { reminder: Bell, task: CheckCircle2 };
+import { ReminderForm } from "@/features/tasks/reminder-form";
+import { TaskForm } from "@/features/tasks/task-form";
+import { useToast } from "@/components/ui/toast";
+import { useShell, type QuickAddKind as Kind } from "./ui-store";
 
 /** Yazı yazılan bir alandayken kısayollar devreye girmez. */
 function isTyping(target: EventTarget | null) {
@@ -24,8 +22,8 @@ function isTyping(target: EventTarget | null) {
 }
 
 /**
- * Her yerden ("+" ya da klavyede N) açılan Hızlı ekle sheet'i. Gider ve gelir formu
- * burada; hatırlatıcı ve görev formları kendi aşamalarında eklenecek.
+ * Her yerden ("+" ya da klavyede N) açılan Hızlı ekle sheet'i: gider, gelir,
+ * hatırlatıcı (fatura ve önemli gün dahil) ya da görev.
  */
 export function QuickAdd() {
   const t = useTranslations("quickAdd");
@@ -34,6 +32,8 @@ export function QuickAdd() {
   const [kind, setKind] = useState<Kind>(quickAddKind);
   const { data, failed, retry } = useQuickAddData(isOpen);
   const feedback = useTransactionFeedback();
+  const tl = useTranslations("life");
+  const toast = useToast();
 
   // Her açılışta istenen türle başla (ör. Finans'taki "Gelir ekle").
   useEffect(() => {
@@ -55,7 +55,6 @@ export function QuickAdd() {
     value,
     label: t(value),
   }));
-  const LaterIcon = LATER[kind];
 
   return (
     <Sheet
@@ -72,14 +71,25 @@ export function QuickAdd() {
         label={t("description")}
         className="mb-5 flex w-full"
       />
-      {LaterIcon ? (
-        <div className="flex flex-col items-center rounded-card border border-dashed border-border px-6 py-10 text-center">
-          <LaterIcon className="mb-3 size-6 text-accent" aria-hidden />
-          <p className="text-small text-muted">{t("comingSoon")}</p>
-        </div>
-      ) : (
-        <FormLoader data={data} failed={failed} onRetry={retry}>
-          {(loaded) => (
+      <FormLoader data={data} failed={failed} onRetry={retry}>
+        {(loaded) =>
+          kind === "reminder" ? (
+            <ReminderForm
+              data={loaded}
+              onSaved={() => {
+                close();
+                toast({ message: tl("reminderAdded") });
+              }}
+            />
+          ) : kind === "task" ? (
+            <TaskForm
+              today={loaded.today}
+              onSaved={() => {
+                close();
+                toast({ message: tl("taskAdded") });
+              }}
+            />
+          ) : (
             <TransactionForm
               // Tür değişince form sıfırlanır: seçili kategori diğer türde geçerli değil.
               key={kind}
@@ -90,9 +100,9 @@ export function QuickAdd() {
                 feedback.added(id, kind === "income" ? "income" : "expense");
               }}
             />
-          )}
-        </FormLoader>
-      )}
+          )
+        }
+      </FormLoader>
     </Sheet>
   );
 }

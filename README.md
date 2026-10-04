@@ -15,9 +15,66 @@ Yerelde hiçbir hesap veya anahtar gerekmez: `DATABASE_URL` tanımlı değilse v
 şifre sıfırlama bağlantıları sunucu konsoluna yazılır. Production için gereken değişkenler
 `.env.example` içinde.
 
-İşlem ekleme ekranı gelene kadar ana sayfayı dolu görmek için, boş ana sayfadaki
-**Örnek veriyle dene** düğmesi (yalnızca geliştirmede görünür) örnek gelir, gider, bütçe ve
-hatırlatıcılar ekler. `/dev/components` sayfasından bu veriler temizlenebilir.
+Ana sayfayı dolu görmek için boş ana sayfadaki **Örnek veriyle dene** düğmesi örnek gelir,
+gider, bütçe ve hatırlatıcılar ekler (geliştirmede her zaman, production'da yalnızca
+`DEMO_MODE=1` ile görünür). `/dev/components` sayfasından bu veriler temizlenebilir.
+
+### Asistan
+
+`ANTHROPIC_API_KEY` tanımlıysa asistan Claude ile çalışır (`AI_MODEL`, özetler için
+`AI_FAST_MODEL`). Anahtar yoksa ya da Claude yanıt veremezse Türkçe kural tabanlı
+çevrimdışı motor devreye girer; gider/gelir ekleme, hatırlatıcı, görev, bütçe, özet ve
+bakiye komutlarını anlar. Anahtar yalnızca sunucuda kullanılır.
+
+Araçlar `src/server/ai/tools.ts` içinde Zod şemalarıyla tanımlı. Okumalar hemen çalışır;
+açık komutla verilen yazmalar hemen yapılır ve **Geri al** ile geri alınabilir; çıkarım
+yapılan yazmalar, silmeler ve bütçe değişiklikleri önce onay kartı olarak gelir (15 dakika
+geçerli). Her işlem `ai_actions` tablosunda saklanır.
+
+### Bildirimler
+
+Uygulama açılınca ve `/api/cron/notifications` (Bearer `CRON_SECRET`, `vercel.json` ile
+15 dakikada bir) çağrıldığında fatura, hatırlatıcı, bütçe ve haftalık özet bildirimleri
+üretilir; sessiz saatler ve günlük üst sınır Ayarlar'dan değişir. Web Push için
+`VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` gerekir (`npx web-push generate-vapid-keys`).
+
+### Eklentiler: Spor & Sağlık
+
+Eklentiler `src/lib/modules.ts` listesinden gelir; kullanıcı Ayarlar › Eklentiler'den açıp
+kapatır (`user_modules` tablosu, kapatmak veri silmez). Spor & Sağlık şunları ekler:
+
+- `/fitness` ekranı: VKİ kartı (değer, kategori, renkli gösterge, açıklama), güncel kilo,
+  haftalık aktivite, hedef kartları; kilo ve haftalık aktivite grafikleri; ölçüm, aktivite ve
+  kilo hedefi formları (Türkçe ondalık, gerçek dışı değer reddi, alışılmadık değer uyarısı).
+- Asistan eklentisi `src/server/ai/plugins/fitness`: 9 araç (`calculate_bmi`,
+  `save_body_measurement`, `get_weight_history`, `save_workout`, `get_workout_summary`,
+  `create_fitness_goal`, `get_fitness_progress`, `get_fitness_dashboard`,
+  `delete_fitness_goal`) ve anahtarsız çalışan Türkçe ayrıştırıcı (“Boyum 180, kilom 80”,
+  “Bugün 30 dakika koştum”, eksik bilgi sorusu dahil). Hedef oluşturma her zaman onay kartıyla.
+- Seyrek bildirimler: pazartesi tartı ve hedef özeti, isteğe bağlı hareket hatırlatması.
+- Veriler metrik tam sayı (boy mm, kilo g, mesafe m) saklanır; `bodyProfiles.unitSystem` ile
+  başka birim sistemine hazırdır. Tablolarda satır düzeyi güvenlik (RLS) açıktır, loglara
+  değer yazılmaz, dışa aktarıma dahildir.
+
+Yeni bir eklenti: `MODULES`'a bir satır, `src/server/ai/plugins/<ad>` (araçlar, istem,
+çevrimdışı işleyici) ve `src/features/<ad>` ekranı.
+
+### PWA
+
+`src/app/manifest.ts` ve `public/sw.js` (yalnızca production'da kaydedilir) uygulamayı
+ana ekrana eklenebilir yapar; bağlantı yokken `public/offline.html` gösterilir.
+
+### Uçtan uca testler
+
+```bash
+pnpm build
+BETTER_AUTH_SECRET=<32+ karakter> BETTER_AUTH_URL=http://localhost:3100 \
+  LOCAL_DB=1 DEMO_MODE=1 AUTH_RATE_LIMIT=0 pnpm start -p 3100
+BASE_URL=http://localhost:3100 pnpm e2e   # mobil (Pixel 7) ve masaüstü, axe erişilebilirlik dahil
+```
+
+`BASE_URL` verilmezse Playwright geliştirme sunucusunu kendisi açar. `LOCAL_DB`,
+`DEMO_MODE` ve `AUTH_RATE_LIMIT=0` yalnızca önizleme ve testler içindir.
 
 | Komut            | Ne yapar                         |
 | ---------------- | -------------------------------- |
@@ -25,6 +82,7 @@ hatırlatıcılar ekler. `/dev/components` sayfasından bu veriler temizlenebili
 | `pnpm typecheck` | TypeScript (strict)              |
 | `pnpm test`      | Vitest birim testleri            |
 | `pnpm build`     | Production derlemesi             |
+| `pnpm e2e`       | Playwright uçtan uca testleri    |
 | `pnpm db:generate` | Şemadan yeni migration üretir  |
 | `pnpm db:migrate`  | Migration'ları `DATABASE_URL`'deki veritabanına uygular |
 

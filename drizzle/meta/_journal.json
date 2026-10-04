@@ -15,6 +15,41 @@
       "when": 1791042003847,
       "tag": "0001_finance_core",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791050347894,
+      "tag": "0002_life",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791051217743,
+      "tag": "0003_ai",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791052253834,
+      "tag": "0004_notifications",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791053044787,
+      "tag": "0005_rls",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791069169463,
+      "tag": "0006_fitness",
+      "breakpoints": true
     }
   ]
 }

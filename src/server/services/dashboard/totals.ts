@@ -1,12 +1,12 @@
 import { and, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
 import type { DateString } from "@/lib/dates";
 import {
-  budgets,
   categories,
   financialGoals,
   paymentMethods,
   transactions,
 } from "@/server/db/schema";
+import { effectiveBudgets } from "../budgets";
 import { alive, num, type Context, type Range } from "./context";
 
 export async function totalsBetween({ db, userId }: Context, start: DateString, end: DateString) {
@@ -36,18 +36,11 @@ export async function balance({ db, userId }: Context) {
 }
 
 /**
- * Aylık bütçeler bir başlangıç ayından itibaren geçerlidir; her kategori için o aya
- * kadar girilmiş en son tutar kullanılır. Genel bütçe varsa kategori bütçelerinin önüne geçer.
+ * Aylık bütçeler bir başlangıç ayından itibaren geçerlidir (bkz. budgets servisi).
+ * Genel bütçe varsa kategori bütçelerinin önüne geçer.
  */
 export async function budgetFor({ db, userId }: Context, month: Range) {
-  const rows = await db
-    .selectDistinctOn([budgets.categoryId], {
-      categoryId: budgets.categoryId,
-      amountMinor: budgets.amountMinor,
-    })
-    .from(budgets)
-    .where(and(eq(budgets.userId, userId), lte(budgets.startsOn, month.start)))
-    .orderBy(budgets.categoryId, desc(budgets.startsOn));
+  const rows = await effectiveBudgets(db, userId, month.start);
   if (rows.length === 0) return null;
 
   const overall = rows.find((r) => r.categoryId === null);

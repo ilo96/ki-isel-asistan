@@ -14,8 +14,12 @@ import { DayGroups } from "@/features/finance/day-groups";
 import { FinanceTabs } from "@/features/finance/finance-tabs";
 import { MonthSwitcher } from "@/features/finance/month-switcher";
 import { financePageContext } from "@/features/finance/page-context";
-import { formatMoney } from "@/lib/money";
+import { CategoryDonut, CumulativeChart, MonthlyChart } from "@/features/finance/charts";
+import { RangeLinks } from "@/features/finance/range-links";
+import { monthsIn, parseRange, type RangeKey } from "@/lib/finance/range";
+import { formatMoney, type CurrencyCode } from "@/lib/money";
 import { getMonthOverview, type MonthOverview } from "@/server/services/finance-overview";
+import { getCumulativeExpense, getMonthlySeries } from "@/server/services/finance-trends";
 import { countTransactions, listTransactions } from "@/server/services/transactions";
 
 export const metadata: Metadata = { title: "Finans" };
@@ -26,14 +30,23 @@ type Props = { searchParams: Promise<Record<string, string | string[] | undefine
 
 export default async function FinancePage({ searchParams }: Props) {
   const t = await getTranslations("finance");
-  const ctx = await financePageContext((await searchParams).month);
+  const params = await searchParams;
+  const ctx = await financePageContext(params.month);
   const { db, userId, currency, today, month, range } = ctx;
+  const chartRange = parseRange(params.range);
 
-  const [total, overview, recent] = await Promise.all([
+  const [total, overview, recent, series, cumulative] = await Promise.all([
     countTransactions(db, userId),
     getMonthOverview(db, userId, range, today),
     listTransactions(db, userId, { ...range, limit: RECENT_LIMIT }),
+    getMonthlySeries(db, userId, month, monthsIn(chartRange)),
+    getCumulativeExpense(db, userId, range, today),
   ]);
+  const hrefFor = (next: { month?: string; range?: RangeKey }) => {
+    const m = next.month ?? month;
+    const r = next.range ?? chartRange;
+    return `/finance?month=${m}${r === "6m" ? "" : `&range=${r}`}`;
+  };
 
   const header = (
     <PageHeader
@@ -77,7 +90,7 @@ export default async function FinancePage({ searchParams }: Props) {
     <>
       {header}
       <FinanceTabs />
-      <MonthSwitcher month={month} hrefFor={(m) => `/finance?month=${m}`} className="mb-4" />
+      <MonthSwitcher month={month} hrefFor={(m) => hrefFor({ month: m })} className="mb-4" />
 
       <section className="grid grid-cols-2 gap-4 lg:grid-cols-3" aria-label={t("summaryLabel")}>
         <StatCard
@@ -127,17 +140,44 @@ export default async function FinancePage({ searchParams }: Props) {
 
       <div className="mt-4 grid gap-4 lg:mt-6 lg:grid-cols-12 lg:gap-6">
         <Card className="lg:col-span-7">
+          <CardHeader className="flex-wrap">
+            <CardTitle>{t("charts.monthlyTitle")}</CardTitle>
+            <RangeLinks value={chartRange} hrefFor={(r) => hrefFor({ range: r })} />
+          </CardHeader>
+          <MonthlyChart points={series} currency={currency} />
+          <AverageNet series={series} currency={currency} t={t} />
+        </Card>
+        <Card className="lg:col-span-5">
+          <CardHeader>
+            <div>
+              <CardTitle>{t("charts.cumulativeTitle")}</CardTitle>
+              <p className="mt-0.5 text-small text-muted">{t("charts.cumulativeHint")}</p>
+            </div>
+          </CardHeader>
+          <CumulativeChart points={cumulative} currency={currency} />
+        </Card>
+      </div>
+
+      <div className="mt-4 grid gap-4 lg:mt-6 lg:grid-cols-12 lg:gap-6">
+        <Card className="lg:col-span-7">
           <CardHeader>
             <CardTitle>{t("byCategory")}</CardTitle>
           </CardHeader>
           {overview.expenseByCategory.length === 0 ? (
             <p className="py-6 text-center text-body text-muted">{t("noExpenseThisMonth")}</p>
           ) : (
-            <CategoryBreakdown
-              shares={overview.expenseByCategory}
-              currency={currency}
-              hrefBase={`${listHref}&type=expense`}
-            />
+            <div className="grid items-center gap-6 sm:grid-cols-[13rem_1fr]">
+              <CategoryDonut
+                shares={overview.expenseByCategory}
+                totalMinor={overview.expenseMinor}
+                currency={currency}
+              />
+              <CategoryBreakdown
+                shares={overview.expenseByCategory}
+                currency={currency}
+                hrefBase={`${listHref}&type=expense`}
+              />
+            </div>
           )}
           {overview.incomeByCategory.length > 0 && (
             <>
@@ -176,6 +216,30 @@ export default async function FinancePage({ searchParams }: Props) {
 }
 
 type T = Awaited<ReturnType<typeof getTranslations<"finance">>>;
+
+/** Seçili aralığın ortalama aylık neti; işlemi olmayan baştaki aylar ortalamaya girmez. */
+function AverageNet({
+  series,
+  currency,
+  t,
+}: {
+  series: { incomeMinor: number; expenseMinor: number; netMinor: number }[];
+  currency: CurrencyCode;
+  t: T;
+}) {
+  const firstActive = series.findIndex((p) => p.incomeMinor > 0 || p.expenseMinor > 0);
+  if (firstActive === -1) return null;
+  const active = series.slice(firstActive);
+  const average = Math.round(active.reduce((sum, p) => sum + p.netMinor, 0) / active.length);
+  return (
+    <p className="mt-2 text-small text-muted">
+      {t("charts.averageNet", {
+        count: active.length,
+        amount: formatMoney(average, { currency, compact: true, signed: true }),
+      })}
+    </p>
+  );
+}
 
 /** İçinde bulunulan ayda geçen ayın aynı gününe, geçmiş aylarda önceki ayın tamamına göre. */
 function Trend({ overview, t }: { overview: MonthOverview; t: T }) {

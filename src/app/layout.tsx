@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   description: "Gelirini, giderini ve gününü senin yerine takip eden kişisel AI asistanın.",
   applicationName: "Asistan",
   appleWebApp: { capable: true, title: "Asistan", statusBarStyle: "default" },
+  icons: {
+    icon: [{ url: "/icons/icon.svg", type: "image/svg+xml" }, { url: "/icons/icon-192.png", sizes: "192x192" }],
+    apple: "/icons/apple-touch-icon.png",
+  },
 };
 
 export const viewport: Viewport = {

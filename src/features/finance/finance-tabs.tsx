@@ -10,10 +10,11 @@ import { spring } from "@/lib/motion";
 const TABS = [
   { key: "overview", href: "/finance" },
   { key: "transactions", href: "/finance/transactions" },
+  { key: "budgets", href: "/finance/budgets" },
   { key: "categories", href: "/finance/categories" },
 ] as const;
 
-/** Finans'ın alt sayfaları: Özet, İşlemler, Kategoriler. Bütçeler kendi aşamasında eklenecek. */
+/** Finans'ın alt sayfaları: Özet, İşlemler, Bütçeler, Kategoriler. */
 export function FinanceTabs() {
   const t = useTranslations("finance.tabs");
   const pathname = usePathname();

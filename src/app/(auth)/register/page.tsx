@@ -20,7 +20,7 @@ export default async function RegisterPage() {
       </div>
       <AuthFooter>
         {t("haveAccount")}{" "}
-        <Link href="/login" className="font-medium text-accent hover:underline">
+        <Link href="/login" className="font-medium text-accent underline underline-offset-2">
           {t("goLogin")}
         </Link>
       </AuthFooter>

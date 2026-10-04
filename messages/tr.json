@@ -14,7 +14,8 @@
     "main": "Ana menü",
     "quickAdd": "Hızlı ekle",
     "search": "Ara veya komut yaz",
-    "skipToContent": "İçeriğe geç"
+    "skipToContent": "İçeriğe geç",
+    "notificationsUnread": "Bildirimler, {count} okunmamış"
   },
   "greeting": {
     "morning": "Günaydın",
@@ -104,7 +105,11 @@
       "clear": "Finans verilerimi temizle",
       "devOnly": "Yalnızca geliştirme ortamında görünür.",
       "failed": "İşlem yapılamadı."
-    }
+    },
+    "askChips": [
+      "Bu ay ne kadar harcadım?",
+      "Bütçem nasıl gidiyor?"
+    ]
   },
   "finance": {
     "title": "Finans",
@@ -144,7 +149,8 @@
       "label": "Finans bölümleri",
       "overview": "Özet",
       "transactions": "İşlemler",
-      "categories": "Kategoriler"
+      "categories": "Kategoriler",
+      "budgets": "Bütçeler"
     },
     "filters": {
       "search": "Açıklama, not ya da kategori ara",
@@ -155,6 +161,28 @@
       "income": "Gelir",
       "category": "Kategori",
       "allCategories": "Tüm kategoriler"
+    },
+    "charts": {
+      "monthlyTitle": "Gelir ve gider",
+      "cumulativeTitle": "Ay içinde harcama",
+      "cumulativeHint": "Geçen ayın aynı günleriyle",
+      "rangeLabel": "Grafik aralığı",
+      "range": {
+        "3m": "3 ay",
+        "6m": "6 ay",
+        "12m": "12 ay"
+      },
+      "income": "Gelir",
+      "expense": "Gider",
+      "month": "Ay",
+      "monthlyCaption": "Aylara göre gelir ve gider",
+      "thisMonth": "Bu ay",
+      "lastMonth": "Geçen ay",
+      "dayN": "{day}. gün",
+      "cumulativeSummary": "Ayın {day}. gününe kadar {current} harcadın; geçen ay aynı günde {previous} idi.",
+      "total": "Toplam",
+      "other": "Diğer",
+      "averageNet": "{count} aylık ortalama net: {amount}"
     }
   },
   "assistantPage": {
@@ -164,21 +192,40 @@
     "emptyBody": "Harcamalarını sorabilir, gider ekletebilir ya da hatırlatıcı kurdurabilirsin.",
     "suggestions": [
       "Bu ay ne kadar harcadım?",
-      "Kira ödemem 25.000 TL, gider olarak ekle",
-      "Yarın 10'da faturayı hatırlat"
+      "Bugün 350 TL yemek harcadım",
+      "Her ayın 5'inde kira hatırlat 25.000 TL"
     ],
     "inputPlaceholder": "Asistana yaz…",
-    "comingSoon": "Sohbet çok yakında burada."
-  },
-  "tasks": {
-    "title": "Görevler",
-    "subtitle": "Hatırlatıcılar ve yapılacaklar",
-    "today": "Bugün",
-    "upcoming": "Yaklaşan",
-    "done": "Tamamlanan",
-    "emptyTitle": "Bugün için bir şey yok",
-    "emptyBody": "Bir hatırlatıcı ya da görev ekle, zamanı gelince sana haber vereyim.",
-    "add": "Görev ekle"
+    "send": "Gönder",
+    "stop": "Durdur",
+    "thinking": "Düşünüyorum…",
+    "suggestionsLabel": "Önerilen sorular",
+    "offlineNote": "Çevrimdışı mod: asistan temel komutları kendi kurallarıyla anlıyor.",
+    "aiNote": "Asistan hata yapabilir; önemli işlemlerden önce onayını ister.",
+    "history": "Geçmiş sohbetler",
+    "historyEmpty": "Henüz bir sohbet yok.",
+    "newChat": "Yeni sohbet",
+    "deleteChat": "Sohbeti sil",
+    "close": "Kapat",
+    "confirm": "Onayla",
+    "reject": "Vazgeç",
+    "undo": "Geri al",
+    "open": "Aç",
+    "undone": "Geri alındı",
+    "states": {
+      "proposed": "Onayın bekleniyor",
+      "executed": "Yapıldı",
+      "rejected": "Vazgeçildi",
+      "undone": "Geri alındı",
+      "expired": "Süresi doldu",
+      "failed": "Yapılamadı"
+    },
+    "errors": {
+      "rateLimited": "Biraz hızlı gittik; bir dakika sonra tekrar dener misin?",
+      "unauthorized": "Oturumun kapanmış görünüyor, yeniden giriş yap.",
+      "unknown": "Bir sorun oldu, tekrar dener misin?",
+      "expired": "Bu önerinin süresi doldu; istersen yeniden iste."
+    }
   },
   "profile": {
     "title": "Profil",
@@ -190,7 +237,13 @@
     "currency": "Para birimi",
     "monthlyIncome": "Aylık gelir",
     "notSet": "Belirtilmedi",
-    "signOutBody": "Bu cihazdaki oturumun kapanır."
+    "signOutBody": "Bu cihazdaki oturumun kapanır.",
+    "settingsLink": "Bildirim ve hesap ayarları",
+    "memories": "Asistanın hatırladıkları",
+    "memoriesEmpty": "Asistana “Unutma: …” dediğin bilgiler burada görünür ve istediğinde silebilirsin.",
+    "forget": "Unut",
+    "fitnessLink": "Spor & Sağlık",
+    "fitnessLinkBody": "VKİ, kilo takibi, aktiviteler ve hedefin"
   },
   "quickAdd": {
     "title": "Hızlı ekle",
@@ -199,7 +252,6 @@
     "income": "Gelir",
     "reminder": "Hatırlatıcı",
     "task": "Görev",
-    "comingSoon": "Hatırlatıcı ve görev ekleme sonraki aşamalarda burada olacak.",
     "close": "Kapat"
   },
   "transactionForm": {
@@ -295,11 +347,15 @@
   },
   "command": {
     "title": "Komut paleti",
-    "placeholder": "Bir sayfa ya da komut ara…",
+    "placeholder": "Ara, git ya da asistana sor…",
     "empty": "Sonuç yok",
     "navigate": "Git",
     "actions": "Komutlar",
-    "toggleTheme": "Temayı değiştir"
+    "toggleTheme": "Temayı değiştir",
+    "assistant": "Asistan",
+    "ask": "Asistana sor: “{query}”",
+    "records": "Kayıtlar",
+    "shortcuts": "Klavye kısayolları"
   },
   "state": {
     "errorTitle": "Bir şeyler ters gitti",
@@ -368,7 +424,9 @@
     "descriptionMax": "Açıklama en fazla 120 karakter olabilir.",
     "noteMax": "Not en fazla 500 karakter olabilir.",
     "date": "Geçerli bir tarih seç.",
-    "categoryNameMax": "Kategori adı en fazla 40 karakter olabilir."
+    "categoryNameMax": "Kategori adı en fazla 40 karakter olabilir.",
+    "titleMax": "Başlık en fazla 120 karakter olabilir.",
+    "time": "Geçerli bir saat seç."
   },
   "onboarding": {
     "skip": "Atla",
@@ -418,6 +476,487 @@
     "errors": {
       "invalid": "Bilgileri kontrol edip tekrar dene.",
       "unknown": "Kaydedemedim. Bağlantını kontrol edip tekrar dene."
+    }
+  },
+  "budgets": {
+    "title": "Bütçeler",
+    "subtitle": "Ne kadar harcayacağına sen karar ver",
+    "emptyTitle": "Henüz bütçe yok",
+    "emptyBody": "Aylık bir sınır koy; yaklaştığında ve aştığında sana haber vereyim.",
+    "orSay": "Ya da yaz: “Market için aylık 6.000 TL bütçe koy”",
+    "setOverall": "Aylık bütçe belirle",
+    "editOverall": "Aylık bütçeyi düzenle",
+    "addCategory": "Kategori bütçesi ekle",
+    "editCategory": "{name} bütçesi",
+    "categoryBudgets": "Kategori bütçeleri",
+    "add": "Ekle",
+    "addShort": "Bütçe",
+    "noCategoryBudgets": "Market, yemek gibi kategorilere ayrı sınır koyabilirsin.",
+    "unbudgeted": "Bütçesi olmayanlar",
+    "unbudgetedHint": "Bu ay harcama yaptığın ama sınır koymadığın kategoriler",
+    "spentThisMonth": "Bu ay {amount}",
+    "over": "{amount} aşıldı",
+    "left": "{amount} kaldı",
+    "projectedOverShort": "{amount} kaldı · bu hızla aşacak",
+    "overall": "Aylık bütçe",
+    "noOverall": "Tüm harcamaların için tek bir aylık sınır belirlemedin.",
+    "suggestion": "Son 3 ayda ortalama {amount} harcadın.",
+    "categorySum": "Kategori bütçelerinde {limit} sınırın {spent} kadarını kullandın.",
+    "edit": "Düzenle",
+    "remaining": "Kalan",
+    "overBy": "Aşılan",
+    "spentOf": "{spent} harcandı",
+    "perDay": "Ay sonuna kadar günde {amount} harcayabilirsin ({days} gün).",
+    "projectedOver": "Bu hızla ay sonunda {amount} harcamış olacaksın; bütçeyi aşarsın.",
+    "projectedOk": "Bu hızla ay sonunda yaklaşık {amount} harcamış olacaksın.",
+    "inherited": "Önceki aydan devam ediyor.",
+    "close": "Kapat",
+    "category": "Kategori",
+    "monthlyLimit": "Aylık sınır",
+    "useSuggestion": "Son 3 ay ortalaması: {amount}",
+    "appliesFrom": "{month} ayından itibaren her ay geçerli.",
+    "remove": "Kaldır",
+    "save": "Kaydet",
+    "saved": "Bütçe kaydedildi",
+    "updated": "Bütçe güncellendi",
+    "removed": "Bütçe kaldırıldı",
+    "undo": "Geri al",
+    "errors": {
+      "unknown": "Kaydedemedim. Bağlantını kontrol edip tekrar dene."
+    }
+  },
+  "life": {
+    "title": "Görevler",
+    "subtitle": "Hatırlatıcılar, faturalar ve yapılacaklar",
+    "tabs": {
+      "label": "Görev listeleri",
+      "today": "Bugün",
+      "upcoming": "Yaklaşan",
+      "done": "Tamamlanan"
+    },
+    "groups": {
+      "overdue": "Gecikenler",
+      "today": "Bugün",
+      "someday": "Tarihsiz"
+    },
+    "empty": {
+      "today": {
+        "title": "Bugün için bir şey yok",
+        "body": "Bir görev ya da hatırlatıcı ekle, zamanı gelince sana haber vereyim."
+      },
+      "upcoming": {
+        "title": "Yaklaşan bir şey yok",
+        "body": "Faturalarını ve önemli günlerini ekle; önümüzdeki 60 gün burada görünür."
+      },
+      "done": {
+        "title": "Henüz tamamlanan yok",
+        "body": "Son 30 günde tamamladıkların burada listelenir."
+      }
+    },
+    "addTask": "Görev ekle",
+    "addReminder": "Hatırlatıcı ekle",
+    "orSay": "Ya da yaz: “Her ayın 5'inde kirayı hatırlat, 25.000 TL”",
+    "day": {
+      "today": "Bugün",
+      "tomorrow": "Yarın",
+      "yesterday": "Dün",
+      "inDays": "{count} gün sonra"
+    },
+    "repeat": {
+      "daily": "Her gün",
+      "weekly": "Her hafta",
+      "monthly": "Her ay",
+      "yearly": "Her yıl"
+    },
+    "repeatLabel": "Tekrar",
+    "repeatOption": {
+      "none": "Tekrar yok",
+      "daily": "Her gün",
+      "weekly": "Her hafta",
+      "monthly": "Her ay",
+      "yearly": "Her yıl"
+    },
+    "kindLabel": "Tür",
+    "kind": {
+      "reminder": "Hatırlatıcı",
+      "bill": "Fatura",
+      "important_date": "Önemli gün"
+    },
+    "titlePlaceholder": {
+      "reminder": "Ör. Diş randevusu",
+      "bill": "Ör. Elektrik faturası",
+      "important_date": "Ör. Annemin doğum günü"
+    },
+    "amount": "Tutar",
+    "amountHint": "Ödendi dediğinde bu tutarı gider olarak eklemeyi öneririm.",
+    "date": "Tarih",
+    "time": "Saat",
+    "allDay": "Tüm gün",
+    "expenseCategory": "Gider kategorisi",
+    "expenseCategoryHint": "İsteğe bağlı. Seçmezsen Faturalar kullanılır.",
+    "more": "Daha fazla",
+    "note": "Not",
+    "notePlaceholder": "İsteğe bağlı",
+    "priorityLabel": "Öncelik",
+    "priority": {
+      "low": "Düşük",
+      "normal": "Normal",
+      "high": "Yüksek"
+    },
+    "taskTitle": "Ne yapılacak?",
+    "taskPlaceholder": "Ör. Vergi beyannamesini gönder",
+    "dueLabel": "Ne zaman?",
+    "due": {
+      "none": "Tarihsiz",
+      "today": "Bugün",
+      "tomorrow": "Yarın",
+      "pick": "Tarih seç"
+    },
+    "save": "Kaydet",
+    "update": "Değişiklikleri kaydet",
+    "delete": "Sil",
+    "close": "Kapat",
+    "editTask": "Görevi düzenle",
+    "editReminder": "Hatırlatıcıyı düzenle",
+    "snooze": "Ertele:",
+    "snoozeHour": "1 saat",
+    "snoozeTomorrow": "Yarın",
+    "snoozedHour": "1 saat ertelendi",
+    "snoozedTomorrow": "Yarına ertelendi",
+    "reminderAdded": "Hatırlatıcı eklendi",
+    "taskAdded": "Görev eklendi",
+    "updated": "Kaydedildi",
+    "taskDone": "Görev tamamlandı",
+    "reminderDone": "Tamamlandı",
+    "completedNext": "Tamamlandı. Sonraki: {date}",
+    "billPaid": "{title} ödendi olarak işaretlendi",
+    "addAsExpense": "Gider olarak ekle",
+    "expenseAdded": "Gider eklendi",
+    "deleted": "Silindi",
+    "undo": "Geri al",
+    "undone": "Geri alındı",
+    "overdue": "Gecikti",
+    "completeLabel": "Tamamla: {title}",
+    "reopenLabel": "Yeniden aç: {title}",
+    "completedAt": "{when} tamamlandı",
+    "checkToPay": "İşaretleyince ödendi sayılır",
+    "errors": {
+      "invalid": "Bilgileri kontrol edip tekrar dene.",
+      "unauthorized": "Oturumun kapanmış. Tekrar giriş yap.",
+      "not_found": "Bu kayıt artık yok. Sayfayı yenile.",
+      "category_not_found": "Kategori bulunamadı.",
+      "unknown": "Kaydedemedim. Bağlantını kontrol edip tekrar dene."
+    },
+    "titleLabel": "Başlık"
+  },
+  "notificationsPage": {
+    "title": "Bildirimler",
+    "subtitle": "Ödemeler, hatırlatıcılar ve bütçe uyarıları",
+    "markAll": "Tümünü okundu say",
+    "emptyTitle": "Her şey yolunda",
+    "emptyBody": "Yaklaşan bir ödeme ya da bütçe uyarısı olduğunda burada göreceksin.",
+    "today": "Bugün",
+    "earlier": "Daha önce",
+    "settings": "Bildirim ayarları",
+    "unread": "Okunmadı"
+  },
+  "settingsPage": {
+    "title": "Ayarlar",
+    "subtitle": "Bildirimler ve hesap",
+    "notifications": "Bildirimler",
+    "notificationsBody": "Hangi durumlarda haber vereceğimi seç. Günde en fazla {limit} bildirim gönderirim.",
+    "bills": "Yaklaşan ve geciken ödemeler",
+    "reminders": "Hatırlatıcılar",
+    "budget": "Bütçe uyarıları (%80 ve %100)",
+    "weekly": "Pazartesi sabahı haftalık özet",
+    "quiet": "Sessiz saatler",
+    "quietBody": "Bu aralıkta bildirim göndermem; birikenler sonra gelir.",
+    "from": "Başlangıç",
+    "to": "Bitiş",
+    "dailyLimit": "Günlük en fazla",
+    "save": "Kaydet",
+    "saved": "Ayarlar kaydedildi",
+    "error": "Kaydedilemedi, tekrar dener misin?",
+    "push": "Bu cihaza bildirim",
+    "pushBody": "Uygulama kapalıyken de ödemelerini hatırlatayım.",
+    "pushEnable": "Bildirimlere izin ver",
+    "pushDisable": "Bu cihazda kapat",
+    "pushOn": "Bu cihazda açık",
+    "pushDenied": "Tarayıcı izni kapalı; tarayıcı ayarlarından açabilirsin.",
+    "pushUnsupported": "Bu tarayıcı anlık bildirimleri desteklemiyor.",
+    "pushNotConfigured": "Sunucuda anlık bildirim henüz yapılandırılmadı; uygulama içi bildirimler çalışıyor.",
+    "data": "Verilerin",
+    "dataBody": "Tüm kayıtlarını istediğin zaman indirebilirsin.",
+    "exportJson": "Tümünü indir (JSON)",
+    "exportCsv": "İşlemler (CSV)",
+    "deleteTitle": "Hesabı sil",
+    "deleteBody": "Hesabın ve tüm verilerin kalıcı olarak silinir. Bu işlem geri alınamaz.",
+    "deleteButton": "Hesabımı sil",
+    "deleteSheetBody": "İşlemlerin, bütçelerin, hatırlatıcıların ve asistan sohbetlerin kalıcı olarak silinecek.",
+    "deleteType": "Onaylamak için {word} yaz",
+    "deleteConfirm": "Kalıcı olarak sil",
+    "deleteError": "Onay kelimesi eşleşmedi.",
+    "close": "Kapat"
+  },
+  "shortcuts": {
+    "title": "Klavye kısayolları",
+    "close": "Kapat",
+    "palette": "Komut paleti",
+    "search": "Ara",
+    "quickAdd": "Hızlı ekle",
+    "home": "Ana sayfaya git",
+    "finance": "Finansa git",
+    "assistant": "Asistana git",
+    "tasks": "Görevlere git",
+    "notifications": "Bildirimlere git",
+    "help": "Bu liste"
+  },
+  "landing": {
+    "login": "Giriş yap",
+    "cta": "Ücretsiz başla",
+    "haveAccount": "Hesabım var",
+    "ctaNote": "Kart bilgisi istemez. Verilerini istediğin an indirip silebilirsin.",
+    "eyebrow": "Kişisel AI asistanın",
+    "title": "Paranı ve gününü senin yerine takip eden asistan.",
+    "subtitle": "Harcamanı yazman yeterli: kaydeder, bütçeni izler, faturayı gününden önce hatırlatır. Ne kadar harcadığını sorduğunda gerçek rakamlarla cevap verir.",
+    "deleted": "Hesabın ve tüm verilerin silindi. Görüşmek üzere.",
+    "featuresTitle": "Tek uygulama, dört iş",
+    "features": {
+      "write": {
+        "title": "Yaz, eklesin",
+        "body": "“Bugün 350 TL yemek harcadım” demen yeter. Kategoriyi, tarihi ve tutarı asistan çıkarır; yanlışsa tek dokunuşla geri alırsın."
+      },
+      "budget": {
+        "title": "Bütçeni korur",
+        "body": "Aylık ve kategori bütçeleri, ay sonu tahmini ve %80'de nazik bir uyarı. Geçmiş aylarına bakıp sana makul bir limit önerir."
+      },
+      "remind": {
+        "title": "Ödemeyi kaçırma",
+        "body": "Kira, fatura, abonelik… Tekrarlayan hatırlatıcılar kurar, ödediğinde gideri tek dokunuşla ekler. Gece rahatsız etmez."
+      },
+      "control": {
+        "title": "Kontrol sende",
+        "body": "Silme ve bütçe değişikliğinden önce onay ister, her işlemi geri alabilirsin. Verilerin yalnızca sana ait; istediğinde indir ya da sil."
+      }
+    },
+    "stepsTitle": "Üç adımda başla",
+    "steps": {
+      "1": {
+        "title": "Hesabını aç",
+        "body": "E-postanla ya da Google ile bir dakikada."
+      },
+      "2": {
+        "title": "Para birimini ve hedefini seç",
+        "body": "İstersen aylık gelirini ve bir birikim hedefini ekle."
+      },
+      "3": {
+        "title": "Asistana yaz",
+        "body": "İlk giderini, kira hatırlatıcını ya da bütçeni tek cümleyle kur."
+      }
+    },
+    "finalTitle": "Ay sonunu merak etmeyi bırak.",
+    "finalBody": "Her sabah iki cümlelik bir özet: neye ne harcadın, hangi ödeme yaklaşıyor.",
+    "footer": "Türkiye'de, Türkçe tasarlandı.",
+    "mock": {
+      "title": "Asistan",
+      "user": "Bugün 350 TL yemek harcadım",
+      "reply": "Tamam, ₺350 Yemek gideri bugüne eklendi. Bu ay yemeğe toplam ₺2.150 harcadın.",
+      "done": "Yapıldı",
+      "card": "−₺350 · Yemek",
+      "cardLine": "Bugün",
+      "user2": "Bütçem nasıl gidiyor?",
+      "reply2": "Aylık bütçenin %62'sini kullandın. Ay sonuna 12 gün var, ₺9.400 kaldı."
+    }
+  },
+  "modules": {
+    "title": "Eklentiler",
+    "fitness": "Spor & Sağlık"
+  },
+  "fitness": {
+    "title": "Spor & Sağlık",
+    "subtitle": "Vücut ölçülerin, aktivitelerin ve kilo hedefin tek yerde.",
+    "summaryLabel": "Spor özeti",
+    "addMeasurement": "Ölçüm ekle",
+    "addWorkout": "Aktivite ekle",
+    "measureShort": "Ölçüm",
+    "workoutShort": "Aktivite",
+    "add": "Ekle",
+    "save": "Kaydet",
+    "saveAnyway": "Yine de kaydet",
+    "delete": "Sil",
+    "undo": "Geri al",
+    "close": "Kapat",
+    "optional": "isteğe bağlı",
+    "today": "Bugün",
+    "yesterday": "Dün",
+    "emptyTitle": "Spor ve sağlık takibine başla",
+    "emptyBody": "Boyunu ve kilonu ekle; VKİ'ni hesaplayalım. Yaptığın aktiviteleri kaydet, haftalık özetini görelim.",
+    "orSay": "Ya da asistana yaz: “Boyum 180, kilom 80”",
+    "disabledTitle": "Spor & Sağlık kapalı",
+    "disabledBody": "Eklentiyi açtığında ekran, asistan komutları ve hatırlatmalar geri gelir. Kayıtların silinmedi.",
+    "enable": "Eklentiyi aç",
+    "vsPrevious": "Önceki ölçüme göre",
+    "recentWorkouts": "Son aktiviteler",
+    "noWorkouts": "Henüz aktivite yok. “Bugün 30 dakika yürüdüm” yazman yeterli.",
+    "editWorkout": "{name} kaydını düzenle",
+    "weights": "Kilo kayıtları",
+    "noWeights": "Henüz kilo kaydı yok.",
+    "weightDeleted": "Kilo kaydı silindi",
+    "deleteWeight": "{date} kilo kaydını sil",
+    "caloriesNote": "Kaloriler, aktivite türü, süre ve son kilona göre yapılan tahminlerdir (~).",
+    "privacy": "Sağlık verilerin yalnızca senin hesabında saklanır ve kimseyle paylaşılmaz.",
+    "disclaimer": "Bu bölüm bilgilendirme amaçlıdır ve tıbbi tavsiye değildir. VKİ tek başına sağlık durumunu göstermez; çocuklar, ergenler, hamileler ve kas oranı yüksek kişiler için yanıltıcı olabilir. Kilo hedefleri ve egzersiz planı için bir sağlık uzmanına danışabilirsin.",
+    "bmi": {
+      "title": "Vücut Kitle İndeksi",
+      "height": "Boy",
+      "weight": "Kilo",
+      "lastMeasured": "Son ölçüm: {day}",
+      "noCategory": "Sınıflanmaz",
+      "srSummary": "VKİ {value}, kategori {category}.",
+      "needBoth": "VKİ'ni hesaplamak için boyunu ve kilonu ekle.",
+      "needHeight": "VKİ için boyunu bir kez eklemen yeterli.",
+      "needWeight": "VKİ için güncel kilonu ekle.",
+      "childNote": "18 yaş altında yetişkin VKİ sınıflaması kullanılmaz; çocuklar için yaşa göre persentil tabloları kullanılır.",
+      "adultAssumed": "Yaş girilmediği için yetişkin sınıflaması kullanıldı.",
+      "explain": {
+        "underweight": "Yetişkinler için zayıf aralığında (18,5'in altı).",
+        "normal": "Yetişkinler için normal aralıkta (18,5–24,9).",
+        "overweight": "Yetişkinler için fazla kilolu aralığında (25–29,9).",
+        "obese": "Yetişkinler için obezite aralığında (30 ve üzeri)."
+      }
+    },
+    "cards": {
+      "weight": "Güncel kilo",
+      "activity": "Bu hafta aktif",
+      "goal": "Hedef",
+      "addWeight": "Kilonu ekle",
+      "setGoal": "Hedef belirle",
+      "targetShort": "Hedef {value}",
+      "activityFooter": "{count, plural, =0 {Aktivite yok} other {# aktivite}} · {kcal}"
+    },
+    "trend": {
+      "last30": "Son 30 günde",
+      "since": "{date} tarihinden beri",
+      "down": "{period} {value} azalma",
+      "up": "{period} {value} artış",
+      "same": "{period} değişim yok"
+    },
+    "charts": {
+      "weightTitle": "Kilo değişimi",
+      "weightEmpty": "Grafik için en az iki kilo ölçümü gerekiyor.",
+      "activityTitle": "Haftalık aktivite",
+      "activityHint": "{days, plural, =0 {Bu hafta henüz hareket yok} other {Bu hafta # gün, toplam {time}}}",
+      "weight": "Kilo",
+      "target": "Hedef",
+      "active": "Aktif süre"
+    },
+    "measure": {
+      "title": "Ölçüm ekle",
+      "body": "Boy cm, kilo kg olarak. Ondalık için virgül ya da nokta kullanabilirsin.",
+      "height": "Boy (cm)",
+      "heightHint": "Örn. 175",
+      "weight": "Kilo (kg)",
+      "weightHint": "Örn. 72,5",
+      "age": "Yaş",
+      "date": "Ölçüm tarihi",
+      "sex": "Cinsiyet",
+      "saved": "Ölçüm kaydedildi"
+    },
+    "sex": {
+      "female": "Kadın",
+      "male": "Erkek",
+      "other": "Belirtmek istemiyorum"
+    },
+    "workout": {
+      "title": "Aktivite ekle",
+      "editTitle": "Aktiviteyi düzenle",
+      "type": "Aktivite",
+      "duration": "Süre (dakika)",
+      "durationHint": "Örn. 45",
+      "date": "Tarih",
+      "distance": "Mesafe (km)",
+      "calories": "Kalori (kcal)",
+      "caloriesHint": "Boşsa tahmin edilir",
+      "note": "Not",
+      "saved": "Aktivite kaydedildi",
+      "updated": "Aktivite güncellendi",
+      "deleted": "Aktivite silindi"
+    },
+    "goal": {
+      "title": "Kilo hedefi belirle",
+      "editTitle": "Kilo hedefini güncelle",
+      "body": "Sağlıklı tempo genelde haftada 0,5–1 kg'dır.",
+      "panelTitle": "Kilo hedefi",
+      "start": "Başlangıç (kg)",
+      "startHint": "Boşsa son ölçüm",
+      "target": "Hedef kilo (kg)",
+      "date": "Hedef tarih",
+      "none": "Henüz bir kilo hedefin yok.",
+      "noneHint": "Hedef belirlersen ilerlemeni ve tahmini süreyi gösteririm.",
+      "needWeight": "Önce bir kilo ölçümü ekle.",
+      "remaining": "{value} kaldı",
+      "progressLine": "%{percent} tamam · {value} kaldı",
+      "reached": "Hedefe ulaştın!",
+      "until": "Hedef: {date}",
+      "eta": "Bu gidişle yaklaşık {weeks} hafta.",
+      "etaUnknown": "Tahmin için bir haftaya yayılan en az iki ölçüm ve hedefe doğru bir eğilim gerekir.",
+      "tooFast": "Bu tarih için haftada yaklaşık {perWeek} değişim gerekir; bu genelde önerilenden hızlıdır.",
+      "saferDate": "Daha gerçekçi bir tarih: {date}.",
+      "belowRange": "Hedef kilo bu boy için VKİ 18,5'in altına düşüyor.",
+      "consult": "Kilo hedeflerinde bir sağlık uzmanına danışmanı öneririm. Hızlı kilo kaybını teşvik etmiyoruz.",
+      "edit": "Hedefi düzenle",
+      "remove": "Hedefi kaldır",
+      "removed": "Hedef kaldırıldı",
+      "saved": "Hedef kaydedildi"
+    },
+    "home": {
+      "empty": "Boyunu ve kilonu ekle, VKİ'ni ve haftalık aktiviteni burada gör.",
+      "bmi": "VKİ",
+      "weight": "Kilo",
+      "week": "Bu hafta",
+      "activeDays": "{count, plural, =0 {aktivite yok} other {# gün aktif}}"
+    },
+    "settings": {
+      "title": "Eklentiler",
+      "body": "Asistana yeni yetenekler ekleyen bölümler. Kapatınca veriler silinmez.",
+      "fitness": "Spor & Sağlık",
+      "fitnessBody": "VKİ, kilo takibi, aktiviteler ve hedefler; asistanla da kullanılabilir.",
+      "weighIn": "Tartı hatırlatması",
+      "weighInBody": "Haftada en fazla bir kez, pazartesi.",
+      "workout": "Hareket hatırlatması",
+      "workoutBody": "4 gün aktivite yoksa bir kez.",
+      "goal": "Hedef ilerlemesi",
+      "goalBody": "Haftalık kısa özet.",
+      "open": "Spor & Sağlık'ı aç",
+      "error": "Kaydedilemedi, tekrar dener misin?"
+    },
+    "errors": {
+      "heightRequired": "Boyunuzu cm cinsinden girin.",
+      "heightInvalid": "Boyunuzu cm cinsinden girin.",
+      "heightRange": "Boy 50 ile 272 cm arasında olmalı.",
+      "weightRequired": "Lütfen kilonuzu girin.",
+      "weightInvalid": "Lütfen geçerli bir kilo değeri girin.",
+      "weightRange": "Kilo 20 ile 400 kg arasında olmalı.",
+      "ageInvalid": "Yaş 2 ile 120 arasında bir tam sayı olmalı.",
+      "durationRequired": "Süreyi dakika olarak girin.",
+      "durationInvalid": "Süre 1 dakika ile 24 saat arasında olmalı.",
+      "distanceInvalid": "Lütfen geçerli bir mesafe (km) girin.",
+      "caloriesInvalid": "Kalori 1 ile 10.000 arasında olmalı.",
+      "dateInvalid": "Geçerli bir tarih seçin.",
+      "dateFuture": "Gelecek bir tarih seçilemez.",
+      "targetRequired": "Hedef kilonuzu girin.",
+      "targetSame": "Hedef, başlangıç kilosundan farklı olmalı.",
+      "targetDatePast": "Hedef tarih bugünden sonra olmalı.",
+      "empty": "En az bir değer girin.",
+      "noWeight": "Başlangıç kilosunu yazın ya da önce bir ölçüm ekleyin.",
+      "unknown": "Bir sorun çıktı, tekrar dener misin?"
+    },
+    "warnings": {
+      "heightUnusual": "Bu boy alışılmadık görünüyor; cm olarak yazdığından emin misin?",
+      "weightUnusual": "Bu kilo alışılmadık görünüyor; kg olarak yazdığından emin misin?",
+      "durationLong": "Bu süre oldukça uzun.",
+      "heightInMeters": "Boyu metre olarak yazdın; cm'ye çevirdim.",
+      "confirm": "Doğruysa yeniden kaydet'e bas."
     }
   }
 }

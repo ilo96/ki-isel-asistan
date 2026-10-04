@@ -1,19 +1,47 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { CornerDownLeft, Palette, Plus, Search, type LucideIcon } from "lucide-react";
+import {
+  Bell,
+  CheckSquare,
+  CornerDownLeft,
+  Keyboard,
+  Palette,
+  Plus,
+  Receipt,
+  Search,
+  Sparkles,
+  type LucideIcon,
+} from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Kbd } from "@/components/ui/kbd";
+import { searchAction, type SearchResults } from "@/features/assistant/search-action";
 import { cn } from "@/lib/cn";
+import { formatMoney } from "@/lib/money";
+import type { ModuleKey } from "@/lib/modules";
 import { fadeTransition, spring } from "@/lib/motion";
+import { SHOW_SHORTCUTS_EVENT } from "./keyboard-shortcuts";
+import { moduleItems } from "./module-items";
 import { NAV_ITEMS } from "./nav-items";
 import { useShell } from "./ui-store";
 
-type Command = { id: string; label: string; group: string; icon: LucideIcon; run: () => void };
+type Command = {
+  id: string;
+  label: string;
+  group: string;
+  icon: LucideIcon;
+  run: () => void;
+  hint?: string;
+};
+
+const shortDate = new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "short", timeZone: "UTC" });
+
+const NO_RESULTS: SearchResults = { transactions: [], life: [], currency: "TRY" };
+const SEARCH_DELAY_MS = 200;
 
 /** Türkçe büyük/küçük harf ve aksan duyarsız arama: "fınans" → "Finans" */
 function normalize(value: string) {
@@ -25,17 +53,34 @@ function normalize(value: string) {
 }
 
 /**
- * ⌘K / Ctrl K komut paleti. Bu aşamada gezinme ve temel komutlar var;
- * doğal dil komutları asistan aşamasında buraya bağlanacak.
+ * ⌘K / Ctrl K komut paleti: gezinme, komutlar, kayıt araması ve "Asistana sor".
+ * Yazılan her şey asistana da sorulabilir (plan: Komut paleti).
  */
-export function CommandPalette() {
+export function CommandPalette({ modules }: { modules: readonly ModuleKey[] }) {
   const t = useTranslations();
   const router = useRouter();
-  const { overlay, open, close } = useShell();
+  const { overlay, open, close, edit, editLife } = useShell();
   const { resolvedTheme, setTheme } = useTheme();
   const [query, setQuery] = useState("");
   const [index, setIndex] = useState(0);
   const isOpen = overlay === "command";
+  const [found, setFound] = useState<SearchResults>(NO_RESULTS);
+  const latest = useRef("");
+
+  // Kayıt araması: yazmayı bırakınca sunucuya sorulur; eski yanıtlar yok sayılır.
+  useEffect(() => {
+    const q = query.trim();
+    latest.current = q;
+    if (q.length < 2) {
+      setFound(NO_RESULTS);
+      return;
+    }
+    const id = setTimeout(async () => {
+      const result = await searchAction(q);
+      if (latest.current === q) setFound(result);
+    }, SEARCH_DELAY_MS);
+    return () => clearTimeout(id);
+  }, [query]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -58,12 +103,26 @@ export function CommandPalette() {
         icon,
         run: () => router.push(href),
       })),
+      ...moduleItems(modules).map(({ key, href, icon }) => ({
+        id: `module-${key}`,
+        label: t(`modules.${key}`),
+        group: t("command.navigate"),
+        icon,
+        run: () => router.push(href),
+      })),
       {
         id: "quick-add",
         label: t("nav.quickAdd"),
         group: t("command.actions"),
         icon: Plus,
         run: () => open("quickAdd"),
+      },
+      {
+        id: "shortcuts",
+        label: t("command.shortcuts"),
+        group: t("command.actions"),
+        icon: Keyboard,
+        run: () => window.dispatchEvent(new Event(SHOW_SHORTCUTS_EVENT)),
       },
       {
         id: "toggle-theme",
@@ -73,13 +132,45 @@ export function CommandPalette() {
         run: () => setTheme(resolvedTheme === "dark" ? "light" : "dark"),
       },
     ],
-    [t, router, open, setTheme, resolvedTheme],
+    [t, router, open, setTheme, resolvedTheme, modules],
   );
 
   const results = useMemo(() => {
-    const q = normalize(query.trim());
-    return q ? commands.filter((c) => normalize(c.label).includes(q)) : commands;
-  }, [commands, query]);
+    const raw = query.trim();
+    const q = normalize(raw);
+    if (!q) return commands;
+    const ask: Command = {
+      id: "ask",
+      label: t("command.ask", { query: raw }),
+      group: t("command.assistant"),
+      icon: Sparkles,
+      run: () => router.push(`/assistant?q=${encodeURIComponent(raw)}`),
+    };
+    const records: Command[] = [
+      ...found.transactions.map((tx) => ({
+        id: `tx-${tx.id}`,
+        label: tx.description || tx.category.name,
+        hint: `${shortDate.format(new Date(`${tx.occurredOn}T12:00:00Z`))} · ${formatMoney(
+          tx.type === "income" ? tx.amountMinor : -tx.amountMinor,
+          { currency: found.currency, compact: true },
+        )}`,
+        group: t("command.records"),
+        icon: Receipt,
+        run: () => edit(tx),
+      })),
+      ...found.life.map((item) => ({
+        id: `life-${item.id}`,
+        label: item.title,
+        hint: item.date ? shortDate.format(new Date(`${item.date}T12:00:00Z`)) : undefined,
+        group: t("command.records"),
+        icon: item.type === "task" ? CheckSquare : Bell,
+        run: () => editLife(item),
+      })),
+    ];
+    const matching = commands.filter((c) => normalize(c.label).includes(q));
+    // Komut adıyla birebir eşleşme varsa önce o; yoksa soru asistana gider.
+    return matching.length ? [...matching, ask, ...records] : [ask, ...records];
+  }, [commands, query, found, t, router, edit, editLife]);
 
   const onOpenChange = (next: boolean) => {
     if (next) open("command");
@@ -182,7 +273,10 @@ export function CommandPalette() {
                             )}
                           >
                             <Icon className="size-[18px]" aria-hidden />
-                            <span className="flex-1">{command.label}</span>
+                            <span className="min-w-0 flex-1 truncate">{command.label}</span>
+                            {command.hint && (
+                              <span className="text-small text-muted tabular-nums">{command.hint}</span>
+                            )}
                             {active && <CornerDownLeft className="size-4" aria-hidden />}
                           </div>
                         </li>

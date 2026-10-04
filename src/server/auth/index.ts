@@ -58,6 +58,7 @@ async function build(): Promise<Auth> {
     baseURL: e.BETTER_AUTH_URL ?? "http://localhost:3000",
     google,
     apple,
+    rateLimit: e.AUTH_RATE_LIMIT === "1",
     sendResetPasswordEmail: canResetPassword()
       ? (to, url) =>
           sendEmail({

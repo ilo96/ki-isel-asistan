@@ -11,3 +11,7 @@ next-env.d.ts
 
 # Gömülü geliştirme veritabanı
 .data
+
+# E2E
+test-results/
+playwright-report/

@@ -5,11 +5,12 @@ import { Greeting } from "@/features/dashboard/greeting";
 import { RecentTransactions } from "@/features/dashboard/recent-transactions";
 import { SummaryCards } from "@/features/dashboard/summary-cards";
 import { UpcomingList } from "@/features/dashboard/upcoming-list";
-import { DEFAULT_TIMEZONE } from "@/lib/dates";
+import { FitnessHomeCard } from "@/features/fitness/fitness-home-card";
+import { dayIn, DEFAULT_TIMEZONE } from "@/lib/dates";
 import { DEFAULT_CURRENCY, type CurrencyCode } from "@/lib/money";
 import { requireUser } from "@/server/auth";
 import { getDb } from "@/server/db";
-import { isProduction } from "@/server/env";
+import { demoEnabled } from "@/server/env";
 import { buildInsights, getDashboard } from "@/server/services/dashboard";
 
 export const metadata: Metadata = { title: "Ana Sayfa" };
@@ -17,7 +18,8 @@ export const metadata: Metadata = { title: "Ana Sayfa" };
 export default async function HomePage() {
   const user = await requireUser();
   const timeZone = user.timezone ?? DEFAULT_TIMEZONE;
-  const data = await getDashboard(await getDb(), { id: user.id, timezone: timeZone });
+  const db = await getDb();
+  const data = await getDashboard(db, { id: user.id, timezone: timeZone });
   const currency = (user.currency ?? DEFAULT_CURRENCY) as CurrencyCode;
   const firstName = user.name.split(" ")[0];
 
@@ -26,10 +28,11 @@ export default async function HomePage() {
       <section className="space-y-4 pt-2">
         <Greeting name={firstName} />
         <AssistantSummary
+          userId={user.id}
           insights={buildInsights(data)}
           isEmpty={data.isEmpty}
           currency={currency}
-          showDemo={!isProduction()}
+          showDemo={demoEnabled()}
         />
       </section>
 
@@ -41,6 +44,7 @@ export default async function HomePage() {
             <GoalCard goal={data.goal} daysLeft={data.daysLeftInMonth} currency={currency} />
           )}
           <UpcomingList items={data.upcoming} currency={currency} timeZone={timeZone} />
+          <FitnessHomeCard db={db} userId={user.id} today={dayIn(new Date(), timeZone)} />
         </div>
         <div className="lg:order-1 lg:col-span-7">
           <RecentTransactions items={data.recent} currency={currency} />

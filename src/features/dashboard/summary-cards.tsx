@@ -42,6 +42,7 @@ export async function SummaryCards({ data, currency }: Props) {
         index={3}
         label={t("budgetLeft")}
         icon={<PiggyBank />}
+        href="/finance/budgets"
         footer={
           budget ? (
             <div className="space-y-1.5">
