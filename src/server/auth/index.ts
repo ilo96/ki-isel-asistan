@@ -53,12 +53,22 @@ const appleConfigured = (e: ServerEnv) =>
     (e.APPLE_CLIENT_SECRET || (e.APPLE_TEAM_ID && e.APPLE_KEY_ID && e.APPLE_PRIVATE_KEY)),
   );
 
-/** Google / Apple düğmeleri yalnızca anahtarları tanımlıysa gösterilir. */
+/**
+ * Google / Apple düğmeleri yalnızca anahtarları tanımlıysa gösterilir. Kimlikler gizli değildir;
+ * mağaza uygulaması yerel giriş penceresini açmak için bunları kullanır.
+ */
 export function enabledSocialProviders() {
   const e = env();
+  const google = Boolean(e.GOOGLE_CLIENT_ID && e.GOOGLE_CLIENT_SECRET);
+  const apple = appleConfigured(e);
   return {
-    google: Boolean(e.GOOGLE_CLIENT_ID && e.GOOGLE_CLIENT_SECRET),
-    apple: appleConfigured(e),
+    google,
+    apple,
+    native: {
+      googleWebClientId: google ? e.GOOGLE_CLIENT_ID! : null,
+      googleIosClientId: google ? (e.GOOGLE_IOS_CLIENT_ID ?? null) : null,
+      appleClientId: apple ? e.APPLE_CLIENT_ID! : null,
+    },
   };
 }
 
@@ -74,7 +84,11 @@ async function build(): Promise<Auth> {
   }
   const google =
     e.GOOGLE_CLIENT_ID && e.GOOGLE_CLIENT_SECRET
-      ? { clientId: e.GOOGLE_CLIENT_ID, clientSecret: e.GOOGLE_CLIENT_SECRET }
+      ? {
+          clientId: e.GOOGLE_CLIENT_ID,
+          clientSecret: e.GOOGLE_CLIENT_SECRET,
+          nativeClientIds: e.GOOGLE_IOS_CLIENT_ID ? [e.GOOGLE_IOS_CLIENT_ID] : [],
+        }
       : undefined;
   const appleSecret = e.APPLE_CLIENT_ID ? appleClientSecret(e) : undefined;
   const apple =

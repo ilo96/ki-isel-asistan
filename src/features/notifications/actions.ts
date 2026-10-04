@@ -6,7 +6,7 @@ import { z } from "zod";
 import { settingsInputSchema, type SettingsInput } from "@/lib/validation/settings";
 import { getSession } from "@/server/auth";
 import { getDb } from "@/server/db";
-import { pushSubscriptions } from "@/server/db/schema";
+import { deviceTokens, pushSubscriptions } from "@/server/db/schema";
 import { markRead } from "@/server/services/notifications";
 import { updateSettings } from "@/server/services/settings";
 
@@ -62,5 +62,32 @@ export async function removePushSubscriptionAction(endpoint: string): Promise<Re
     await (await getDb())
       .delete(pushSubscriptions)
       .where(and(eq(pushSubscriptions.userId, userId), eq(pushSubscriptions.endpoint, endpoint)));
+  });
+}
+
+const deviceTokenSchema = z.object({
+  platform: z.enum(["ios", "android"]),
+  // FCM belirteçleri ~160, APNs belirteçleri 64 karakter; boşluk ya da tuhaf karakter içermez.
+  token: z.string().min(32).max(4096).regex(/^[\w:.-]+$/),
+});
+
+/** Mağaza uygulaması: cihazın bildirim belirteci. Aynı cihaz başka hesaba geçerse ona taşınır. */
+export async function saveDeviceTokenAction(input: unknown): Promise<Result> {
+  const parsed = deviceTokenSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid" };
+  const { platform, token } = parsed.data;
+  return withUser(async (userId) => {
+    await (await getDb())
+      .insert(deviceTokens)
+      .values({ userId, platform, token })
+      .onConflictDoUpdate({ target: deviceTokens.token, set: { userId, platform } });
+  });
+}
+
+export async function removeDeviceTokenAction(token: string): Promise<Result> {
+  return withUser(async (userId) => {
+    await (await getDb())
+      .delete(deviceTokens)
+      .where(and(eq(deviceTokens.userId, userId), eq(deviceTokens.token, token)));
   });
 }

@@ -15,7 +15,8 @@ export type AuthDeps = {
   db: Db;
   secret: string;
   baseURL: string;
-  google?: { clientId: string; clientSecret: string };
+  /** nativeClientIds: mağaza uygulamasındaki yerel girişin kimlik belirteci bunlardan biri için de kabul edilir. */
+  google?: { clientId: string; clientSecret: string; nativeClientIds?: string[] };
   apple?: { clientId: string; clientSecret: string; appBundleIdentifier?: string };
   sendResetPasswordEmail?: (to: string, url: string) => Promise<void>;
   /** Testlerde istek sınırı kapatılır. */
@@ -24,8 +25,16 @@ export type AuthDeps = {
 
 export function createAuth(deps: AuthDeps) {
   const socialProviders: BetterAuthOptions["socialProviders"] = {};
-  if (deps.google) socialProviders.google = { ...deps.google, prompt: "select_account" };
-  if (deps.apple) socialProviders.apple = deps.apple;
+  if (deps.google) {
+    const { nativeClientIds = [], ...google } = deps.google;
+    // İlk kimlik web akışında kullanılır; diğerleri yalnızca yerel girişin belirtecini doğrular.
+    socialProviders.google = { ...google, clientId: [google.clientId, ...nativeClientIds], prompt: "select_account" };
+  }
+  if (deps.apple) {
+    // Web akışında belirteç Services ID için, iOS'taki yerel girişte uygulamanın Bundle ID'si için üretilir.
+    const audience = [deps.apple.clientId, ...(deps.apple.appBundleIdentifier ? [deps.apple.appBundleIdentifier] : [])];
+    socialProviders.apple = { ...deps.apple, audience };
+  }
 
   return betterAuth({
     appName: APP_NAME,

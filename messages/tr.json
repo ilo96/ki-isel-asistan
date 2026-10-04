@@ -704,6 +704,7 @@
     "pushDisable": "Bu cihazda kapat",
     "pushOn": "Bu cihazda açık",
     "pushDenied": "Tarayıcı izni kapalı; tarayıcı ayarlarından açabilirsin.",
+    "pushDeniedApp": "Bildirim izni kapalı; telefonun Ayarlar › Vantrel › Bildirimler bölümünden açabilirsin.",
     "pushUnsupported": "Bu tarayıcı anlık bildirimleri desteklemiyor.",
     "pushNotConfigured": "Sunucuda anlık bildirim henüz yapılandırılmadı; uygulama içi bildirimler çalışıyor.",
     "data": "Verilerin",

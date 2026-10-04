@@ -1,0 +1,98 @@
+/* vantrelcode.com: uygulamanın tanıtım ve indirme sayfası. Renkler uygulamanın tokens.css'iyle aynı. */
+:root {
+  color-scheme: light dark;
+  --bg: #f7f8fb;
+  --surface: #ffffff;
+  --border: #e6e8ef;
+  --text: #0f1220;
+  --muted: #5d6478;
+  --accent: #5b4bdb;
+  --accent-strong: #5b4bdb;
+  --store-bg: #0f1220;
+  --store-text: #ffffff;
+  --ai-1: #6d5df6;
+  --ai-2: #a26bf5;
+  --ai-3: #5ec8f2;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b0d12;
+    --surface: #12151c;
+    --border: #232733;
+    --text: #f5f7fa;
+    --muted: #8b93a7;
+    --accent: #968bff;
+    /* Beyaz yazıyla 4,5:1 için balon zemini bir ton koyu */
+    --accent-strong: #6d5df6;
+    --store-bg: #f5f7fa;
+    --store-text: #0b0d12;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+a { color: var(--accent); }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+header.top { display: flex; align-items: center; gap: 10px; padding: 20px 0; }
+header.top img { width: 36px; height: 36px; border-radius: 10px; }
+header.top b { font-size: 19px; letter-spacing: -0.01em; }
+
+.hero { display: grid; gap: 40px; align-items: center; padding: 40px 0 64px; }
+@media (min-width: 860px) { .hero { grid-template-columns: 1.1fr 0.9fr; padding-top: 64px; } }
+.hero h1 { font-size: clamp(34px, 6vw, 54px); line-height: 1.08; letter-spacing: -0.03em; margin: 0 0 16px; }
+.hero h1 span {
+  background: linear-gradient(120deg, var(--ai-1), var(--ai-2) 55%, var(--ai-3));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero p.lead { font-size: 19px; color: var(--muted); margin: 0 0 28px; max-width: 520px; }
+
+.stores { display: flex; flex-wrap: wrap; gap: 12px; }
+.store {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 18px 8px 14px;
+  border-radius: 14px; background: var(--store-bg); color: var(--store-text); text-decoration: none;
+}
+.store svg { width: 26px; height: 26px; flex: none; }
+.store small { display: block; font-size: 11px; opacity: 0.8; line-height: 1.2; }
+.store strong { display: block; font-size: 17px; line-height: 1.2; }
+.store[aria-disabled="true"] { cursor: default; }
+.soon { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
+
+.phone {
+  justify-self: center; width: min(300px, 80vw); aspect-ratio: 9 / 17; border-radius: 44px; padding: 14px;
+  background: var(--surface); border: 1px solid var(--border); box-shadow: 0 30px 80px -30px rgb(91 75 219 / 0.45);
+}
+.screen {
+  height: 100%; border-radius: 32px; background: var(--bg); padding: 28px 18px; display: flex; flex-direction: column; gap: 12px;
+}
+.orb {
+  width: 64px; height: 64px; border-radius: 50%; margin: 8px auto 4px;
+  background: radial-gradient(circle at 36% 30%, rgb(255 255 255 / 0.45), transparent 32%),
+    linear-gradient(135deg, var(--ai-1), var(--ai-2) 55%, var(--ai-3));
+}
+.bubble { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 12px 14px; font-size: 14px; }
+.bubble.me { align-self: flex-end; background: var(--accent-strong); color: #fff; border: 0; max-width: 85%; }
+.bubble .amount { font-weight: 650; font-variant-numeric: tabular-nums; }
+.bubble .muted { color: var(--muted); font-size: 13px; }
+
+.features { display: grid; gap: 16px; padding: 8px 0 64px; }
+@media (min-width: 700px) { .features { grid-template-columns: repeat(3, 1fr); } }
+.feature { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 22px; }
+.feature h2 { font-size: 18px; margin: 0 0 6px; }
+.feature p { margin: 0; color: var(--muted); font-size: 15px; }
+
+footer { border-top: 1px solid var(--border); padding: 24px 0 40px; color: var(--muted); font-size: 14px; }
+footer nav { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 8px; }
+footer a { color: inherit; }
+
+/* Yasal sayfalar */
+.doc { max-width: 720px; padding-bottom: 64px; }
+.doc h1 { font-size: 32px; letter-spacing: -0.02em; margin: 24px 0 8px; }
+.doc h2 { font-size: 20px; margin: 32px 0 8px; }
+.doc p, .doc li { color: var(--text); }
+.doc .meta { color: var(--muted); margin: 0 0 24px; }

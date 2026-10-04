@@ -11,15 +11,17 @@ import { MemoryList } from "@/features/settings/memory-list";
 import { getDb } from "@/server/db";
 import { listMemoryRows } from "@/server/services/account";
 import type { CurrencyCode } from "@/lib/money";
+import { isAppRequest } from "@/server/app-request";
 import { requireUser } from "@/server/auth";
 
 export const metadata: Metadata = { title: "Profil" };
 
 export default async function ProfilePage() {
-  const [t, tOnboarding, user] = await Promise.all([
+  const [t, tOnboarding, user, inApp] = await Promise.all([
     getTranslations("profile"),
     getTranslations("onboarding.currencies"),
     requireUser(),
+    isAppRequest(),
   ]);
   const currency = user.currency as CurrencyCode;
   const memories = await listMemoryRows(await getDb(), user.id);
@@ -76,7 +78,8 @@ export default async function ProfilePage() {
             { href: "/achievements", icon: Flame, tone: "text-warning", key: "achievements" },
             { href: "/recap", icon: Sparkles, tone: "text-accent", key: "recap" },
             { href: "/finance/subscriptions", icon: Repeat, tone: "text-accent", key: "subscriptions" },
-            { href: "/widget", icon: LayoutGrid, tone: "text-accent", key: "widget" },
+            // Ana ekran widget'ı tarayıcı için bir geçici çözüm; mağaza uygulamasında gösterilmez.
+            ...(inApp ? [] : [{ href: "/widget", icon: LayoutGrid, tone: "text-accent", key: "widget" }] as const),
           ] as const
         ).map(({ href, icon: Icon, tone, key }) => (
           <Link

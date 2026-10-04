@@ -4,12 +4,14 @@ import webpush from "web-push";
 import { DEFAULT_TIMEZONE } from "@/lib/dates";
 import { DEFAULT_CURRENCY, type CurrencyCode } from "@/lib/money";
 import type { Db } from "@/server/db/client";
-import { notifications, pushSubscriptions, users, type Notification } from "@/server/db/schema";
+import { deviceTokens, notifications, pushSubscriptions, users, type Notification } from "@/server/db/schema";
 import { env } from "@/server/env";
+import { sendApns, sendFcm, type ApnsKey, type FcmAccount, type NativeMessage, type SendResult } from "@/server/native-push";
 import { generateNotifications, type NotificationUser } from "@/server/services/notifications";
 
 /*
- * Bildirimleri üretir ve (VAPID anahtarları varsa) Web Push ile gönderir. Zamanlanmış iş
+ * Bildirimleri üretir; mağaza uygulamasına (FCM / APNs anahtarları varsa) ve tarayıcıya
+ * (VAPID anahtarları varsa) gönderir. Zamanlanmış iş
  * (/api/cron/notifications) tüm kullanıcılar için, uygulama düzeni ise oturumdaki kullanıcı
  * için (en sık 5 dakikada bir) çağırır; böylece cron olmadan da uygulama içi bildirim oluşur.
  */
@@ -25,8 +27,66 @@ function pushReady() {
 
 export const pushPublicKey = () => (pushReady() ? env().VAPID_PUBLIC_KEY! : null);
 
+function fcmAccount(): FcmAccount | null {
+  const raw = env().FCM_SERVICE_ACCOUNT;
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as FcmAccount;
+    return parsed.project_id && parsed.client_email && parsed.private_key ? parsed : null;
+  } catch {
+    console.error("FCM_SERVICE_ACCOUNT geçerli bir JSON değil");
+    return null;
+  }
+}
+
+function apnsKey(): ApnsKey | null {
+  const e = env();
+  if (!e.APNS_KEY_ID || !e.APNS_PRIVATE_KEY || !e.APPLE_TEAM_ID) return null;
+  return {
+    teamId: e.APPLE_TEAM_ID,
+    keyId: e.APNS_KEY_ID,
+    privateKey: e.APNS_PRIVATE_KEY,
+    bundleId: e.APPLE_APP_BUNDLE_IDENTIFIER,
+    sandbox: e.APNS_ENV === "sandbox",
+  };
+}
+
+/** Mağaza uygulamasının bildirim belirteçleri tanımlı mı (Ayarlar'daki düğme için). */
+export const nativePushReady = () => ({ android: fcmAccount() !== null, ios: apnsKey() !== null });
+
+/** Mağaza uygulaması: her cihaz belirtecine, platformunun servisiyle. */
+async function pushNative(db: Db, userId: string, items: Notification[]): Promise<boolean> {
+  const fcm = fcmAccount();
+  const apns = apnsKey();
+  if (!fcm && !apns) return false;
+  const devices = await db.select().from(deviceTokens).where(eq(deviceTokens.userId, userId));
+  if (devices.length === 0) return false;
+  const gone = new Set<string>();
+  let sent = false;
+  for (const item of items) {
+    const message: NativeMessage = { title: item.title, body: item.body, href: item.href ?? "/notifications", tag: item.dedupeKey };
+    const results = await Promise.all(
+      devices.map(async (d): Promise<SendResult> => {
+        if (gone.has(d.id)) return "gone";
+        const r =
+          d.platform === "android"
+            ? fcm ? await sendFcm(fcm, d.token, message).catch(() => "error" as const) : "error"
+            : apns ? await sendApns(apns, d.token, message) : "error";
+        if (r === "gone") gone.add(d.id);
+        return r;
+      }),
+    );
+    sent ||= results.includes("ok");
+  }
+  if (gone.size) await db.delete(deviceTokens).where(inArray(deviceTokens.id, [...gone]));
+  return sent;
+}
+
 async function push(db: Db, userId: string, items: Notification[]) {
-  if (!pushReady() || items.length === 0) return;
+  if (items.length === 0) return;
+  const nativeSent = await pushNative(db, userId, items);
+  if (nativeSent) await markPushed(db, items);
+  if (!pushReady()) return;
   const subs = await db.select().from(pushSubscriptions).where(eq(pushSubscriptions.userId, userId));
   if (subs.length === 0) return;
   const gone: string[] = [];
@@ -46,6 +106,10 @@ async function push(db: Db, userId: string, items: Notification[]) {
     );
   }
   if (gone.length) await db.delete(pushSubscriptions).where(inArray(pushSubscriptions.id, gone));
+  await markPushed(db, items);
+}
+
+async function markPushed(db: Db, items: Notification[]) {
   await db
     .update(notifications)
     .set({ pushedAt: new Date() })

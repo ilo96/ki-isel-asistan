@@ -3,6 +3,10 @@
 Kişisel AI asistanı + kişisel finans uygulaması. Mimari ve UI/UX planı:
 [plan dokümanı](https://claude.ai/code/artifact/3b2c6c31-1486-4135-95fb-f7c0adc0829a).
 
+Vantrel yalnızca **Android ve iOS uygulaması** olarak yayınlanır (Capacitor kabuğu bu sunucuyu
+açar); `vantrelcode.com` indirme bağlantılarının olduğu tanıtım sayfasıdır (`landing/`).
+Mobil derleme ve yayına alma adımları: [docs/mobil.md](docs/mobil.md).
+
 ## Çalıştırma
 
 ```bash
@@ -61,8 +65,8 @@ Yeni bir eklenti: `MODULES`'a bir satır, `src/server/ai/plugins/<ad>` (araçlar
 
 ### PWA
 
-`src/app/manifest.ts` ve `public/sw.js` (yalnızca production'da kaydedilir) uygulamayı
-ana ekrana eklenebilir yapar; bağlantı yokken `public/offline.html` gösterilir.
+`src/app/manifest.ts` ve `public/sw.js` (yalnızca production'da ve tarayıcıda kaydedilir)
+tarayıcıda ana ekrana eklemeyi sağlar. Mobil uygulamada servis çalışanı kullanılmaz.
 
 ### Uçtan uca testler
 

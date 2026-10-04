@@ -4,10 +4,11 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
+import { nativeSignIn, usesNativeSignIn, type NativeAuthIds } from "@/lib/native/social-login";
 import { AppleIcon, GoogleIcon } from "./brand-icons";
 import { useAuthErrorMessage } from "./use-auth-error";
 
-export type SocialProviders = { google: boolean; apple: boolean };
+export type SocialProviders = { google: boolean; apple: boolean; native: NativeAuthIds };
 
 /**
  * Yalnızca anahtarı tanımlı sağlayıcılar gösterilir; hiçbiri yoksa bileşen hiçbir şey çizmez.
@@ -24,6 +25,7 @@ export function SocialButtons({ providers }: { providers: SocialProviders }) {
   async function signIn(provider: "google" | "apple") {
     setPending(provider);
     setError(null);
+    if (usesNativeSignIn(provider)) return signInNative(provider);
     const res = await authClient.signIn.social({
       provider,
       callbackURL: "/home",
@@ -33,6 +35,29 @@ export function SocialButtons({ providers }: { providers: SocialProviders }) {
     // Başarılıysa tarayıcı sağlayıcıya yönlenir; buraya yalnızca hata durumunda düşülür.
     if (res.error) {
       setError(toMessage(res.error));
+      setPending(null);
+    }
+  }
+
+  /** Mağaza uygulaması: telefonun giriş penceresi, ardından belirteçle oturum. */
+  async function signInNative(provider: "google" | "apple") {
+    try {
+      const credential = await nativeSignIn(provider, providers.native);
+      if (!credential) {
+        setPending(null);
+        return;
+      }
+      const res = await authClient.signIn.social({ provider, idToken: credential });
+      if (res.error) {
+        setError(toMessage(res.error));
+        setPending(null);
+        return;
+      }
+      // Onboarding'i bitmemiş yeni hesaplar /home'dan onboarding'e yönlenir.
+      window.location.assign("/home");
+    } catch (e) {
+      console.error("Yerel giriş başarısız", e);
+      setError(toMessage({}));
       setPending(null);
     }
   }
