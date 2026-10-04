@@ -139,3 +139,18 @@ describe("onboarding", () => {
     ).rejects.toThrow();
   });
 });
+
+describe("mağaza uygulamasında yerel giriş", () => {
+  it("Google belirteci web ve iOS istemcisi için, Apple belirteci Services ID ve Bundle ID için kabul edilir", () => {
+    const native = createAuth({
+      db,
+      secret: "test-secret-test-secret-test-secret-123",
+      baseURL: "http://localhost:3000",
+      google: { clientId: "web.apps.googleusercontent.com", clientSecret: "s", nativeClientIds: ["ios.apps.googleusercontent.com"] },
+      apple: { clientId: "com.vantrelcode.web", clientSecret: "s", appBundleIdentifier: "com.vantrelcode.app" },
+    });
+    const { google, apple } = native.options.socialProviders as Record<string, { clientId?: unknown; audience?: unknown }>;
+    expect(google?.clientId).toEqual(["web.apps.googleusercontent.com", "ios.apps.googleusercontent.com"]);
+    expect(apple?.audience).toEqual(["com.vantrelcode.web", "com.vantrelcode.app"]);
+  });
+});

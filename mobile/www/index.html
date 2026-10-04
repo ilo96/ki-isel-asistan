@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Çevrimdışı · Vantrel</title>
+    <style>
+      :root { --bg: #f7f8fb; --text: #0e1116; --muted: #5b6474; --accent: #5b4cf0; }
+      @media (prefers-color-scheme: dark) { :root { --bg: #0b0d12; --text: #eef0f5; --muted: #8b93a3; --accent: #8f84ff; } }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: 24px;
+        background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; text-align: center; }
+      .orb { width: 72px; height: 72px; margin: 0 auto 24px; border-radius: 50%;
+        background: linear-gradient(135deg, #6d5df6, #a26bf5 55%, #5ec8f2); filter: grayscale(60%); }
+      h1 { font-size: 24px; margin: 0 0 8px; }
+      p { color: var(--muted); margin: 0 0 24px; max-width: 320px; }
+      button { height: 44px; padding: 0 20px; border: 0; border-radius: 12px; background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="orb" aria-hidden="true"></div>
+      <h1>Bağlantı yok</h1>
+      <p>Verilerin güvende. İnternet geri geldiğinde kaldığın yerden devam edebilirsin.</p>
+      <button type="button" onclick="location.replace('https://app.vantrelcode.com/home')">Tekrar dene</button>
+    </main>
+  </body>
+</html>

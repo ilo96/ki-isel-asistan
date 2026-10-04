@@ -1,11 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { isNative } from "@/lib/native/platform";
 
 /*
  * Tarayıcının konuşma tanıma API'si (Web Speech). Chrome, Edge ve Safari'de var; Firefox'ta
  * yok, orada mikrofon düğmesi hiç görünmez. Ses tanımayı tarayıcı kendi hizmetiyle yapar;
- * uygulamaya yalnızca metin gelir.
+ * uygulamaya yalnızca metin gelir. Mağaza uygulamasında web görünümünde bu API olmadığı için
+ * telefonun kendi konuşma tanıması (yerel eklenti) kullanılır.
  */
 
 type RecognitionResult = { isFinal: boolean; 0: { transcript: string } };
@@ -38,7 +40,7 @@ const noop = () => () => {};
 export function useSpeechSupported() {
   return useSyncExternalStore(
     noop,
-    () => ctor() !== null,
+    () => isNative() || ctor() !== null,
     () => false,
   );
 }
@@ -56,7 +58,7 @@ export function useSpeech({
   const [state, setState] = useState<SpeechState>("idle");
   const [interim, setInterim] = useState("");
   const [error, setError] = useState<SpeechError | null>(null);
-  const rec = useRef<Recognition | null>(null);
+  const rec = useRef<Pick<Recognition, "stop" | "abort"> | null>(null);
   const finalText = useRef("");
   const onFinalRef = useRef(onFinal);
   useEffect(() => {
@@ -66,6 +68,30 @@ export function useSpeech({
   useEffect(() => () => rec.current?.abort(), []);
 
   const start = useCallback(() => {
+    if (isNative()) {
+      if (rec.current) return;
+      setInterim("");
+      setError(null);
+      void startNative({
+        lang,
+        onStart: (handle) => {
+          rec.current = handle;
+          setState("listening");
+        },
+        onInterim: setInterim,
+        onError: (e) => {
+          rec.current = null;
+          setState("idle");
+          setError(e);
+        },
+        onEnd: (text) => {
+          rec.current = null;
+          setState("idle");
+          if (text) onFinalRef.current(text);
+        },
+      });
+      return;
+    }
     const Ctor = ctor();
     if (!Ctor || rec.current) return;
     const r = new Ctor();
@@ -118,4 +144,51 @@ export function useSpeech({
   const stop = useCallback(() => rec.current?.stop(), []);
 
   return { state, interim, error, start, stop };
+}
+
+/** Yerel konuşma tanıma: kısmi sonuçlar her seferinde o ana kadarki metnin tamamıdır. */
+async function startNative(cb: {
+  lang: string;
+  onStart: (handle: Pick<Recognition, "stop" | "abort">) => void;
+  onInterim: (text: string) => void;
+  onError: (error: SpeechError) => void;
+  onEnd: (text: string) => void;
+}) {
+  const { SpeechRecognition } = await import("@capgo/capacitor-speech-recognition");
+  try {
+    const { available } = await SpeechRecognition.available();
+    if (!available) return cb.onError("unknown");
+    const perm = await SpeechRecognition.requestPermissions();
+    if (perm.speechRecognition !== "granted") return cb.onError("denied");
+  } catch {
+    return cb.onError("unknown");
+  }
+
+  let latest = "";
+  let done = false;
+  const finish = (keep: boolean) => {
+    if (done) return;
+    done = true;
+    void SpeechRecognition.removeAllListeners();
+    cb.onEnd(keep ? latest.trim() : "");
+  };
+  await SpeechRecognition.removeAllListeners();
+  await SpeechRecognition.addListener("partialResults", ({ matches, accumulatedText }) => {
+    latest = accumulatedText ?? matches?.[0] ?? latest;
+    cb.onInterim(latest.trim());
+  });
+  await SpeechRecognition.addListener("listeningState", ({ state, status }) => {
+    if (state === "stopped" || status === "stopped") finish(true);
+  });
+  cb.onStart({
+    stop: () => void SpeechRecognition.stop().finally(() => finish(true)),
+    abort: () => void SpeechRecognition.stop().finally(() => finish(false)),
+  });
+  try {
+    await SpeechRecognition.start({ language: cb.lang, partialResults: true, popup: false, maxResults: 1 });
+  } catch {
+    done = true;
+    void SpeechRecognition.removeAllListeners();
+    cb.onError("no-speech");
+  }
 }

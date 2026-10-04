@@ -5,7 +5,14 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
-import { removePushSubscriptionAction, savePushSubscriptionAction } from "@/features/notifications/actions";
+import {
+  removeDeviceTokenAction,
+  removePushSubscriptionAction,
+  saveDeviceTokenAction,
+  savePushSubscriptionAction,
+} from "@/features/notifications/actions";
+import { isNative, nativePlatform } from "@/lib/native/platform";
+import { disableNativePush, enableNativePush, nativePushState } from "@/lib/native/push";
 
 type State = "loading" | "unsupported" | "denied" | "off" | "on";
 
@@ -15,12 +22,30 @@ function keyBytes(base64: string) {
   return Uint8Array.from(atob(padded), (c) => c.charCodeAt(0));
 }
 
-export function PushSettings({ publicKey }: { publicKey: string | null }) {
+/**
+ * Tarayıcıda Web Push, mağaza uygulamasında telefonun kendi bildirimleri. `nativeReady`:
+ * sunucuda Android (FCM) ve iOS (APNs) gönderim anahtarları tanımlı mı.
+ */
+export function PushSettings({
+  publicKey,
+  nativeReady,
+}: {
+  publicKey: string | null;
+  nativeReady: { android: boolean; ios: boolean };
+}) {
   const t = useTranslations("settingsPage");
   const [state, setState] = useState<State>("loading");
+  const [native, setNative] = useState(false);
   const [pending, start] = useTransition();
 
   useEffect(() => {
+    if (isNative()) {
+      setNative(true);
+      nativePushState()
+        .then(setState)
+        .catch(() => setState("off"));
+      return;
+    }
     if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
       setState("unsupported");
       return;
@@ -35,8 +60,14 @@ export function PushSettings({ publicKey }: { publicKey: string | null }) {
       .catch(() => setState("off"));
   }, []);
 
+  const configured = native ? nativeReady[nativePlatform() === "ios" ? "ios" : "android"] : Boolean(publicKey);
+
   const enable = () =>
     start(async () => {
+      if (native) {
+        setState(await enableNativePush(saveDeviceTokenAction).catch(() => "off" as const));
+        return;
+      }
       if (!publicKey) return;
       const permission = await Notification.requestPermission();
       if (permission !== "granted") {
@@ -51,6 +82,10 @@ export function PushSettings({ publicKey }: { publicKey: string | null }) {
 
   const disable = () =>
     start(async () => {
+      if (native) {
+        setState(await disableNativePush(removeDeviceTokenAction));
+        return;
+      }
       const reg = await navigator.serviceWorker.ready;
       const sub = await reg.pushManager.getSubscription();
       if (sub) {
@@ -61,12 +96,12 @@ export function PushSettings({ publicKey }: { publicKey: string | null }) {
     });
 
   const note =
-    !publicKey
+    !configured
       ? t("pushNotConfigured")
       : state === "unsupported"
         ? t("pushUnsupported")
         : state === "denied"
-          ? t("pushDenied")
+          ? t(native ? "pushDeniedApp" : "pushDenied")
           : state === "on"
             ? t("pushOn")
             : null;
@@ -83,7 +118,7 @@ export function PushSettings({ publicKey }: { publicKey: string | null }) {
           {note && <p className="mt-2 text-small text-text">{note}</p>}
         </div>
       </div>
-      {publicKey && (state === "off" || state === "on") && (
+      {configured && (state === "off" || state === "on") && (
         <div className="mt-4 flex justify-end">
           {state === "off" ? (
             <Button loading={pending} onClick={enable}>

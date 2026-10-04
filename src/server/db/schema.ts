@@ -441,6 +441,23 @@ export const pushSubscriptions = pgTable(
   (t) => [index("push_subscriptions_user_idx").on(t.userId)],
 );
 
+export const devicePlatform = pgEnum("device_platform", ["ios", "android"]);
+
+/** Mağaza uygulamasının bildirim belirteçleri: Android'de FCM, iOS'ta APNs. */
+export const deviceTokens = pgTable(
+  "device_tokens",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    platform: devicePlatform("platform").notNull(),
+    token: text("token").notNull().unique(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("device_tokens_user_idx").on(t.userId)],
+);
+
 /* ------------------------------------------------------------ Abonelikler */
 
 export const subscriptionCycle = pgEnum("subscription_cycle", ["weekly", "monthly", "yearly"]);
