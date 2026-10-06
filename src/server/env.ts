@@ -68,5 +68,14 @@ export function env(): ServerEnv {
 
 export const isProduction = () => env().NODE_ENV === "production";
 
+/**
+ * Uygulamanın açık adresi. BETTER_AUTH_URL yoksa Vercel'in verdiği kalıcı adres
+ * (proje-adi.vercel.app) kullanılır; böylece ilk kurulumda adresi önceden bilmek gerekmez.
+ */
+export function appBaseUrl() {
+  const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  return env().BETTER_AUTH_URL ?? (vercelHost ? `https://${vercelHost}` : "http://localhost:3000");
+}
+
 /** Demo verisi düğmesi: geliştirmede her zaman, production'da yalnızca DEMO_MODE=1 ile. */
 export const demoEnabled = () => !isProduction() || env().DEMO_MODE === "1";

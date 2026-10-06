@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import { getDb } from "@/server/db";
 import { sendEmail } from "@/server/email";
-import { env, isProduction, type ServerEnv } from "@/server/env";
+import { appBaseUrl, env, isProduction, type ServerEnv } from "@/server/env";
 import { createAppleClientSecret } from "./apple-secret";
 import { createAuth, type Auth, type Session } from "./config";
 
@@ -102,7 +102,7 @@ async function build(): Promise<Auth> {
   return createAuth({
     db: await getDb(),
     secret: e.BETTER_AUTH_SECRET ?? DEV_SECRET,
-    baseURL: e.BETTER_AUTH_URL ?? "http://localhost:3000",
+    baseURL: appBaseUrl(),
     google,
     apple,
     rateLimit: e.AUTH_RATE_LIMIT === "1",

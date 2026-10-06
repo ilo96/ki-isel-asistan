@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "vercel-build": "node scripts/vercel-build.mjs",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -16,7 +17,8 @@
     "e2e": "playwright test",
     "mobile:sync": "cap sync",
     "mobile:android": "cap open android",
-    "mobile:ios": "cap open ios"
+    "mobile:ios": "cap open ios",
+    "ios:deneme": "node scripts/ios-deneme.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",
