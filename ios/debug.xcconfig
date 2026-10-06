@@ -1,1 +1,10 @@
 CAPACITOR_DEBUG = true
+
+// Xcode'dan "Run" ile kurulan derlemenin kimliği ve yetenekleri. Mağaza (Release) derlemesi
+// bunları kullanmaz.
+VANTREL_BUNDLE_ID = com.vantrelcode.app
+VANTREL_ENTITLEMENTS = App/App.entitlements
+
+// Ücretsiz Apple hesabıyla (Personal Team) denemek için `pnpm ios:deneme` bu dosyayı yazar:
+// bildirim ve Apple girişi yetenekleri kapanır, paket kimliği ayrılır. Dosya git'e girmez.
+#include? "deneme.xcconfig"

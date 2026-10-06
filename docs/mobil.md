@@ -65,6 +65,57 @@ VANTREL_APP_URL=http://localhost:3000 pnpm mobile:sync   # iOS simülatörü
 
 İkonlar `assets/` içinden üretilir: `npx @capacitor/assets generate --android --ios`.
 
+## Mağazasız deneme: iPhone + ücretsiz Apple hesabı
+
+Mağaza hesabı açmadan uygulamayı kendi iPhone'unda denemek için. Ücretsiz hesapla kurulan
+uygulama **7 gün** çalışır; sonra Mac'te Xcode'dan yeniden "Run" demek yeter.
+Bu derlemede bildirimler ve Apple girişi yoktur (ücretsiz hesap desteklemez); e-postayla
+kayıt ve giriş, tüm ekranlar ve çevrimdışı asistan çalışır.
+
+### A. Sunucu (bir kez, telefondan da yapılabilir)
+
+1. <https://vercel.com/signup> → **Continue with GitHub**.
+2. **Add New… › Project** → `ki-isel-asistan` deposunu **Import** et. Ortam değişkenlerine
+   `BETTER_AUTH_SECRET` ekle (en az 32 karakter rastgele metin) → **Deploy**. İlk derleme
+   `main` dalından olduğu için başarısız olabilir; sorun değil.
+3. Proje › **Storage** › **Create Database** › **Neon** (Free, bölge Frankfurt) → projeye bağla.
+   `DATABASE_URL` kendiliğinden eklenir; tablolar her derlemede kendiliğinden kurulur
+   (`scripts/vercel-build.mjs`).
+4. Proje › **Settings › Environments › Production › Branch Tracking**: uygulamanın kodunun olduğu
+   dalı yaz (birleştirilene kadar en üstteki PR'ın dalı) → kaydet, sonra **Deployments**'tan
+   bu dalın son derlemesini **Promote to Production** ya da yeniden derle.
+5. Adres: **Settings › Domains**'teki `proje-adi.vercel.app`. Giriş adresini bilmek gerekmez;
+   `BETTER_AUTH_URL` boşsa bu adres kullanılır. Hep bu ana adresi kullan (derlemeye özel
+   uzun adreslerde giriş reddedilir).
+
+`APP_ONLY` boş kaldığı için sayfa Safari'den de açılır; denemeyi kolaylaştırır.
+Vercel'in ücretsiz planı zamanlanmış işi günde bir çalıştırır (`vercel.json`); 15 dakikalık
+hatırlatma kontrolünü `.github/workflows/bildirim-zamanlayici.yml` yapar (depo secret'ları
+`VANTREL_APP_URL` ve `CRON_SECRET` girilince, `main`'de).
+
+### B. Mac'te (her 7 günde bir yalnızca 6–8. adımlar)
+
+1. App Store'dan **Xcode**'u kur, bir kez aç, istenen ek bileşenleri yükle.
+   Xcode › Settings › **Accounts** › `+` › Apple ID ile giriş.
+2. <https://nodejs.org>'dan **Node.js LTS**'yi kur.
+3. GitHub'da depoyu aç, dalı seç, **Code › Download ZIP**; ZIP'i aç.
+4. **Terminal**'de (klasörü Terminal penceresine sürükleyerek yolu yazdırabilirsin):
+   ```bash
+   cd ~/Downloads/ki-isel-asistan-...
+   npx -y pnpm@10 install
+   npx -y pnpm@10 ios:deneme https://proje-adi.vercel.app
+   ```
+   Komut uygulamayı bu sunucuya bağlar, ücretsiz hesap ayarını yazar ve Xcode'u açar.
+5. Xcode'da sol üstte **App** › **Signing & Capabilities** › **Team**: adın (Personal Team).
+6. iPhone'u kabloyla bağla, telefonda **Bu bilgisayara güven**. Üstteki cihaz listesinden
+   iPhone'u seç, **▶ Run**.
+7. İlk seferde iPhone'da: Ayarlar › Gizlilik ve Güvenlik › **Geliştirici Modu** › Aç
+   (telefon yeniden başlar). Ardından Ayarlar › Genel › **VPN ve Aygıt Yönetimi** › Apple ID'n ›
+   **Güven**. Xcode'da tekrar ▶ Run.
+8. Vantrel ana ekranda. E-postayla kayıt ol.
+
+Mağaza ayarına dönmek için: `pnpm ios:deneme --kapat`.
+
 ## Yayına alma: yapılacaklar
 
 ### 1. Hesaplar (ilo)

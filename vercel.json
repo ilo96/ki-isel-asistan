@@ -1,3 +1,5 @@
 {
-  "crons": [{ "path": "/api/cron/notifications", "schedule": "*/15 * * * *" }]
+  "buildCommand": "pnpm vercel-build",
+  "regions": ["fra1"],
+  "crons": [{ "path": "/api/cron/notifications", "schedule": "0 6 * * *" }]
 }
